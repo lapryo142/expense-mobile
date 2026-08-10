@@ -45,7 +45,7 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
   <div class="header">
     <div class="eyebrow">PERSONAL EXPENSE</div><h1>Giao dịch</h1>
     <div class="headerActions">
-      <button id="refreshBtn" class="headerBtn">↻ Làm mới</button>
+      <button id="refreshBtn" class="headerBtn" aria-label="Làm mới" title="Làm mới">↻</button>
       <button id="summaryBtn" class="headerBtn">Tổng quan</button>
     </div>
   </div>
@@ -84,7 +84,7 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
     </div>
     <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
     <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
-    <div class="field"><label>NGÀY</label><input id="date" type="date"></div>
+    <div class="field"><label>NGÀY (NGÀY/THÁNG/NĂM)</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="11/08/2026"></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
   </div>
 </div>
@@ -96,7 +96,6 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
       <div class="field"><label>CÒN LẠI TRONG NGÂN HÀNG</label><input id="editBank" inputmode="numeric"></div>
       <div class="field"><label>TIẾT KIỆM</label><input id="editSavings" inputmode="numeric"></div>
       <div class="field"><label>GỬI VỢ</label><input id="editWife" inputmode="numeric"></div>
-      <div class="field"><label>CHÊNH LỆCH ĂN UỐNG</label><input id="editFood" inputmode="numeric"></div>
     </div>
     <button id="saveSummary" class="primary" style="margin-top:12px">Lưu</button>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
@@ -113,6 +112,18 @@ const fmtDate=iso=>{
   if(!iso)return '';
   const parts=String(iso).slice(0,10).split('-');
   return parts.length===3?parts[2]+'/'+parts[1]:'';
+};
+const todayVi=()=>{
+  const now=new Date(),day=String(now.getDate()).padStart(2,'0'),month=String(now.getMonth()+1).padStart(2,'0');
+  return `${day}/${month}/${now.getFullYear()}`;
+};
+const viDateToIso=value=>{
+  const match=String(value||'').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!match)return null;
+  const day=Number(match[1]),month=Number(match[2]),year=Number(match[3]);
+  const date=new Date(Date.UTC(year,month-1,day));
+  if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)return null;
+  return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
 };
 let user=null,current=8,entryType='expense';
 
@@ -153,7 +164,7 @@ async function refresh(){
   appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
   $('bankHero').textContent=fmt(st?.bank_balance||0);
   $('remain').textContent=fmt(rem);
-  $('foodDifference').textContent=fmt(st?.food_difference||0);
+  $('foodDifference').textContent=fmt(rem-Number(st?.bank_balance||0));
   $('savingsBalance').textContent=fmt(st?.savings_balance||0);
   $('sendWife').textContent=fmt(st?.send_wife||0);
   $('startBalance').textContent=fmt(st?.start_balance||0);
@@ -162,7 +173,7 @@ async function refresh(){
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=new Date().toISOString().slice(0,10)
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayVi()
 }
 function setType(type){
   entryType=type;
@@ -187,12 +198,12 @@ async function runAppRefresh(){
   if(pullRefreshing)return;
   pullRefreshing=true;
   const button=$('refreshBtn'),indicator=$('pullRefresh');
-  button.disabled=true;button.classList.add('refreshing');button.textContent='↻ Đang tải…';
+  button.disabled=true;button.classList.add('refreshing');button.textContent='↻';
   indicator.classList.remove('dragging');indicator.classList.add('loading');indicator.style.opacity='1';
   indicator.style.transform='translate(-50%,6px)';indicator.textContent='↻ Đang cập nhật…';
   try{await refresh();indicator.textContent='✓ Đã cập nhật';hidePullRefresh(650)}
   catch(error){indicator.textContent='Không thể cập nhật';hidePullRefresh(900)}
-  finally{button.disabled=false;button.classList.remove('refreshing');button.textContent='↻ Làm mới';pullRefreshing=false}
+  finally{button.disabled=false;button.classList.remove('refreshing');button.textContent='↻';pullRefreshing=false}
 }
 
 document.addEventListener('touchstart',e=>{
@@ -221,21 +232,23 @@ $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('ad
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('#quickExpense button,#quickIncome button').forEach(b=>b.addEventListener('click',()=>{$('desc').value=b.dataset.name||'';(b.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
-  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;if(!amount||!desc||!date)return;
+  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=viDateToIso($('date').value);
+  if(!amount||!desc)return;
+  if(!date){alert('Ngày phải theo định dạng ngày/tháng/năm, ví dụ 11/08/2026.');return}
   const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source:'app',source_key:'app-'+crypto.randomUUID()};
   const {error}=await sb.from('transactions').insert(payload);if(error){alert(error.message);return}
   current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
 });
 $('summaryBtn').addEventListener('click',async()=>{
   const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  $('editBank').value=st?.bank_balance||'';$('editSavings').value=st?.savings_balance||'';$('editWife').value=st?.send_wife||'';$('editFood').value=st?.food_difference||'';
+  $('editBank').value=st?.bank_balance||'';$('editSavings').value=st?.savings_balance||'';$('editWife').value=st?.send_wife||'';
   $('summaryOverlay').classList.add('open');
 });
 $('closeSummary').addEventListener('click',()=>$('summaryOverlay').classList.remove('open'));
 $('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))$('summaryOverlay').classList.remove('open')});
 $('saveSummary').addEventListener('click',async()=>{
   const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  const payload={...(st||{}),user_id:user.id,year:2026,month:current,bank_balance:cleanMoney('editBank'),savings_balance:cleanMoney('editSavings'),send_wife:cleanMoney('editWife'),food_difference:cleanMoney('editFood'),updated_at:new Date().toISOString()};
+  const payload={...(st||{}),user_id:user.id,year:2026,month:current,bank_balance:cleanMoney('editBank'),savings_balance:cleanMoney('editSavings'),send_wife:cleanMoney('editWife'),updated_at:new Date().toISOString()};
   delete payload.id;
   const {error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'});if(error){alert(error.message);return}
   $('summaryOverlay').classList.remove('open');refresh();
