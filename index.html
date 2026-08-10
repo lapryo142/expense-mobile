@@ -24,7 +24,7 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28
 .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.quick button{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:800}.quick button:active,.quick button.selected{background:#d8bd78;color:#241b09;border-color:#b58e3e}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
 .field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px;caret-color:var(--gold)}.field input:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,90,.2)}.field input.amount{font-size:27px;font-weight:850}.primary{width:100%;border:1px solid rgba(199,164,90,.7);border-radius:14px;padding:14px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900}.dangerlink{width:100%;border:0;background:transparent;color:#8a8174;padding:12px;font-size:12px}
 .dateChoice{display:grid;grid-template-columns:auto 1fr;gap:8px}.todayBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:13px;padding:0 14px;font-weight:850}.dateChoice input{min-width:0;color:#654f1c;accent-color:var(--gold);color-scheme:light}.dateChoice input::selection{background:#d8bd78;color:var(--text)}
-.settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}
+.overviewSection{margin-top:16px}.sectionTitle{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.65px;margin:0 0 8px}.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.statBox{background:#faf8f3;border:1px solid var(--line);border-radius:14px;padding:12px}.statBox.wide{grid-column:1/-1}.statLabel{font-size:10px;color:var(--muted);font-weight:850}.statValue{font-size:18px;font-weight:900;margin-top:5px}.statNote{font-size:11px;color:var(--muted);margin-top:4px}.trendGood{color:var(--green)}.trendBad{color:var(--red)}.topSpend{background:#faf8f3;border:1px solid var(--line);border-radius:14px;overflow:hidden}.topSpendRow{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}.topSpendRow:last-child{border-bottom:0}.topRank{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--goldSoft);color:#705820;font-size:11px;font-weight:900}.topName{font-size:13px;font-weight:750}.topAmount{font-size:13px;font-weight:850;color:var(--red)}.overviewLoading{padding:18px;text-align:center;color:var(--muted);font-size:12px}.settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}
 .auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px rgba(60,48,22,.08)}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:6px 0;font-size:16px}.authSecondary{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}.authSecondary button{border:0;background:transparent;color:#705820;font-weight:850}.status{font-size:12px;color:var(--muted);margin-top:9px}
 .empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}
 </style></head>
@@ -92,13 +92,23 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28
 
 <div id="summaryOverlay" class="overlay">
   <div class="panel">
-    <div class="panelHead"><h2>Tổng quan / chỉnh số</h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
-    <div class="settings">
-      <div class="field"><label>CÒN LẠI TRONG NGÂN HÀNG</label><input id="editBank" inputmode="numeric"></div>
-      <div class="field"><label>TIẾT KIỆM</label><input id="editSavings" inputmode="numeric"></div>
-      <div class="field"><label>GỬI VỢ</label><input id="editWife" inputmode="numeric"></div>
+    <div class="panelHead"><h2>Tổng quan tháng <span id="overviewMonth"></span></h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
+    <div id="overviewStats" class="overviewSection"><div class="overviewLoading">Đang tính thống kê…</div></div>
+
+    <div class="overviewSection">
+      <div class="sectionTitle">TOP NỘI DUNG CHI NHIỀU NHẤT</div>
+      <div id="topSpending" class="topSpend"><div class="overviewLoading">Đang tải…</div></div>
     </div>
-    <button id="saveSummary" class="primary" style="margin-top:12px">Lưu</button>
+
+    <div class="overviewSection">
+      <div class="sectionTitle">CHỈNH SỐ</div>
+      <div class="settings">
+        <div class="field"><label>CÒN LẠI TRONG NGÂN HÀNG</label><input id="editBank" inputmode="numeric"></div>
+        <div class="field"><label>TIẾT KIỆM</label><input id="editSavings" inputmode="numeric"></div>
+        <div class="field"><label>GỬI VỢ</label><input id="editWife" inputmode="numeric"></div>
+      </div>
+      <button id="saveSummary" class="primary" style="margin-top:12px">Lưu</button>
+    </div>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
 </div>
@@ -180,6 +190,54 @@ function setType(type){
   $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');
 }
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
+function monthTotals(rows,status){
+  let income=Number(status?.total_income||0),expense=Number(status?.total_expense||0);
+  (rows||[]).filter(row=>row.source!=='sheet').forEach(row=>{income+=Number(row.income||0);expense+=Number(row.expense||0)});
+  return {income,expense};
+}
+async function renderMonthlyOverview(){
+  $('overviewMonth').textContent=current;
+  $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
+  $('topSpending').innerHTML='<div class="overviewLoading">Đang tải…</div>';
+  const previousMonth=current-1;
+  const queries=[
+    sb.from('transactions').select('*').eq('year',2026).eq('month',current),
+    sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle()
+  ];
+  if(previousMonth>0)queries.push(
+    sb.from('transactions').select('*').eq('year',2026).eq('month',previousMonth),
+    sb.from('monthly_status').select('*').eq('year',2026).eq('month',previousMonth).maybeSingle()
+  );
+  const results=await Promise.all(queries);
+  const rows=results[0].data||[],status=results[1].data,currentTotals=monthTotals(rows,status);
+  const previousTotals=previousMonth>0?monthTotals(results[2].data||[],results[3].data):null;
+  const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
+  const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
+  const expenses=rows.filter(row=>Number(row.expense||0)>0);
+  const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
+  let trendText='Chưa có dữ liệu tháng trước',trendClass='';
+  if(previousTotals&&previousTotals.expense>0){
+    const percent=Math.round(Math.abs(currentTotals.expense-previousTotals.expense)/previousTotals.expense*100);
+    const lower=currentTotals.expense<=previousTotals.expense;
+    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}% so với tháng ${previousMonth}`;
+    trendClass=lower?'trendGood':'trendBad';
+  }
+  $('overviewStats').innerHTML=`<div class="statGrid">
+    <div class="statBox"><div class="statLabel">TỔNG THU</div><div class="statValue inc">${fmt(currentTotals.income)}</div></div>
+    <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
+    <div class="statBox"><div class="statLabel">SỐ GIAO DỊCH</div><div class="statValue">${rows.length}</div></div>
+    <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(currentTotals.expense/Math.max(1,dayCount))}</div></div>
+    <div class="statBox wide"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
+    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div></div>
+  </div>`;
+  const grouped=new Map();
+  expenses.forEach(row=>{
+    const name=String(row.description||'Khác').trim()||'Khác',key=name.toLocaleLowerCase('vi-VN');
+    const item=grouped.get(key)||{name,total:0};item.total+=Number(row.expense||0);grouped.set(key,item);
+  });
+  const top=[...grouped.values()].sort((a,b)=>b.total-a.total).slice(0,3);
+  $('topSpending').innerHTML=top.map((item,index)=>`<div class="topSpendRow"><div class="topRank">${index+1}</div><div class="topName">${escapeHtml(item.name)}</div><div class="topAmount">${fmt(item.total)}</div></div>`).join('')||'<div class="overviewLoading">Chưa có khoản chi</div>';
+}
 
 let pullStartY=null,pullDistance=0,pullRefreshing=false;
 function showPullRefresh(distance,text){
@@ -239,9 +297,12 @@ $('saveTx').addEventListener('click',async()=>{
   current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
 });
 $('summaryBtn').addEventListener('click',async()=>{
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  $('editBank').value=st?.bank_balance||'';$('editSavings').value=st?.savings_balance||'';$('editWife').value=st?.send_wife||'';
   $('summaryOverlay').classList.add('open');
+  const [{data:st}]=await Promise.all([
+    sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle(),
+    renderMonthlyOverview()
+  ]);
+  $('editBank').value=st?.bank_balance||'';$('editSavings').value=st?.savings_balance||'';$('editWife').value=st?.send_wife||'';
 });
 $('closeSummary').addEventListener('click',()=>$('summaryOverlay').classList.remove('open'));
 $('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))$('summaryOverlay').classList.remove('open')});
