@@ -1,8 +1,11 @@
-Expense Mobile V7 Auth
-- Supabase session persistence explicitly enabled.
-- App automatically restores login session on iPhone/browser.
-- Email is remembered locally for convenience.
-- Password is NOT stored by the app.
-- Login UI cleaned up: primary Login button + small Create account link.
-- Uses browser/iCloud Password AutoFill through autocomplete attributes.
-- No SQL/database migration required.
+Expense Mobile V8 CLEAN
+This is a clean rebuild, not a patch over V7.
+- Add transaction button wired with addEventListener.
+- Summary/Edit button wired with addEventListener.
+- Overlays have explicit close buttons.
+- Persistent Supabase session.
+- Luxury charcoal + champagne gold UI.
+- Transactions first, summaries below.
+- Income and expense quick presets.
+- Requires the V5 send_wife migration already run.
+No new SQL required.

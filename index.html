@@ -4,221 +4,187 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="theme-color" content="#f5f5f3">
+<meta name="theme-color" content="#f4f1ea">
 <title>Expense</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f4f1ea;--card:#fff;--text:#181714;--muted:#7a756c;--line:#e4dfd4;--green:#1f6a50;--red:#9c4c43;--dark:#171714;--gold:#c7a45a;--gold2:#e6cf91;--goldSoft:#f6edd8}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
-.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
-h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{display:flex;gap:6px;overflow:auto;margin:12px 0}.months button{border:0;border-radius:999px;padding:8px 12px;font-weight:700}.months .active{background:var(--dark);color:white}
-.balance{background:linear-gradient(145deg,#151513,#242016);color:white;border:1px solid rgba(230,207,145,.45);border-radius:20px;padding:20px;margin:12px 0 14px;box-shadow:0 10px 28px rgba(46,38,19,.16)}.balance small{color:var(--gold2);font-weight:800;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.meta{display:flex;gap:14px;color:#cfc7b7;font-size:12px}
-.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 0}.summarycard{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.summarycard.highlight{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.summarycard .k{font-size:10px;color:var(--muted);font-weight:800;line-height:1.25}.summarycard .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;margin-bottom:14px}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}.name{font-size:16px;font-weight:700}.date{font-size:11px;color:var(--muted);margin-top:3px}.amt{font-weight:800}.inc{color:var(--green)}.exp{color:var(--red)}
-.topactions{display:flex;justify-content:flex-end;margin-top:-36px;margin-bottom:8px;position:relative;z-index:3}.topactions button{border:1px solid #d9c28b;background:var(--goldSoft);color:#5f4b1c;border-radius:12px;padding:9px 12px;font-size:12px;font-weight:850;box-shadow:0 4px 12px rgba(90,70,26,.08)}.bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px));display:flex;gap:8px;z-index:40;pointer-events:auto}.bottom button,.primary{border:0;border-radius:15px;padding:14px;font-weight:800;font-size:16px}.bottom button{flex:1;min-height:54px}.primary{background:linear-gradient(135deg,#1b1a16,#2b2417);color:#fff7e5;border:1px solid rgba(199,164,90,.65)!important}.secondary{background:#fff;border:1px solid var(--line)!important}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.34);display:none;align-items:flex-end;z-index:100}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:white;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:4px 0 12px}.quick.income-quick{display:none}.quick.income-quick.show{display:grid}.quick.expense-quick.hide{display:none}.settings-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings-grid .field{margin:0}.settings-grid input{font-size:16px}.quick button{border:1px solid var(--line);background:#fafafa;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:750}.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.amount{font-size:27px!important;font-weight:800}.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:800}.toggle .active{background:var(--dark);color:#fff}
-.auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:white;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px rgba(60,48,22,.08)}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:6px 0;font-size:16px}.auth button{width:100%;margin-top:10px}.auth-secondary{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}.auth-secondary button{width:auto;border:0;background:transparent;color:#7b6229;font-weight:800;padding:4px;margin:0}.status{font-size:12px;margin-top:10px;color:var(--muted)}.import{background:#fff8e8;border:1px solid #ead7a5;border-radius:16px;padding:14px;margin:10px 0;font-size:13px}.import button{margin-top:9px;width:100%}.hidden{display:none!important}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
+button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
+.header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
+.summaryBtn{position:absolute;right:0;top:4px;border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 11px;font-size:12px;font-weight:850}
+.months{display:flex;gap:6px;overflow:auto;margin:13px 0 12px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.months button{border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;background:#e8e3d8;color:#615c52}.months button.active{background:var(--dark);color:#fff4d8}
+.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);align-items:center}.tx:last-child{border-bottom:0}.txName{font-size:16px;font-weight:750}.txDate{font-size:11px;color:var(--muted);margin-top:3px}.txAmt{font-size:16px;font-weight:850}.inc{color:var(--green)}.exp{color:var(--red)}
+.balance{background:linear-gradient(145deg,#151513,#272116);color:white;border:1px solid rgba(230,207,145,.5);border-radius:20px;padding:20px;margin:14px 0 10px;box-shadow:0 10px 28px rgba(46,38,19,.15)}.balance small{color:var(--gold2);font-weight:850;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.balance .hint{font-size:11px;color:#cfc7b7}
+.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}
+.bottom{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px))}.addBtn{width:100%;min-height:55px;border:1px solid rgba(199,164,90,.7);border-radius:16px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900;box-shadow:0 10px 28px rgba(44,35,17,.22)}
+.overlay{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel h2{font-size:23px;margin:0}.closeBtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:750}
+.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:850}.toggle button.active{background:var(--dark);color:#fff3d3;border-color:var(--dark)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.quick button{border:1px solid var(--line);background:#fafafa;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:750}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
+.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.field input.amount{font-size:27px;font-weight:850}.primary{width:100%;border:1px solid rgba(199,164,90,.7);border-radius:14px;padding:14px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900}.dangerlink{width:100%;border:0;background:transparent;color:#8a8174;padding:12px;font-size:12px}
+.settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}
+.auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px rgba(60,48,22,.08)}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:6px 0;font-size:16px}.authSecondary{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}.authSecondary button{border:0;background:transparent;color:#705820;font-weight:850}.status{font-size:12px;color:var(--muted);margin-top:9px}
+.empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}
 </style></head>
 <body>
 <div id="auth" class="auth">
-  <div class="authbox"><div class="muted">EXPENSE MOBILE</div><h1>Đăng nhập</h1>
-  <input id="email" type="email" autocomplete="username" placeholder="Email">
-  <input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu">
-  <button class="primary" id="loginBtn">Đăng nhập</button>
-  <div class="auth-secondary">Chưa có tài khoản? <button id="signupBtn">Tạo tài khoản</button></div>
-  <div class="status">Ứng dụng sẽ giữ trạng thái đăng nhập trên thiết bị này.</div>
-  <div id="authStatus" class="status"></div></div>
+  <div class="authbox">
+    <div class="eyebrow">EXPENSE MOBILE</div><h1>Đăng nhập</h1>
+    <input id="email" type="email" autocomplete="username" placeholder="Email">
+    <input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu">
+    <button id="loginBtn" class="primary">Đăng nhập</button>
+    <div class="authSecondary">Chưa có tài khoản? <button id="signupBtn">Tạo tài khoản</button></div>
+    <div class="status">App sẽ giữ trạng thái đăng nhập trên thiết bị này.</div>
+    <div id="authStatus" class="status"></div>
+  </div>
 </div>
 
-<div id="main" class="app hidden">
-  <div class="muted">PERSONAL EXPENSE</div><h1>Giao dịch</h1><div class="topactions"><button id="summaryBtn">Tổng quan / chỉnh số</button></div>
+<div id="app" class="app hidden">
+  <div class="header">
+    <div class="eyebrow">PERSONAL EXPENSE</div><h1>Giao dịch</h1>
+    <button id="summaryBtn" class="summaryBtn">Tổng quan / chỉnh số</button>
+  </div>
   <div id="months" class="months"></div>
-  <div id="importBox" class="import hidden">Supabase chưa có dữ liệu. Bấm một lần để nhập snapshot mới nhất từ Google Sheet của anh.
-    <button id="importBtn" class="primary">Import Google Sheet mới nhất</button>
-  </div>
+
   <div id="list" class="list"></div>
-  <div class="balance"><small>CÒN LẠI TRONG NGÂN HÀNG</small><div id="bankHero" class="big">—</div><div class="meta"><span id="bankUpdated">Theo số nhập trong Sheet</span></div></div>
+
+  <div class="balance">
+    <small>CÒN LẠI TRONG NGÂN HÀNG</small>
+    <div id="bankHero" class="big">—</div>
+    <div class="hint">Số thật anh đang theo dõi trong ngân hàng</div>
+  </div>
+
   <div class="summarygrid">
-    <div class="summarycard"><div class="k">CÒN LẠI THEO SỔ</div><div id="remain" class="v">—</div></div>
-    <div class="summarycard highlight"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div></div>
-    <div class="summarycard"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div></div>
-    <div class="summarycard"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div></div>
-    <div class="summarycard"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div></div>
-    <div class="summarycard"><div class="k">THU / CHI THÁNG</div><div class="v" style="font-size:15px"><span id="totalIncome">—</span><br><span id="totalExpense">—</span></div></div>
+    <div class="card"><div class="k">CÒN LẠI THEO SỔ</div><div id="remain" class="v">—</div></div>
+    <div class="card gold"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div></div>
+    <div class="card"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div></div>
+    <div class="card"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div></div>
+    <div class="card"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div></div>
+    <div class="card"><div class="k">THU / CHI THÁNG</div><div class="v" style="font-size:14px"><span id="totalIncome">—</span><br><span id="totalExpense">—</span></div></div>
   </div>
 </div>
 
-<div id="bottom" class="bottom hidden"><button class="primary" id="addBtn">＋ Thêm giao dịch</button></div>
+<div id="bottom" class="bottom hidden"><button id="addBtn" class="addBtn">＋ Thêm giao dịch</button></div>
 
-<div id="overlay" class="overlay"><div class="panel"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Thêm giao dịch</h2><button id="closeAddBtn" class="secondary" style="padding:8px 10px">Đóng</button></div>
-  <div class="quick expense-quick">
-    <button data-name="Tennis">Tennis</button><button data-name="Taxi đi làm">Taxi</button><button data-name="Ăn uống">Ăn uống</button><button data-name="Shopee">Shopee</button>
-    <button data-name="Tiền điện">Điện</button><button data-name="Internet">Internet</button><button data-name="Sunny">Sunny</button><button data-name="">Khác</button>
+<div id="addOverlay" class="overlay">
+  <div class="panel">
+    <div class="panelHead"><h2>Thêm giao dịch</h2><button id="closeAdd" class="closeBtn">Đóng</button></div>
+    <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
+    <div id="quickExpense" class="quick quickExpense">
+      <button data-name="Tennis">Tennis</button><button data-name="Taxi đi làm">Taxi</button><button data-name="Ăn uống">Ăn uống</button><button data-name="Shopee">Shopee</button>
+      <button data-name="Tiền điện">Điện</button><button data-name="Internet">Internet</button><button data-name="Sunny">Sunny</button><button data-name="">Khác</button>
+    </div>
+    <div id="quickIncome" class="quick quickIncome">
+      <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
+    </div>
+    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
+    <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
+    <div class="field"><label>NGÀY</label><input id="date" type="date"></div>
+    <button id="saveTx" class="primary">Lưu giao dịch</button>
   </div>
-  <div class="quick income-quick">
-    <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
+</div>
+
+<div id="summaryOverlay" class="overlay">
+  <div class="panel">
+    <div class="panelHead"><h2>Tổng quan / chỉnh số</h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
+    <div class="settings">
+      <div class="field"><label>CÒN LẠI TRONG NGÂN HÀNG</label><input id="editBank" inputmode="numeric"></div>
+      <div class="field"><label>TIẾT KIỆM</label><input id="editSavings" inputmode="numeric"></div>
+      <div class="field"><label>GỬI VỢ</label><input id="editWife" inputmode="numeric"></div>
+      <div class="field"><label>CHÊNH LỆCH ĂN UỐNG</label><input id="editFood" inputmode="numeric"></div>
+    </div>
+    <button id="saveSummary" class="primary" style="margin-top:12px">Lưu</button>
+    <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
-  <div class="toggle"><button class="active" data-type="expense">Chi</button><button data-type="income">Thu</button></div>
-  <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
-  <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
-  <div class="field"><label>NGÀY</label><input id="date" type="date"></div>
-  <button id="saveBtn" class="primary" style="width:100%">Lưu</button>
-</div></div>
+</div>
 
 <script>
 const SUPABASE_URL="https://cmejwdeklvmgqrollnqn.supabase.co";
 const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
-const SEED={"transactions":[{"year":2026,"month":1,"row_order":5,"description":"Mua shopee trả sau (1,240,000)","txn_date":null,"income":0,"expense":1240000,"source":"sheet","source_key":"206aab0b4ae7e2eacc7920b7acb07295f6ed5784"},{"year":2026,"month":1,"row_order":6,"description":"Tiền điện","txn_date":"2026-01-08","income":0,"expense":434000,"source":"sheet","source_key":"e52807911f16ec1458dc4e7326a18da55db87279"},{"year":2026,"month":1,"row_order":7,"description":"Tiền internet","txn_date":"2026-01-08","income":0,"expense":220000,"source":"sheet","source_key":"df0b5b0fdb3321c275dc86f6609f12514b2fc079"},{"year":2026,"month":1,"row_order":8,"description":"Tiền internet lexington","txn_date":"2026-01-08","income":0,"expense":200000,"source":"sheet","source_key":"0ae5fba267c38f98469f6a1a9a603d9def8b9ae8"},{"year":2026,"month":1,"row_order":9,"description":"Tennis 37","txn_date":"2026-01-08","income":0,"expense":215000,"source":"sheet","source_key":"0a11a113cc94ae936378a6db675c54056e9e65d1"},{"year":2026,"month":1,"row_order":10,"description":"Nhận lương","txn_date":"2026-01-09","income":18240000,"expense":0,"source":"sheet","source_key":"e699fe004b3dd2a5d0eba194d82a6c3e0158ea4b"},{"year":2026,"month":1,"row_order":11,"description":"Tiền ship đai","txn_date":"2026-01-09","income":220000,"expense":0,"source":"sheet","source_key":"bc97bf2a65a0c2fe9a2dbc637a22d6800e8077ce"},{"year":2026,"month":1,"row_order":12,"description":"Mã tiểu dã","txn_date":"2026-01-09","income":0,"expense":382000,"source":"sheet","source_key":"1ac53d54c01fa82ceabda6f2e14ce5acf9a43713"},{"year":2026,"month":1,"row_order":13,"description":"Tennis 38","txn_date":"2026-01-10","income":0,"expense":157000,"source":"sheet","source_key":"07ff74955738591a075e5dbcc9ae7a3adfb1bed9"},{"year":2026,"month":1,"row_order":14,"description":"Rút tiền mặt","txn_date":"2026-01-10","income":0,"expense":500000,"source":"sheet","source_key":"adc21124c1218a6c5e83c8a4ca8547b1056bba49"},{"year":2026,"month":1,"row_order":15,"description":"Nạp điện thoại","txn_date":"2026-01-10","income":0,"expense":100000,"source":"sheet","source_key":"5532fddfd3800b7cad443a7db9bf239ba6bf1f42"},{"year":2026,"month":1,"row_order":16,"description":"Shopee (ly tre, đựng bút gỗ, hộp tăm)","txn_date":"2026-01-12","income":0,"expense":130000,"source":"sheet","source_key":"29974d2edc27accfc657429a381e89c6b266c4e9"},{"year":2026,"month":1,"row_order":17,"description":"Shopee máy đo tim thai + bánh socola (trả sau)","txn_date":"2026-01-12","income":0,"expense":302000,"source":"sheet","source_key":"1c6992f8f1015697d14b1917eb7d2f720176cf6a"},{"year":2026,"month":1,"row_order":18,"description":"Tennis 39","txn_date":"2026-01-15","income":0,"expense":215000,"source":"sheet","source_key":"b2c8a1627c94ada260f8ae589bc362cd69729bad"},{"year":2026,"month":1,"row_order":19,"description":"Tennis 40","txn_date":"2026-01-17","income":0,"expense":330000,"source":"sheet","source_key":"10df373e06aa0c390e509cead35e7d26233d1307"},{"year":2026,"month":1,"row_order":20,"description":"Hadilao","txn_date":"2026-01-17","income":0,"expense":1100000,"source":"sheet","source_key":"73d2f5146c9e951845de08f0cba4876804b25966"},{"year":2026,"month":1,"row_order":21,"description":"Shopee (ốp lưng, móc 3M)","txn_date":"2026-01-20","income":0,"expense":219000,"source":"sheet","source_key":"5b2fbda881a208eaef4f87300185e60af8299c16"},{"year":2026,"month":1,"row_order":22,"description":"Tennis 41","txn_date":"2026-01-20","income":0,"expense":375000,"source":"sheet","source_key":"c083cda7cd53f5ecfb1a9e2adb6f56bd6d2b64bc"},{"year":2026,"month":1,"row_order":23,"description":"Tennis 42","txn_date":"2026-01-22","income":0,"expense":215000,"source":"sheet","source_key":"ec138597ad25e9560d240b256d99bb4c8a902a33"},{"year":2026,"month":1,"row_order":24,"description":"Taxi từ LP về nhà","txn_date":"2026-01-23","income":0,"expense":135000,"source":"sheet","source_key":"57edbebacc19e9cb6c500b4588dbc672e8d0dfdd"},{"year":2026,"month":1,"row_order":25,"description":"Tennis 43","txn_date":"2026-01-24","income":0,"expense":230000,"source":"sheet","source_key":"a775abbc7b433a5139f62898721e939e896df6d2"},{"year":2026,"month":1,"row_order":26,"description":"Taxi ăn đám cưới","txn_date":"2026-01-25","income":0,"expense":300000,"source":"sheet","source_key":"2a856c0dfafbd82bffe8318395712ad19a5ff6b1"},{"year":2026,"month":1,"row_order":27,"description":"Rút tiết kiệm","txn_date":"2026-01-25","income":2000000,"expense":0,"source":"sheet","source_key":"5743203b7e850e2fecb11e0e52ef3ad33f0edbe5"},{"year":2026,"month":1,"row_order":28,"description":"Tiền mừng cưới","txn_date":"2026-01-25","income":0,"expense":500000,"source":"sheet","source_key":"05365a1232e0267595ddda13d0010d9e8933028d"},{"year":2026,"month":1,"row_order":29,"description":"Balo Babolat","txn_date":"2026-01-26","income":0,"expense":1360000,"source":"sheet","source_key":"da75c289eb003e816cd4cf59049c0d23d028c64e"},{"year":2026,"month":1,"row_order":30,"description":"Taxi về nhà","txn_date":"2026-01-26","income":0,"expense":150000,"source":"sheet","source_key":"4dd5ef09cd24fe6abd9740601b5b54b83f6a62aa"},{"year":2026,"month":1,"row_order":31,"description":"Rút tiết kiệm","txn_date":"2026-01-27","income":3000000,"expense":0,"source":"sheet","source_key":"359a808ef535d5949f0cb07b623df9fa1d14e5bb"},{"year":2026,"month":1,"row_order":32,"description":"Bán balo head","txn_date":"2026-01-28","income":650000,"expense":0,"source":"sheet","source_key":"03f2eacc9e3e4fcc03581bb474ddcba9abb2101d"},{"year":2026,"month":1,"row_order":33,"description":"Tennis 44","txn_date":"2026-01-27","income":0,"expense":220000,"source":"sheet","source_key":"26e0f37e5659f13c1009d7d5b05ff3d941894d3e"},{"year":2026,"month":1,"row_order":34,"description":"Shopee","txn_date":"2026-01-29","income":0,"expense":108000,"source":"sheet","source_key":"0ab5891ec45a25616ffb2b7cdf9dbab6231336f9"},{"year":2026,"month":1,"row_order":35,"description":"Tennis 45","txn_date":"2026-01-29","income":0,"expense":210000,"source":"sheet","source_key":"0bd349bb729860706e9d1fd5d0815be2cf6aae8b"},{"year":2026,"month":1,"row_order":36,"description":"Ăn ốc lửa","txn_date":"2026-01-31","income":0,"expense":368000,"source":"sheet","source_key":"03661487445a1a549853561018d16ee16742b331"},{"year":2026,"month":2,"row_order":5,"description":"Trả cafe liên phong","txn_date":"2026-02-03","income":0,"expense":352000,"source":"sheet","source_key":"4c4fce6047e7299b0826f5e9b2f43c8e7802a87e"},{"year":2026,"month":2,"row_order":6,"description":"Tennis 46","txn_date":"2026-02-03","income":0,"expense":220000,"source":"sheet","source_key":"e001d94c279cd6ff3c0d6de56e705df73dd6bc12"},{"year":2026,"month":2,"row_order":7,"description":"Taxi bệnh viện Từ Dũ","txn_date":"2026-02-02","income":0,"expense":269000,"source":"sheet","source_key":"a34cc27f22ad12332e144c164ffaa0a7aebc9aa7"},{"year":2026,"month":2,"row_order":8,"description":"Shopee","txn_date":"2026-02-05","income":0,"expense":264000,"source":"sheet","source_key":"3b4c434c42c718e82e6e0afb2ceaaa9cf01eb76f"},{"year":2026,"month":2,"row_order":9,"description":"Nhận lương","txn_date":"2026-02-06","income":19440000,"expense":0,"source":"sheet","source_key":"a01faa3a6452a299838218a55f55fcf320889dcf"},{"year":2026,"month":2,"row_order":10,"description":"Cgv F&B","txn_date":"2026-02-07","income":0,"expense":128000,"source":"sheet","source_key":"55d2b9255166d3b6b98fe9ca64f3e040a6a3488b"},{"year":2026,"month":2,"row_order":11,"description":"Tiền điện","txn_date":"2026-02-08","income":0,"expense":451000,"source":"sheet","source_key":"d4b41e10ca000d91b7a60fbaadd19fa688a73fce"},{"year":2026,"month":2,"row_order":12,"description":"Sushi Haru","txn_date":"2026-02-08","income":0,"expense":728000,"source":"sheet","source_key":"a527da837fd0d7df7bd95a2f285400119a06aaf2"},{"year":2026,"month":2,"row_order":13,"description":"Tiền internet","txn_date":"2026-02-05","income":0,"expense":220000,"source":"sheet","source_key":"d49b08bd82b4851848a2c82f312a801ef317fc33"},{"year":2026,"month":2,"row_order":14,"description":"Nhuộm giày","txn_date":"2026-02-10","income":0,"expense":200000,"source":"sheet","source_key":"ccaba062d47ae44b454f75b3eed5f757850221d6"},{"year":2026,"month":2,"row_order":15,"description":"Tennis 48","txn_date":"2026-02-10","income":0,"expense":215000,"source":"sheet","source_key":"8d752e1be18315ebff1bda27f689bd1ae21bbdbf"},{"year":2026,"month":2,"row_order":16,"description":"Taxi","txn_date":"2026-02-09","income":0,"expense":200000,"source":"sheet","source_key":"c8da53148e28ff0e6e9adee4b692a5e70fbcaaa9"},{"year":2026,"month":2,"row_order":17,"description":"Nạp điện thoại","txn_date":"2026-02-09","income":0,"expense":100000,"source":"sheet","source_key":"1a9c9861cca1f9121ecacb76266f5302011655e3"},{"year":2026,"month":2,"row_order":18,"description":"Shopee","txn_date":"2026-02-12","income":0,"expense":137000,"source":"sheet","source_key":"eb06e0e569da6653d0fa1f7320b49e27b1bc5b28"},{"year":2026,"month":2,"row_order":19,"description":"Đặt cọc vợt","txn_date":"2026-02-12","income":0,"expense":500000,"source":"sheet","source_key":"867ae7aeefafdfb4b11f45478b97148a7944f1ce"},{"year":2026,"month":2,"row_order":20,"description":"Cắt, nhuộm tóc 4rau","txn_date":"2026-02-15","income":0,"expense":540000,"source":"sheet","source_key":"abefbb3b520f6d3f12ae8c216888ac1f1e59f882"},{"year":2026,"month":2,"row_order":21,"description":"Thưởng tết","txn_date":"2026-02-15","income":9500000,"expense":0,"source":"sheet","source_key":"2aab25804fe822cfd9ca67c9a3670c62168857dd"},{"year":2026,"month":2,"row_order":22,"description":"Lì xì ba","txn_date":"2026-02-14","income":0,"expense":2000000,"source":"sheet","source_key":"f751e92b3f46a6aab180662a06ebc04a6858d03a"},{"year":2026,"month":2,"row_order":23,"description":"Lì xì mẹ + em, cháu","txn_date":"2026-02-14","income":0,"expense":2600000,"source":"sheet","source_key":"66e0d254791163dae9fc9df498adf84fead7ad23"},{"year":2026,"month":2,"row_order":24,"description":"Tennis 49","txn_date":"2026-02-14","income":0,"expense":330000,"source":"sheet","source_key":"1ea4baf31ac7b3a4666dd946173a50224af62d44"},{"year":2026,"month":2,"row_order":25,"description":"Tiền mặt","txn_date":"2026-02-15","income":0,"expense":900000,"source":"sheet","source_key":"d3245b14237f52ab935243450ac01ffc30587f74"},{"year":2026,"month":2,"row_order":26,"description":"Lì xì vợ","txn_date":"2026-02-18","income":0,"expense":1000000,"source":"sheet","source_key":"e6173207558ec67f5884e0611a46d148f26e2c15"},{"year":2026,"month":2,"row_order":27,"description":"Bình đun siêu tốc Toshiba","txn_date":"2026-02-21","income":0,"expense":555000,"source":"sheet","source_key":"94d04dff6c4e1bc18b72fecbe5e8694b289983bf"},{"year":2026,"month":2,"row_order":28,"description":"Tennis 50","txn_date":"2026-02-21","income":0,"expense":390000,"source":"sheet","source_key":"e55581c20be7e0509711e354e3627cc089d125f8"},{"year":2026,"month":2,"row_order":29,"description":"Tennis 51","txn_date":"2026-02-22","income":0,"expense":245000,"source":"sheet","source_key":"f2270c9d0e1780d619d9fae0b521102f111c4606"},{"year":2026,"month":2,"row_order":30,"description":"Mini Golf","txn_date":"2026-02-23","income":0,"expense":560000,"source":"sheet","source_key":"f6c8626adf6e5f65533c2cffeceb66a58a679a79"},{"year":2026,"month":2,"row_order":31,"description":"Ck giùm > rút tiền mặt","txn_date":"2026-02-24","income":0,"expense":240000,"source":"sheet","source_key":"6531200a17b37f2c2879a93bfc41301394d4bf01"},{"year":2026,"month":2,"row_order":32,"description":"Shopee","txn_date":"2026-02-25","income":0,"expense":466000,"source":"sheet","source_key":"3864f3db883fe3314604beed18001990a9d95674"},{"year":2026,"month":2,"row_order":33,"description":"Khám thai","txn_date":"2026-02-26","income":0,"expense":770000,"source":"sheet","source_key":"ce1458e1990cc395bd6ed2b9167e36e3fb1a7aac"},{"year":2026,"month":2,"row_order":34,"description":"Tennis 52","txn_date":"2026-02-26","income":0,"expense":220000,"source":"sheet","source_key":"2d5703b3ec9b4d3379f0f1ef382fa600ad0e4184"},{"year":2026,"month":2,"row_order":35,"description":"Lệ phí giải tennis","txn_date":"2026-02-26","income":0,"expense":500000,"source":"sheet","source_key":"03f7ffd57e7444fd09b9bbef22f052999db781ab"},{"year":2026,"month":3,"row_order":5,"description":"Tennis 53","txn_date":"2026-03-05","income":0,"expense":220000,"source":"sheet","source_key":"522f47092988b432884cf010d9cb18ebff281cc3"},{"year":2026,"month":3,"row_order":6,"description":"Internet","txn_date":"2026-03-05","income":0,"expense":220000,"source":"sheet","source_key":"b382985125edf6b1fddb144b8d901857e2958245"},{"year":2026,"month":3,"row_order":7,"description":"Rút tiền mặt","txn_date":"2026-03-08","income":0,"expense":2000000,"source":"sheet","source_key":"d7f08441457f3c64f75673c97fdb75368ff25daf"},{"year":2026,"month":3,"row_order":8,"description":"Tiền điện","txn_date":"2026-03-06","income":0,"expense":346000,"source":"sheet","source_key":"417bc5856a5a652ff3cbd648d07b53e4f006eb6c"},{"year":2026,"month":3,"row_order":9,"description":"Lương","txn_date":"2026-03-06","income":18000000,"expense":0,"source":"sheet","source_key":"ded81782c248e4aeec755801db1a57ffb4735a29"},{"year":2026,"month":3,"row_order":10,"description":"Taxi bệnh viện Từ Dũ","txn_date":"2026-03-07","income":0,"expense":200000,"source":"sheet","source_key":"66c686bf94b50b08b6f900a7443020847f601357"},{"year":2026,"month":3,"row_order":11,"description":"Vợt Tfight 98 300g","txn_date":"2026-03-10","income":0,"expense":1600000,"source":"sheet","source_key":"fcd7767fead3a627b035a604f9db3ec5f11f8c31"},{"year":2026,"month":3,"row_order":12,"description":"Tiktok shop","txn_date":"2026-03-11","income":0,"expense":145000,"source":"sheet","source_key":"62be5e7e1b9e47c02e0226c455006624880e7d90"},{"year":2026,"month":3,"row_order":13,"description":"Highland coffee","txn_date":"2026-03-12","income":0,"expense":180000,"source":"sheet","source_key":"ecb7e80b419d5f68849304024e21cd4098042be2"},{"year":2026,"month":3,"row_order":14,"description":"Shopee","txn_date":"2026-03-14","income":0,"expense":218000,"source":"sheet","source_key":"d5f281e51c50b4445ed9d57741c90ceff385a56a"},{"year":2026,"month":3,"row_order":15,"description":"Shopee cốc sạc","txn_date":"2026-03-14","income":0,"expense":180000,"source":"sheet","source_key":"5c846097b318e3f577316e9e47e5eef2b3dc12f4"},{"year":2026,"month":3,"row_order":16,"description":"Shopee áo, băng tay,","txn_date":"2026-03-14","income":0,"expense":392000,"source":"sheet","source_key":"4e230c18909b0fad4b532622dfa97a1b8037a0eb"},{"year":2026,"month":3,"row_order":17,"description":"Tennis 54","txn_date":"2026-03-14","income":0,"expense":310000,"source":"sheet","source_key":"fc2eaf84865610efc4b501140a9bf1d2060e671f"},{"year":2026,"month":3,"row_order":18,"description":"Taxi đi Nhi Đồng 2","txn_date":"2026-03-17","income":0,"expense":200000,"source":"sheet","source_key":"8e45367ed567abd1e7022e388a715a9a6f1aea96"},{"year":2026,"month":3,"row_order":19,"description":"Làm hồ sơ khai sinh, sao y","txn_date":"2026-03-17","income":0,"expense":200000,"source":"sheet","source_key":"d56ac20c3d63c254f09ac8fb22205bc2a5086079"},{"year":2026,"month":3,"row_order":20,"description":"Tennis với tụi GMA","txn_date":"2026-03-16","income":0,"expense":170000,"source":"sheet","source_key":"cb94ca9f021935488a9aa25f2d955166fc16c94d"},{"year":2026,"month":3,"row_order":21,"description":"Tennis 55","txn_date":"2026-03-19","income":0,"expense":220000,"source":"sheet","source_key":"3d7cdd2481474d74ff9100e673c2ee6f9e2a2da6"},{"year":2026,"month":3,"row_order":24,"description":"Bánh sinh nhật vợ","txn_date":"2026-03-24","income":0,"expense":480000,"source":"sheet","source_key":"351ca7f33d15e37817fec8c71f78db1ddf201760"},{"year":2026,"month":3,"row_order":25,"description":"Tennis 56","txn_date":"2026-03-26","income":0,"expense":220000,"source":"sheet","source_key":"2175ec2aaef9b2abf8372ab41c78e541aa32f903"},{"year":2026,"month":3,"row_order":26,"description":"Về quê vk","txn_date":"2026-03-29","income":0,"expense":300000,"source":"sheet","source_key":"b1e02f22e2a7e9e2f54b4baaff78e369960472b4"},{"year":2026,"month":3,"row_order":27,"description":"Tennis 57","txn_date":"2026-03-29","income":0,"expense":220000,"source":"sheet","source_key":"f726a09b0076ebe9f539b7f90e32a697bafcd820"},{"year":2026,"month":3,"row_order":28,"description":"shopee cho Sunny","txn_date":"2026-03-04","income":0,"expense":205000,"source":"sheet","source_key":"c8245e2229e9718deb4559026472c0819c687df4"},{"year":2026,"month":4,"row_order":5,"description":"Chuyển từ tiết kiệm","txn_date":"2026-04-02","income":1300000,"expense":0,"source":"sheet","source_key":"25ad342e850e2601418b96df9db771d682f92925"},{"year":2026,"month":4,"row_order":6,"description":"Shopee","txn_date":"2026-04-03","income":0,"expense":105000,"source":"sheet","source_key":"b48a109a10ddd86b1d433f75bc2010789f8c2157"},{"year":2026,"month":4,"row_order":7,"description":"Internet","txn_date":"2026-04-03","income":0,"expense":220000,"source":"sheet","source_key":"ebf2dcbf0921fec80b3e73eb935b4893b694373d"},{"year":2026,"month":4,"row_order":8,"description":"Về quê","txn_date":"2026-04-04","income":0,"expense":200000,"source":"sheet","source_key":"f8ef32c89a113959368cca118018565b61ad363c"},{"year":2026,"month":4,"row_order":9,"description":"Ăn ốc","txn_date":"2026-04-06","income":0,"expense":286000,"source":"sheet","source_key":"4a65386076e9c4d356b73d193dca4d3a60ebcb98"},{"year":2026,"month":4,"row_order":10,"description":"Chuyển từ tiết kiệm","txn_date":"2026-04-07","income":1000000,"expense":0,"source":"sheet","source_key":"187bbe0d20865d831afcd501ca5e32fe3fc86229"},{"year":2026,"month":4,"row_order":11,"description":"Lương","txn_date":"2026-04-08","income":18240000,"expense":0,"source":"sheet","source_key":"823ded35c670c3ca6f68a663918c9c9e28c5c258"},{"year":2026,"month":4,"row_order":12,"description":"Tiền điện","txn_date":"2026-04-09","income":0,"expense":1041000,"source":"sheet","source_key":"272306cd7bb730401210d48fbf61dd5bd84a7a90"},{"year":2026,"month":4,"row_order":13,"description":"Tennis 59","txn_date":"2026-04-09","income":0,"expense":220000,"source":"sheet","source_key":"a49b3261619ad654bff72931ae46df9d986ff6b1"},{"year":2026,"month":4,"row_order":14,"description":"Đi về quê","txn_date":"2026-04-12","income":0,"expense":350000,"source":"sheet","source_key":"3dad73c9eefa31aa614f73be201f9dec84c367a6"},{"year":2026,"month":4,"row_order":15,"description":"Shopee cho Sunny","txn_date":"2026-04-12","income":0,"expense":92000,"source":"sheet","source_key":"12628529c9f8c9f2b4c23b8ed581e27ba3f93f67"},{"year":2026,"month":4,"row_order":16,"description":"Thay nhớt máy, số Vario","txn_date":"2026-04-12","income":0,"expense":265000,"source":"sheet","source_key":"0b75b56053b312fba34f87c49c0fd85562c9e028"},{"year":2026,"month":4,"row_order":17,"description":"Shopping tennis","txn_date":"2026-04-12","income":0,"expense":700000,"source":"sheet","source_key":"7cbb930d3c9192f1d2e18f57dfe4d7968ee80023"},{"year":2026,"month":4,"row_order":18,"description":"Tennis 60 + đánh giải","txn_date":"2026-04-12","income":0,"expense":720000,"source":"sheet","source_key":"07988e728559a854be0651c56ab854e3ad090479"},{"year":2026,"month":4,"row_order":19,"description":"Shopee","txn_date":"2026-04-12","income":0,"expense":213000,"source":"sheet","source_key":"93e3e63ed8c025d2dd5a3c02fbfdf6646fcc3607"},{"year":2026,"month":4,"row_order":20,"description":"Tiền điện thoại","txn_date":"2026-04-09","income":0,"expense":100000,"source":"sheet","source_key":"e215f7596712b0e06505ed0deef9aa16e21e8d02"},{"year":2026,"month":4,"row_order":21,"description":"Gửi Tuấn Thành","txn_date":"2026-04-13","income":0,"expense":500000,"source":"sheet","source_key":"3910cf3cb55c66b963851e517c27782460560daf"},{"year":2026,"month":4,"row_order":22,"description":"Hoàn thuế","txn_date":"2026-04-15","income":7900000,"expense":0,"source":"sheet","source_key":"316e55448d78e0a3d3957d4d40c2c7f6545c2f56"},{"year":2026,"month":4,"row_order":23,"description":"Rút tiền mặt","txn_date":"2026-04-15","income":0,"expense":1000000,"source":"sheet","source_key":"8f9e62b87327d8dc747119dfcbc4dce6170901e9"},{"year":2026,"month":4,"row_order":24,"description":"Bàn làm việc cho vợ","txn_date":"2026-04-15","income":0,"expense":954000,"source":"sheet","source_key":"1d9101f24d9490f1ab0e8c786d7b202280145226"},{"year":2026,"month":4,"row_order":25,"description":"Cuốn cán shopee","txn_date":"2026-04-15","income":0,"expense":245000,"source":"sheet","source_key":"b0eda35a30eb36e8bd78f1f8f6c3c5d3bf80f0e7"},{"year":2026,"month":4,"row_order":26,"description":"Shopee pay later","txn_date":"2026-04-17","income":0,"expense":414000,"source":"sheet","source_key":"088603170a3dd5d8ea46b81773df669c0c979c8e"},{"year":2026,"month":4,"row_order":27,"description":"Thay bánh sau, vệ sinh nồi Vario","txn_date":"2026-04-18","income":0,"expense":920000,"source":"sheet","source_key":"7e40f160ed81a0d59d64e52357df6a3973d3751b"},{"year":2026,"month":4,"row_order":28,"description":"Rút tiền mặt","txn_date":"2026-04-20","income":0,"expense":500000,"source":"sheet","source_key":"2870c4d1f4e4602920089f276d59ad680a09fac8"},{"year":2026,"month":4,"row_order":29,"description":"Rút từ tiết kiệm","txn_date":"2026-04-21","income":1000000,"expense":0,"source":"sheet","source_key":"3cd13d148473776e75316efc65765c57064de288"},{"year":2026,"month":4,"row_order":30,"description":"Shopee","txn_date":"2026-04-25","income":0,"expense":858000,"source":"sheet","source_key":"c4cecd02968803956878d758c218ad665b86c512"},{"year":2026,"month":4,"row_order":31,"description":"Tennis với a Teng","txn_date":"2026-04-26","income":0,"expense":165000,"source":"sheet","source_key":"cf13a6fcf204dc7e6e133a80d05250f537ea29d6"},{"year":2026,"month":4,"row_order":32,"description":"Tennis 63","txn_date":"2026-04-26","income":0,"expense":240000,"source":"sheet","source_key":"b829dc145169f9fc60597801cc7eecb2ad6951ba"},{"year":2026,"month":4,"row_order":33,"description":"Tennis 64","txn_date":"2026-04-28","income":0,"expense":220000,"source":"sheet","source_key":"9b52508ee99ac3772924b6be0b9dc16c087449e8"},{"year":2026,"month":4,"row_order":34,"description":"Rút tiết kiệm","txn_date":"2026-04-30","income":1000000,"expense":0,"source":"sheet","source_key":"f28ebbb78eaa88fd0ff8be6d679e155917f59852"},{"year":2026,"month":4,"row_order":35,"description":"Về quê","txn_date":"2026-04-30","income":0,"expense":150000,"source":"sheet","source_key":"1678a4107f530a3c3d919ee903b2d3fc1496e28d"},{"year":2026,"month":5,"row_order":5,"description":"Từ quê lên sg + giữ xe","txn_date":"2026-05-03","income":0,"expense":270000,"source":"sheet","source_key":"bab2934985f2d391cc79cdfcc25cf28fc7025b93"},{"year":2026,"month":5,"row_order":6,"description":"Internet","txn_date":"2026-05-05","income":0,"expense":220000,"source":"sheet","source_key":"59710f5f39f0b93700547c0d1ec1b99f6c9f9bc9"},{"year":2026,"month":5,"row_order":7,"description":"Lương","txn_date":"2026-05-06","income":18540000,"expense":0,"source":"sheet","source_key":"56791e552e42fbee34842c3af6a00ab1bb53ec99"},{"year":2026,"month":5,"row_order":8,"description":"Tiền điện","txn_date":"2026-05-06","income":0,"expense":608000,"source":"sheet","source_key":"d3b2fdb070d0951233ab9a4c52ab048a451fdd17"},{"year":2026,"month":5,"row_order":9,"description":"Shopee","txn_date":"2026-05-06","income":0,"expense":411000,"source":"sheet","source_key":"2d2be2e0517cbdc154bc400f4b7106e334fcdc80"},{"year":2026,"month":5,"row_order":10,"description":"Tennis 65","txn_date":"2026-05-07","income":0,"expense":220000,"source":"sheet","source_key":"bebbe970d531a781fb5d0d83e7d38d0731936418"},{"year":2026,"month":5,"row_order":11,"description":"Phim ĐTTM 8","txn_date":"2026-05-09","income":0,"expense":330000,"source":"sheet","source_key":"9219ed71abb7418919c49d199b074756350a5fce"},{"year":2026,"month":5,"row_order":12,"description":"Rút tiền mặt","txn_date":"2026-05-11","income":0,"expense":898000,"source":"sheet","source_key":"20e3a600289e55687cb5b285deac8c1c1fc8c82b"},{"year":2026,"month":5,"row_order":13,"description":"Tennis với tường","txn_date":"2026-05-12","income":0,"expense":100000,"source":"sheet","source_key":"ee1fc3844d086cb4b7889969d68fbc4c0c83043a"},{"year":2026,"month":5,"row_order":14,"description":"Tennis 67","txn_date":"2026-05-14","income":0,"expense":220000,"source":"sheet","source_key":"a0c69e1ba0c281e199724a30f6107d0c5b99c03a"},{"year":2026,"month":5,"row_order":15,"description":"Về quê","txn_date":"2026-05-23","income":0,"expense":140000,"source":"sheet","source_key":"d2340ea77f682604961da479165667b814200b30"},{"year":2026,"month":5,"row_order":16,"description":"Cafe Bình rượu mơ","txn_date":"2026-05-23","income":0,"expense":170000,"source":"sheet","source_key":"e8302ba3e54a4264f3da86afe456d9d570f1b4f3"},{"year":2026,"month":5,"row_order":17,"description":"Về sg","txn_date":"2026-05-24","income":0,"expense":190000,"source":"sheet","source_key":"c37063302863df662f77f0dfe9534e9bb835a1a8"},{"year":2026,"month":5,"row_order":18,"description":"Tennis 68","txn_date":"2026-05-24","income":0,"expense":220000,"source":"sheet","source_key":"1c37649004c09be95a1aca81e695e69975ed9af5"},{"year":2026,"month":5,"row_order":19,"description":"Đan vợt tennis","txn_date":"2026-05-23","income":0,"expense":250000,"source":"sheet","source_key":"81c4f61ab4c091383b3b89fb30494d1bb3ae7430"},{"year":2026,"month":5,"row_order":20,"description":"Đi siêu thị","txn_date":"2026-05-26","income":0,"expense":312000,"source":"sheet","source_key":"6693c1e2afc0ecf705c01ed2618ed219989378b4"},{"year":2026,"month":5,"row_order":21,"description":"McDonald's","txn_date":"2026-05-30","income":0,"expense":104000,"source":"sheet","source_key":"b7aac987e15c6f39b8e13eef0ce04e45afbeb008"},{"year":2026,"month":6,"row_order":5,"description":"Siêu thị","txn_date":"2026-06-02","income":0,"expense":224000,"source":"sheet","source_key":"b38d8c10bbfa6219a21167b0b2d4b120b1166e7e"},{"year":2026,"month":6,"row_order":6,"description":"Internet","txn_date":"2026-06-05","income":0,"expense":220000,"source":"sheet","source_key":"e611fc80bc87fe42370ebd564a439a800a11b715"},{"year":2026,"month":6,"row_order":7,"description":"Quê lên","txn_date":"2026-06-07","income":0,"expense":210000,"source":"sheet","source_key":"0f24fa804cd430ef9b68e3420be8a07102717e22"},{"year":2026,"month":6,"row_order":8,"description":"Rút tiền mặt","txn_date":"2026-06-07","income":0,"expense":200000,"source":"sheet","source_key":"b4512da99119aa1c808ac42371521f13ed2d7ad6"},{"year":2026,"month":6,"row_order":9,"description":"Lương","txn_date":"2026-06-11","income":18225000,"expense":0,"source":"sheet","source_key":"d2370592f9fdd7be777a26a43842205b3bef4699"},{"year":2026,"month":6,"row_order":10,"description":"Tiền điện","txn_date":"2026-06-10","income":0,"expense":789000,"source":"sheet","source_key":"876d41c36170e9f1c399ebde43be5ef67602a5bf"},{"year":2026,"month":6,"row_order":11,"description":"Điện thoại","txn_date":"2026-06-10","income":0,"expense":100000,"source":"sheet","source_key":"679c6b662cf7bb23a7c2d4fa2220baf3a9f43167"},{"year":2026,"month":6,"row_order":12,"description":"Siêu thị","txn_date":"2026-06-11","income":0,"expense":450000,"source":"sheet","source_key":"b5d605c8fb0b3d1a405ce28daeba68cd5e201cd0"},{"year":2026,"month":6,"row_order":13,"description":"Tiktok shop","txn_date":"2026-06-18","income":0,"expense":293000,"source":"sheet","source_key":"2a50f3a1aef52913dafbe2570c7fa1cd27f752be"},{"year":2026,"month":6,"row_order":14,"description":"Muji","txn_date":"2026-06-18","income":0,"expense":200000,"source":"sheet","source_key":"679b8cc554ea38c4cc4a15c5e50c68ee3b5c0cb9"},{"year":2026,"month":6,"row_order":15,"description":"Vệ sinh máy lạnh","txn_date":"2026-06-23","income":0,"expense":340000,"source":"sheet","source_key":"50c5e10c520be71c5714528918487c93e3aa38d1"},{"year":2026,"month":6,"row_order":16,"description":"Tennis","txn_date":"2026-06-23","income":0,"expense":330000,"source":"sheet","source_key":"b0f0994d7191387508a9f0eb96fe8548e7967310"},{"year":2026,"month":6,"row_order":17,"description":"Taxi đi làm","txn_date":"2026-06-26","income":0,"expense":300000,"source":"sheet","source_key":"d30987aef7e8ef05c138d051b914312bbfe40815"},{"year":2026,"month":6,"row_order":18,"description":"4 buổi tennis","txn_date":"2026-06-29","income":0,"expense":667000,"source":"sheet","source_key":"a8a920e9c0288382e8654f096919a2376200e15f"},{"year":2026,"month":6,"row_order":19,"description":"May giày adidas","txn_date":"2026-06-29","income":0,"expense":200000,"source":"sheet","source_key":"038d3bd53b1cf51dfe5f00da486bb3dbb16d63af"},{"year":2026,"month":6,"row_order":20,"description":"Tennis","txn_date":"2026-06-30","income":0,"expense":167000,"source":"sheet","source_key":"959709114a4e0bc87afa94ab51694e39a1206d67"},{"year":2026,"month":7,"row_order":5,"description":"Taxi đi làm","txn_date":"2026-07-01","income":0,"expense":280000,"source":"sheet","source_key":"e1a7615ef9b6dcd17e8b21cd19beacde96f20d72"},{"year":2026,"month":7,"row_order":7,"description":"Đồ ăn","txn_date":"2026-07-05","income":0,"expense":139000,"source":"sheet","source_key":"199eb9f898fe862655a060c9081ae2e0950a3945"},{"year":2026,"month":7,"row_order":8,"description":"Durex","txn_date":"2026-07-07","income":0,"expense":263000,"source":"sheet","source_key":"c8b3e11a5bc16433eb8745afd6613a49a0aa3731"},{"year":2026,"month":7,"row_order":9,"description":"Internet","txn_date":"2026-07-05","income":0,"expense":220000,"source":"sheet","source_key":"807f3f07ec2caf3b288ab1d384358e28ee555b7d"},{"year":2026,"month":7,"row_order":10,"description":"Ăn đồ thái với Dung Nhi","txn_date":"2026-07-08","income":0,"expense":700000,"source":"sheet","source_key":"fbe617a066dbba47a725c0d99438b2ff1c088d17"},{"year":2026,"month":7,"row_order":11,"description":"Lương","txn_date":"2026-07-09","income":18540000,"expense":0,"source":"sheet","source_key":"29af9e74a2e080f8dc909693d6c2c9593016bd9e"},{"year":2026,"month":7,"row_order":12,"description":"Tiền điện","txn_date":"2026-07-07","income":0,"expense":1500000,"source":"sheet","source_key":"838eb3dbc78b8f41a19bac13ab253c1c0609151b"},{"year":2026,"month":7,"row_order":13,"description":"Đám ma","txn_date":"2026-07-08","income":0,"expense":300000,"source":"sheet","source_key":"806cdabf7f7aacf17874b920c9ef80d5f0f87a63"},{"year":2026,"month":7,"row_order":14,"description":"Tiền mặt","txn_date":"2026-07-08","income":0,"expense":200000,"source":"sheet","source_key":"217e5c670f00a19bae458fe84cd029887a9b57ec"},{"year":2026,"month":7,"row_order":15,"description":"Cọc áo Messi","txn_date":"2026-07-10","income":0,"expense":200000,"source":"sheet","source_key":"8080c23ffbc009953ae44afebc7810024fba8e10"},{"year":2026,"month":7,"row_order":16,"description":"Shopee","txn_date":"2026-07-11","income":0,"expense":200000,"source":"sheet","source_key":"49764715d9a6de098fad10cfe6ad71934c3ffe8b"},{"year":2026,"month":7,"row_order":17,"description":"Bình nước Lock n Lock","txn_date":"2026-07-15","income":0,"expense":360000,"source":"sheet","source_key":"58712745c44017fc9dac1a77b7458a6353282f66"},{"year":2026,"month":7,"row_order":18,"description":"Sách Amazon","txn_date":"2026-07-23","income":0,"expense":189000,"source":"sheet","source_key":"6754d3f5efa1abe49eba438a8d750abcb648b55d"},{"year":2026,"month":7,"row_order":19,"description":"Áo Messi","txn_date":"2026-07-20","income":0,"expense":320000,"source":"sheet","source_key":"633d087fa0ca0c4d98db1643065a75b9f0c81200"},{"year":2026,"month":7,"row_order":20,"description":"Mua ốc (rút tiền mặt, mẹ đưa)","txn_date":"2026-07-18","income":0,"expense":640000,"source":"sheet","source_key":"4b0ced79c94e1b6a7ac01ff6bd875c84d092f893"},{"year":2026,"month":7,"row_order":21,"description":"Bảo trì xe vespa (rút tiền mặt)","txn_date":"2026-07-23","income":0,"expense":1335000,"source":"sheet","source_key":"56800da6e845ae8647154297ecc61a5a2dea3d10"},{"year":2026,"month":7,"row_order":22,"description":"Mua quạt cho Sunny","txn_date":"2026-07-26","income":0,"expense":245000,"source":"sheet","source_key":"a6e3ee16719fb7675849d2f1fa967e3cf2e2beb3"},{"year":2026,"month":7,"row_order":23,"description":"Tiktok shop","txn_date":"2026-07-26","income":0,"expense":173000,"source":"sheet","source_key":"ca7363b395a4764d38bf7465d437733ca639628d"},{"year":2026,"month":7,"row_order":24,"description":"Taxi Phong Cua","txn_date":"2026-07-30","income":0,"expense":260000,"source":"sheet","source_key":"d637f5b034f3184fadf7a52db1726446a8ed3d76"},{"year":2026,"month":8,"row_order":5,"description":"Nạp shopee","txn_date":"2026-08-01","income":0,"expense":125000,"source":"sheet","source_key":"8777b1b283c5a9c3b6a05d35ff2298f202d13c50"},{"year":2026,"month":8,"row_order":6,"description":"Bánh kem SN Mẹ","txn_date":"2026-08-02","income":0,"expense":527000,"source":"sheet","source_key":"a31bef87ad65d1ce9b237fddcf77bad58f266898"},{"year":2026,"month":8,"row_order":7,"description":"Taxi SN mẹ","txn_date":"2026-08-02","income":0,"expense":160000,"source":"sheet","source_key":"a95b7ebecfd7839ef5c37f8534a8f68230c8bc88"},{"year":2026,"month":8,"row_order":8,"description":"Tiền ăn SN mẹ","txn_date":"2026-08-02","income":0,"expense":806000,"source":"sheet","source_key":"0c4a2834f4be791af5aa56fb5198e6f9d386325c"},{"year":2026,"month":8,"row_order":9,"description":"Tennis t3 tháng 8","txn_date":"2026-08-04","income":0,"expense":500000,"source":"sheet","source_key":"a9eb17e933bf382a58a7621b72f209deac524716"},{"year":2026,"month":8,"row_order":10,"description":"Tiktok shop","txn_date":"2026-08-04","income":0,"expense":147000,"source":"sheet","source_key":"e771cb4a08ef88286f6e94e04e708bd138774420"},{"year":2026,"month":8,"row_order":11,"description":"Shopee mua gấu tặng Dung","txn_date":"2026-08-05","income":0,"expense":140000,"source":"sheet","source_key":"0666ef781b5ddf69ec8dd172c039af82ef1642e6"},{"year":2026,"month":8,"row_order":12,"description":"Rút tiết kiệm","txn_date":"2026-08-05","income":1000000,"expense":0,"source":"sheet","source_key":"423ec12290f881d5493d7a1b79cdd171f9f5c179"},{"year":2026,"month":8,"row_order":13,"description":"Taxi đi làm thứ 4","txn_date":"2026-08-05","income":0,"expense":287000,"source":"sheet","source_key":"6cf907d7ec876968e0f85f19c3446c08a34880fc"},{"year":2026,"month":8,"row_order":14,"description":"Taxi đi bv Nhi Đồng 2","txn_date":"2026-08-06","income":0,"expense":84000,"source":"sheet","source_key":"dc47ae456a99a0cf0ac4511113465ef1e1b14d9d"},{"year":2026,"month":8,"row_order":15,"description":"Taxi đi làm thứ 6","txn_date":"2026-08-07","income":0,"expense":244000,"source":"sheet","source_key":"80e0aaf96f71a8fae8472e28c1d8a29ff442b781"},{"year":2026,"month":8,"row_order":16,"description":"Rút tiết kiệm","txn_date":"2026-08-07","income":1000000,"expense":0,"source":"sheet","source_key":"f167d16907e6f128b80e56bf984fbdaea068721e"},{"year":2026,"month":8,"row_order":17,"description":"Tennis chủ nhật","txn_date":"2026-08-09","income":0,"expense":220000,"source":"sheet","source_key":"44309ed5cdbc844d98d794b87475c509718e5a41"},{"year":2026,"month":8,"row_order":18,"description":"Tiền điện","txn_date":"2026-08-10","income":0,"expense":2500000,"source":"sheet","source_key":"1d45da4bdeef8fd0a362b16bfcc4be959a32d0f2"},{"year":2026,"month":8,"row_order":19,"description":"Lương","txn_date":"2026-08-10","income":17310000,"expense":0,"source":"sheet","source_key":"a0911f8bc138d243062501a5f5e8d3ee39a306c7"}],"monthly":[{"year":2026,"month":1,"start_balance":435000,"total_income":24545000,"total_expense":9915000,"remaining":5630000,"bank_balance":2615000,"food_difference":3015000,"savings_balance":6000000},{"year":2026,"month":2,"start_balance":2615000,"total_income":31555000,"total_expense":15300000,"remaining":7255000,"bank_balance":4755000,"food_difference":2500000,"savings_balance":9000000},{"year":2026,"month":3,"start_balance":4755000,"total_income":22755000,"total_expense":8226000,"remaining":2529000,"bank_balance":261000,"food_difference":2268000,"savings_balance":8300000},{"year":2026,"month":4,"start_balance":261000,"total_income":30701000,"total_expense":10678000,"remaining":4023000,"bank_balance":827000,"food_difference":3196000,"savings_balance":12000000},{"year":2026,"month":5,"start_balance":827000,"total_income":19367000,"total_expense":4663000,"remaining":5704000,"bank_balance":1738000,"food_difference":3966000,"savings_balance":12000000},{"year":2026,"month":6,"start_balance":1738000,"total_income":19963000,"total_expense":4690000,"remaining":7273000,"bank_balance":3463000,"food_difference":3810000,"savings_balance":12000000},{"year":2026,"month":7,"start_balance":3074000,"total_income":21614000,"total_expense":7524000,"remaining":5090000,"bank_balance":3034000,"food_difference":2056000,"savings_balance":13000000},{"year":2026,"month":8,"start_balance":2936000,"total_income":22246000,"total_expense":5740000,"remaining":8506000,"bank_balance":7375000,"food_difference":1131000,"savings_balance":11000000}]};
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{
-  auth:{
-    persistSession:true,
-    autoRefreshToken:true,
-    detectSessionInUrl:true,
-    storage:window.localStorage
-  }
-});
-let current=8, entryType='expense', user=null;
-const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 const $=id=>document.getElementById(id);
-const rememberedEmail=localStorage.getItem('expense_login_email')||'';
-if(rememberedEmail){setTimeout(()=>{if($('email'))$('email').value=rememberedEmail},0);}
+const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
+let user=null,current=8,entryType='expense';
+
+function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
+function showAuth(){$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
+function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
+function renderMonths(){
+  $('months').innerHTML='';
+  for(let m=1;m<=8;m++){
+    const b=document.createElement('button');b.textContent='T'+m;b.className=m===current?'active':'';
+    b.addEventListener('click',()=>{current=m;renderMonths();refresh()});
+    $('months').appendChild(b);
+  }
+}
+async function refresh(){
+  const [{data:tx,error:txErr},{data:st,error:stErr}]=await Promise.all([
+    sb.from('transactions').select('*').eq('year',2026).eq('month',current).order('txn_date',{ascending:false,nullsFirst:false}).order('row_order',{ascending:false}),
+    sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle()
+  ]);
+  if(txErr){$('list').innerHTML='<div class="empty">Lỗi tải giao dịch</div>';return}
+  $('list').innerHTML=(tx||[]).map(x=>{
+    const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
+    const d=x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):'';
+    return `<div class="tx"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?'+':'-'}${fmt(amt)}</div></div>`;
+  }).join('')||'<div class="empty">Chưa có giao dịch</div>';
+  const appRows=(tx||[]).filter(x=>x.source==='app');
+  let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
+  appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
+  $('bankHero').textContent=fmt(st?.bank_balance||0);
+  $('remain').textContent=fmt(rem);
+  $('foodDifference').textContent=fmt(st?.food_difference||0);
+  $('savingsBalance').textContent=fmt(st?.savings_balance||0);
+  $('sendWife').textContent=fmt(st?.send_wife||0);
+  $('startBalance').textContent=fmt(st?.start_balance||0);
+  $('totalIncome').textContent='Thu '+fmt(inc);
+  $('totalExpense').textContent='Chi '+fmt(exp);
+}
+function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function openAdd(){
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=new Date().toISOString().slice(0,10)
+}
+function setType(type){
+  entryType=type;
+  $('expenseType').classList.toggle('active',type==='expense');$('incomeType').classList.toggle('active',type==='income');
+  $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');
+}
+function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
+
+$('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showApp();renderMonths();refresh()}});
+$('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
+$('addBtn').addEventListener('click',openAdd);
+$('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
+$('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
+$('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
+document.querySelectorAll('#quickExpense button,#quickIncome button').forEach(b=>b.addEventListener('click',()=>{$('desc').value=b.dataset.name||'';(b.dataset.name?$('amount'):$('desc')).focus()}));
+$('saveTx').addEventListener('click',async()=>{
+  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;if(!amount||!desc||!date)return;
+  const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source:'app',source_key:'app-'+crypto.randomUUID()};
+  const {error}=await sb.from('transactions').insert(payload);if(error){alert(error.message);return}
+  current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
+});
+$('summaryBtn').addEventListener('click',async()=>{
+  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
+  $('editBank').value=st?.bank_balance||'';$('editSavings').value=st?.savings_balance||'';$('editWife').value=st?.send_wife||'';$('editFood').value=st?.food_difference||'';
+  $('summaryOverlay').classList.add('open');
+});
+$('closeSummary').addEventListener('click',()=>$('summaryOverlay').classList.remove('open'));
+$('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))$('summaryOverlay').classList.remove('open')});
+$('saveSummary').addEventListener('click',async()=>{
+  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
+  const payload={...(st||{}),user_id:user.id,year:2026,month:current,bank_balance:cleanMoney('editBank'),savings_balance:cleanMoney('editSavings'),send_wife:cleanMoney('editWife'),food_difference:cleanMoney('editFood'),updated_at:new Date().toISOString()};
+  delete payload.id;
+  const {error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'});if(error){alert(error.message);return}
+  $('summaryOverlay').classList.remove('open');refresh();
+});
+$('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;showAuth()});
 
 async function init(){
- const {data:{session}}=await sb.auth.getSession();
- if(session){
-   user=session.user;
-   showMain();
-   await refresh();
- }else{
-   showAuth();
- }
+  const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
+  const {data:{session}}=await sb.auth.getSession();
+  if(session){user=session.user;showApp();renderMonths();await refresh()}else showAuth();
 }
-sb.auth.onAuthStateChange(async(event,session)=>{
-  if(session){
-    user=session.user;
-    showMain();
-    if(event==='SIGNED_IN' || event==='TOKEN_REFRESHED') await refresh();
-  }else if(event==='SIGNED_OUT'){
-    user=null;
-    showAuth();
-  }
-});
-function showAuth(){$('auth').classList.remove('hidden');$('main').classList.add('hidden');$('bottom').classList.add('hidden')}
-function showMain(){$('auth').classList.add('hidden');$('main').classList.remove('hidden');$('bottom').classList.remove('hidden');renderMonths()}
-function renderMonths(){let h='';for(let m=1;m<=8;m++)h+=`<button class="${m===current?'active':''}" onclick="setMonth(${m})">T${m}</button>`;$('months').innerHTML=h}
-async function setMonth(m){current=m;renderMonths();await refresh()}
-async function refresh(){
- const {count}=await sb.from('transactions').select('*',{count:'exact',head:true});
- $('importBox').classList.toggle('hidden',!!count);
- const {data:tx,error}=await sb.from('transactions').select('*').eq('year',2026).eq('month',current).order('txn_date',{ascending:false,nullsFirst:false}).order('row_order',{ascending:false});
- if(error){$('list').innerHTML='<div class="tx">Lỗi tải dữ liệu</div>';return}
- const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
- let inc=Number(st?.total_income||0), exp=Number(st?.total_expense||0), rem=Number(st?.remaining||0);
- const appRows=(tx||[]).filter(x=>x.source==='app');
- appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
- $('remain').textContent=fmt(rem);
- $('totalIncome').textContent='Thu '+fmt(inc);
- $('totalExpense').textContent='Chi '+fmt(exp);
- $('bankHero').textContent=st?fmt(st.bank_balance):'—';
- $('foodDifference').textContent=st?fmt(st.food_difference):'—';
- $('savingsBalance').textContent=st?fmt(st.savings_balance):'—';
- $('startBalance').textContent=st?fmt(st.start_balance):'—';
- $('sendWife').textContent=st?.send_wife!==undefined?fmt(st.send_wife):'—';
- $('list').innerHTML=(tx||[]).map(x=>`<div class="tx"><div><div class="name">${esc(x.description)}</div><div class="date">${x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):''}</div></div><div class="amt ${x.income?'inc':'exp'}">${x.income?'+':'-'}${fmt(x.income||x.expense)}</div></div>`).join('')||'<div class="tx">Chưa có giao dịch</div>';
-}
-function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
-
-$('loginBtn').onclick=async()=>{localStorage.setItem('expense_login_email',$('email').value.trim());const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showMain();refresh()}}
-$('signupBtn').onclick=async()=>{localStorage.setItem('expense_login_email',$('email').value.trim());const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:(data?.session?'Đã tạo tài khoản.':'Đã tạo tài khoản. Nếu Supabase yêu cầu xác nhận email, hãy mở email xác nhận rồi đăng nhập.');if(data?.session){user=data.user;showMain();refresh()}}
-$('logoutBtn').onclick=async()=>{await sb.auth.signOut();user=null;showAuth()}
-$('importBtn').onclick=async()=>{
- if(!user)return;
- $('importBtn').disabled=true;$('importBtn').textContent='Đang import...';
- const tx=SEED.transactions.map(x=>({...x,user_id:user.id}));
- const ms=SEED.monthly.map(x=>({...x,user_id:user.id}));
- let e=null;
- for(let i=0;i<tx.length;i+=100){const {error}=await sb.from('transactions').upsert(tx.slice(i,i+100),{onConflict:'user_id,source_key'});if(error){e=error;break}}
- if(!e){const {error}=await sb.from('monthly_status').upsert(ms,{onConflict:'user_id,year,month'});e=error}
- $('importBtn').disabled=false;$('importBtn').textContent=e?'Import lỗi — thử lại':'Đã import';
- await refresh();
-}
-$('overlay').onclick=e=>{if(e.target===$('overlay'))$('overlay').classList.remove('open')}
-document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{
-  $('desc').value=b.dataset.name||'';
-  if(b.dataset.name){$('amount').focus()}else{$('desc').focus()}
-});
-document.querySelectorAll('.toggle button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{
-  $('desc').value=b.dataset.name||'';
-  if(b.dataset.name){$('amount').focus()}else{$('desc').focus()}
-});
-document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('active'));b.classList.add('active');entryType=b.dataset.type})
-$('saveBtn').onclick=async()=>{
- const n=Number(($('amount').value||'').replace(/\D/g,'')); const d=$('date').value; const desc=$('desc').value.trim();
- if(!n||!d||!desc)return;
- const m=Number(d.slice(5,7)); const row={user_id:user.id,year:Number(d.slice(0,4)),month:m,description:desc,txn_date:d,income:entryType==='income'?n:0,expense:entryType==='expense'?n:0,source:'app',source_key:'app-'+crypto.randomUUID()};
- const {error}=await sb.from('transactions').insert(row);
- if(!error){current=m;$('overlay').classList.remove('open');renderMonths();await refresh()}
-}
-
-
-
-
-
-function openAddPanel(){
-  $('overlay').classList.add('open');
-  $('date').value=new Date().toISOString().slice(0,10);
-  $('amount').value='';
-  $('desc').value='';
-}
-$('closeAddBtn').onclick=()=> $('overlay').classList.remove('open');
-$('overlay').onclick=e=>{if(e.target===$('overlay'))$('overlay').classList.remove('open')};
-
-$('summaryBtn').onclick=async()=>{
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  $('editBank').value=st?.bank_balance||'';
-  $('editSavings').value=st?.savings_balance||'';
-  $('editWife').value=st?.send_wife||'';
-  $('editFood').value=st?.food_difference||'';
-  $('summaryOverlay').classList.add('open');
-};
-$('closeSummaryBtn').onclick=()=> $('summaryOverlay').classList.remove('open');
-$('summaryOverlay').onclick=e=>{if(e.target===$('summaryOverlay'))$('summaryOverlay').classList.remove('open')};
-
-$('saveSummaryBtn').onclick=async()=>{
-  const clean=id=>Number(($(id).value||'').replace(/\D/g,''))||0;
-  const {data:existing}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  const payload={
-    ...(existing||{}),
-    user_id:user.id,
-    year:2026,
-    month:current,
-    bank_balance:clean('editBank'),
-    savings_balance:clean('editSavings'),
-    send_wife:clean('editWife'),
-    food_difference:clean('editFood'),
-    updated_at:new Date().toISOString()
-  };
-  delete payload.id;
-  const {error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'});
-  if(!error){
-    $('summaryOverlay').classList.remove('open');
-    await refresh();
-  } else {
-    alert(error.message);
-  }
-};
-
 init();
 </script>
-<div id="summaryOverlay" class="overlay"><div class="panel">
-  <div style="display:flex;justify-content:space-between;align-items:center"><h2>Tổng quan / chỉnh số</h2><button id="closeSummaryBtn" class="secondary" style="padding:8px 10px">Đóng</button></div>
-  <div class="settings-grid">
-    <div class="field"><label>CÒN LẠI TRONG NGÂN HÀNG</label><input id="editBank" inputmode="numeric"></div>
-    <div class="field"><label>TIẾT KIỆM</label><input id="editSavings" inputmode="numeric"></div>
-    <div class="field"><label>GỬI VỢ</label><input id="editWife" inputmode="numeric"></div>
-    <div class="field"><label>CHÊNH LỆCH ĂN UỐNG</label><input id="editFood" inputmode="numeric"></div>
-  </div>
-  <button id="saveSummaryBtn" class="primary" style="width:100%;margin-top:12px">Lưu</button>
-  <button id="logoutBtn" class="secondary" style="width:100%;margin-top:8px">Đăng xuất</button>
-</div></div>
 </body></html>
