@@ -1,14 +1,7 @@
-Expense Mobile V3 — Supabase
-
-Changes from V2:
-- Shows monthly_status fields imported from Google Sheet:
-  * Remaining
-  * Bank balance
-  * Food difference
-  * Savings balance
-  * Start-of-month balance
-  * Total income
-  * Total expense
-- Transactions still read/write Supabase.
-- No schema changes required if V2 schema was already run.
-Replace only index.html in the GitHub repo and let Vercel redeploy.
+Expense Mobile V4
+- Main hero number is now "Còn lại trong ngân hàng".
+- "Còn lại theo sổ" moved to secondary summary card.
+- Quick transaction presets restored:
+  Tennis, Taxi, Ăn uống, Shopee, Điện, Internet, Sunny, Khác.
+- No Supabase schema changes required.
+Replace only index.html in GitHub and let Vercel redeploy.

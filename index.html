@@ -16,7 +16,7 @@ h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{disp
 .summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.summarycard{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.summarycard.highlight{background:#fff8e8;border-color:#ead7a5}.summarycard .k{font-size:10px;color:var(--muted);font-weight:800;line-height:1.25}.summarycard .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}.name{font-size:16px;font-weight:700}.date{font-size:11px;color:var(--muted);margin-top:3px}.amt{font-weight:800}.inc{color:var(--green)}.exp{color:var(--red)}
 .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px));display:flex;gap:8px}.bottom button,.primary{border:0;border-radius:15px;padding:14px;font-weight:800;font-size:16px}.bottom button{flex:1}.primary{background:var(--dark);color:#fff}.secondary{background:#fff;border:1px solid var(--line)!important}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;align-items:flex-end;z-index:5}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:white;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
-.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.amount{font-size:27px!important;font-weight:800}.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:800}.toggle .active{background:var(--dark);color:#fff}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:4px 0 12px}.quick button{border:1px solid var(--line);background:#fafafa;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:750}.field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.amount{font-size:27px!important;font-weight:800}.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:800}.toggle .active{background:var(--dark);color:#fff}
 .auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:white;border:1px solid var(--line);border-radius:20px;padding:20px}.auth input{width:100%;padding:13px;border:1px solid var(--line);border-radius:12px;margin:6px 0;font-size:16px}.auth button{width:100%;margin-top:8px}.status{font-size:12px;margin-top:10px;color:var(--muted)}.import{background:#fff8e8;border:1px solid #ead7a5;border-radius:16px;padding:14px;margin:10px 0;font-size:13px}.import button{margin-top:9px;width:100%}.hidden{display:none!important}
 </style></head>
 <body>
@@ -35,12 +35,12 @@ h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{disp
   <div id="importBox" class="import hidden">Supabase chưa có dữ liệu. Bấm một lần để nhập snapshot mới nhất từ Google Sheet của anh.
     <button id="importBtn" class="primary">Import Google Sheet mới nhất</button>
   </div>
-  <div class="balance"><small>CÒN LẠI</small><div id="remain" class="big">—</div><div class="meta"><span id="totalIncome">Thu —</span><span id="totalExpense">Chi —</span></div></div>
+  <div class="balance"><small>CÒN LẠI TRONG NGÂN HÀNG</small><div id="bankHero" class="big">—</div><div class="meta"><span id="bankUpdated">Theo số nhập trong Sheet</span></div></div>
   <div class="summarygrid">
-    <div class="summarycard"><div class="k">CÒN LẠI TRONG NGÂN HÀNG</div><div id="bankBalance" class="v">—</div></div>
+    <div class="summarycard"><div class="k">CÒN LẠI THEO SỔ</div><div id="remain" class="v">—</div></div>
     <div class="summarycard highlight"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div></div>
     <div class="summarycard"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div></div>
-    <div class="summarycard"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div></div>
+    <div class="summarycard"><div class="k">THU / CHI THÁNG</div><div class="v" style="font-size:15px"><span id="totalIncome">—</span><br><span id="totalExpense">—</span></div></div>
   </div>
   <div id="list" class="list"></div>
 </div>
@@ -48,6 +48,10 @@ h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{disp
 <div id="bottom" class="bottom hidden"><button class="secondary" id="logoutBtn">Đăng xuất</button><button class="primary" id="addBtn">＋ Giao dịch</button></div>
 
 <div id="overlay" class="overlay"><div class="panel"><h2>Thêm giao dịch</h2>
+  <div class="quick">
+    <button data-name="Tennis">Tennis</button><button data-name="Taxi đi làm">Taxi</button><button data-name="Ăn uống">Ăn uống</button><button data-name="Shopee">Shopee</button>
+    <button data-name="Tiền điện">Điện</button><button data-name="Internet">Internet</button><button data-name="Sunny">Sunny</button><button data-name="">Khác</button>
+  </div>
   <div class="toggle"><button class="active" data-type="expense">Chi</button><button data-type="income">Thu</button></div>
   <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
   <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
@@ -84,10 +88,9 @@ async function refresh(){
  $('remain').textContent=fmt(rem);
  $('totalIncome').textContent='Thu '+fmt(inc);
  $('totalExpense').textContent='Chi '+fmt(exp);
- $('bankBalance').textContent=st?fmt(st.bank_balance):'—';
+ $('bankHero').textContent=st?fmt(st.bank_balance):'—';
  $('foodDifference').textContent=st?fmt(st.food_difference):'—';
  $('savingsBalance').textContent=st?fmt(st.savings_balance):'—';
- $('startBalance').textContent=st?fmt(st.start_balance):'—';
  $('list').innerHTML=(tx||[]).map(x=>`<div class="tx"><div><div class="name">${esc(x.description)}</div><div class="date">${x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):''}</div></div><div class="amt ${x.income?'inc':'exp'}">${x.income?'+':'-'}${fmt(x.income||x.expense)}</div></div>`).join('')||'<div class="tx">Chưa có giao dịch</div>';
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -108,7 +111,15 @@ $('importBtn').onclick=async()=>{
 }
 $('addBtn').onclick=()=>{$('overlay').classList.add('open');$('date').value=new Date().toISOString().slice(0,10);$('amount').value='';$('desc').value=''}
 $('overlay').onclick=e=>{if(e.target===$('overlay'))$('overlay').classList.remove('open')}
-document.querySelectorAll('.toggle button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('active'));b.classList.add('active');entryType=b.dataset.type})
+document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{
+  $('desc').value=b.dataset.name||'';
+  if(b.dataset.name){$('amount').focus()}else{$('desc').focus()}
+});
+document.querySelectorAll('.toggle button').forEach(b=>b.onclick=()=>{document.querySelectorAll('.quick button').forEach(b=>b.onclick=()=>{
+  $('desc').value=b.dataset.name||'';
+  if(b.dataset.name){$('amount').focus()}else{$('desc').focus()}
+});
+document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('active'));b.classList.add('active');entryType=b.dataset.type})
 $('saveBtn').onclick=async()=>{
  const n=Number(($('amount').value||'').replace(/\D/g,'')); const d=$('date').value; const desc=$('desc').value.trim();
  if(!n||!d||!desc)return;
