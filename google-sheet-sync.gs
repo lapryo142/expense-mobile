@@ -16,6 +16,7 @@ const EXPENSE_SYNC = {
   sheetName: '2026',
   year: 2026,
   firstDataRow: 4,
+  maxAutomaticNewRows: 25,
   descriptionColumns: { 1: 7, 2: 12, 3: 17, 4: 22, 5: 27, 6: 32, 7: 37, 8: 42 },
   idNotePrefix: 'expense-sync-id:',
   ignoredLabels: [
@@ -32,7 +33,19 @@ const EXPENSE_SYNC = {
 function syncExpenseBidirectional() {
   const config = getExpenseSyncConfig_();
   const sheet = getExpenseSheet_();
-  const sheetRows = readExpenseSheetRows_(sheet);
+  // Fetch first so the initial run can adopt the IDs already created by the
+  // V8 seed import. Never invent a second ID for an existing Sheet row.
+  const initialRemoteRows = fetchTransactions_(config);
+  const sheetRows = readExpenseSheetRows_(sheet, initialRemoteRows);
+
+  const remoteIds = new Set(initialRemoteRows.map(row => row.source_key).filter(Boolean));
+  const unmatchedSheetRows = sheetRows.filter(row => !remoteIds.has(row.source_key));
+  if (unmatchedSheetRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
+    throw new Error(
+      'Safety stop: ' + unmatchedSheetRows.length +
+      ' Sheet rows did not match Supabase. No database write was made.'
+    );
+  }
 
   if (sheetRows.length) upsertTransactions_(config, sheetRows);
 
@@ -89,8 +102,9 @@ function getExpenseSheet_() {
   return sheet;
 }
 
-function readExpenseSheetRows_(sheet) {
+function readExpenseSheetRows_(sheet, remoteRows) {
   const rows = [];
+  const claimedRemoteIds = new Set();
 
   Object.keys(EXPENSE_SYNC.descriptionColumns).forEach(monthKey => {
     const month = Number(monthKey);
@@ -115,12 +129,22 @@ function readExpenseSheetRows_(sheet) {
       const sheetRow = EXPENSE_SYNC.firstDataRow + index;
       let sourceKey = readSyncId_(notes[index][0]);
       if (!sourceKey) {
-        // Preserve the key used by the original one-way importer. This lets the
-        // first bidirectional run adopt existing Supabase rows instead of
-        // creating a duplicate copy of every historical transaction.
-        sourceKey = 'sheet-' + EXPENSE_SYNC.year + '-' + month + '-' + sheetRow;
+        const draft = {
+          year: EXPENSE_SYNC.year,
+          month: month,
+          row_order: sheetRow,
+          description: description,
+          txn_date: parseExpenseDate_(row[1], displays[index][1], month),
+          income: income,
+          expense: expense
+        };
+        const match = findUnclaimedRemoteMatch_(draft, remoteRows || [], claimedRemoteIds);
+        sourceKey = match && match.source_key
+          ? match.source_key
+          : 'sheet-' + Utilities.getUuid();
         sheet.getRange(sheetRow, column).setNote(EXPENSE_SYNC.idNotePrefix + sourceKey);
       }
+      claimedRemoteIds.add(sourceKey);
 
       rows.push({
         user_id: null, // filled immediately before the API request
@@ -139,6 +163,26 @@ function readExpenseSheetRows_(sheet) {
   });
 
   return rows;
+}
+
+function findUnclaimedRemoteMatch_(sheetRow, remoteRows, claimedIds) {
+  const candidates = remoteRows.filter(remote => {
+    if (!remote.source_key || claimedIds.has(remote.source_key)) return false;
+    return Number(remote.year) === Number(sheetRow.year) &&
+      Number(remote.month) === Number(sheetRow.month) &&
+      normalizeLabel_(remote.description) === normalizeLabel_(sheetRow.description) &&
+      toInteger_(remote.income) === toInteger_(sheetRow.income) &&
+      toInteger_(remote.expense) === toInteger_(sheetRow.expense);
+  });
+
+  if (!candidates.length) return null;
+
+  // Row order is the strongest discriminator for repeated descriptions such as
+  // Tennis, Shopee or Rút tiết kiệm. Date is the fallback when a row moved.
+  const sameRow = candidates.find(remote => Number(remote.row_order) === Number(sheetRow.row_order));
+  if (sameRow) return sameRow;
+  const sameDate = candidates.find(remote => String(remote.txn_date || '') === String(sheetRow.txn_date || ''));
+  return sameDate || (candidates.length === 1 ? candidates[0] : null);
 }
 
 function fetchTransactions_(config) {
@@ -166,6 +210,13 @@ function upsertTransactions_(config, rows) {
 
 function writeMissingRemoteRowsToSheet_(sheet, remoteRows) {
   const existingIds = collectSheetSyncIds_(sheet);
+  const missingRows = remoteRows.filter(row => row.source_key && !existingIds.has(row.source_key));
+  if (missingRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
+    throw new Error(
+      'Safety stop: ' + missingRows.length +
+      ' Supabase rows did not match the Sheet. No transaction rows were inserted.'
+    );
+  }
   let inserted = 0;
   let existing = 0;
 
