@@ -11,6 +11,7 @@
 :root{--bg:#f4f1ea;--card:#fff;--text:#181714;--muted:#7a756c;--line:#e4dfd4;--green:#1f6a50;--red:#9c4c43;--dark:#171714;--gold:#c7a45a;--gold2:#e6cf91;--goldSoft:#f6edd8}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
 button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
+.pullRefresh{position:fixed;z-index:35;left:50%;top:calc(8px + env(safe-area-inset-top));transform:translate(-50%,-52px);opacity:0;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);font-size:12px;font-weight:800;box-shadow:0 7px 22px rgba(38,32,19,.13);transition:transform .18s ease,opacity .18s ease}.pullRefresh.dragging{transition:none}.pullRefresh.loading{color:#654f1c;border-color:#d8bf7c;background:var(--goldSoft)}
 .header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
 .headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}
 .months{display:flex;gap:6px;overflow:auto;margin:13px 0 12px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.months button{border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;background:#e8e3d8;color:#615c52}.months button.active{background:var(--dark);color:#fff4d8}
@@ -27,6 +28,7 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
 .empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}
 </style></head>
 <body>
+<div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
 <div id="auth" class="auth">
   <div class="authbox">
     <div class="eyebrow">EXPENSE MOBILE</div><h1>Đăng nhập</h1>
@@ -169,14 +171,50 @@ function setType(type){
 }
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
 
+let pullStartY=null,pullDistance=0,pullRefreshing=false;
+function showPullRefresh(distance,text){
+  const indicator=$('pullRefresh'),offset=Math.min(58,Math.max(0,distance*.55));
+  indicator.classList.add('dragging');indicator.style.opacity=String(Math.min(1,distance/45));
+  indicator.style.transform=`translate(-50%,${offset-52}px)`;indicator.textContent=text;
+}
+function hidePullRefresh(delay=0){
+  setTimeout(()=>{
+    const indicator=$('pullRefresh');indicator.classList.remove('dragging','loading');
+    indicator.style.opacity='0';indicator.style.transform='translate(-50%,-52px)';
+  },delay);
+}
+async function runAppRefresh(){
+  if(pullRefreshing)return;
+  pullRefreshing=true;
+  const button=$('refreshBtn'),indicator=$('pullRefresh');
+  button.disabled=true;button.classList.add('refreshing');button.textContent='↻ Đang tải…';
+  indicator.classList.remove('dragging');indicator.classList.add('loading');indicator.style.opacity='1';
+  indicator.style.transform='translate(-50%,6px)';indicator.textContent='↻ Đang cập nhật…';
+  try{await refresh();indicator.textContent='✓ Đã cập nhật';hidePullRefresh(650)}
+  catch(error){indicator.textContent='Không thể cập nhật';hidePullRefresh(900)}
+  finally{button.disabled=false;button.classList.remove('refreshing');button.textContent='↻ Làm mới';pullRefreshing=false}
+}
+
+document.addEventListener('touchstart',e=>{
+  if(window.scrollY<=0&&!pullRefreshing&&!document.querySelector('.overlay.open')){
+    pullStartY=e.touches[0].clientY;pullDistance=0;
+  }
+},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(pullStartY===null)return;
+  pullDistance=Math.max(0,e.touches[0].clientY-pullStartY);
+  if(!pullDistance)return;
+  showPullRefresh(pullDistance,pullDistance>=80?'↑ Thả để làm mới':'↓ Kéo xuống để làm mới');
+},{passive:true});
+document.addEventListener('touchend',()=>{
+  if(pullStartY===null)return;
+  const shouldRefresh=pullDistance>=80;pullStartY=null;pullDistance=0;
+  if(shouldRefresh)runAppRefresh();else hidePullRefresh();
+},{passive:true});
+
 $('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showApp();renderMonths();refresh()}});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
-$('refreshBtn').addEventListener('click',async()=>{
-  const button=$('refreshBtn');
-  if(button.disabled)return;
-  button.disabled=true;button.classList.add('refreshing');button.textContent='↻ Đang tải…';
-  try{await refresh()}finally{button.disabled=false;button.classList.remove('refreshing');button.textContent='↻ Làm mới'}
-});
+$('refreshBtn').addEventListener('click',runAppRefresh);
 $('addBtn').addEventListener('click',openAdd);
 $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
