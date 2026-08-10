@@ -23,6 +23,7 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
 .toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:850}.toggle button.active{background:var(--dark);color:#fff3d3;border-color:var(--dark)}
 .quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.quick button{border:1px solid var(--line);background:#fafafa;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:750}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
 .field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.field input.amount{font-size:27px;font-weight:850}.primary{width:100%;border:1px solid rgba(199,164,90,.7);border-radius:14px;padding:14px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900}.dangerlink{width:100%;border:0;background:transparent;color:#8a8174;padding:12px;font-size:12px}
+.dateChoice{display:grid;grid-template-columns:auto 1fr;gap:8px}.todayBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:13px;padding:0 14px;font-weight:850}.dateChoice input{min-width:0}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}
 .auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px rgba(60,48,22,.08)}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:6px 0;font-size:16px}.authSecondary{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}.authSecondary button{border:0;background:transparent;color:#705820;font-weight:850}.status{font-size:12px;color:var(--muted);margin-top:9px}
 .empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}
@@ -84,7 +85,7 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
     </div>
     <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
     <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
-    <div class="field"><label>NGÀY (NGÀY/THÁNG/NĂM)</label><input id="date" type="text" inputmode="numeric" maxlength="10" placeholder="11/08/2026"></div>
+    <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
   </div>
 </div>
@@ -108,23 +109,21 @@ const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 const $=id=>document.getElementById(id);
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
-const fmtDate=iso=>{
+const normalizedIsoDate=(iso,expectedMonth)=>{
   if(!iso)return '';
   const parts=String(iso).slice(0,10).split('-');
+  if(parts.length!==3)return '';
+  const year=parts[0],month=Number(parts[1]),day=Number(parts[2]),recordMonth=Number(expectedMonth);
+  // The original Sheet import stored some Vietnamese dd/mm values as mm/dd.
+  // When the stored date disagrees with the transaction's month, swap them back.
+  if(recordMonth&&month!==recordMonth&&day===recordMonth)return `${year}-${String(day).padStart(2,'0')}-${String(month).padStart(2,'0')}`;
+  return `${year}-${parts[1]}-${parts[2]}`;
+};
+const fmtDate=(iso,expectedMonth)=>{
+  const parts=normalizedIsoDate(iso,expectedMonth).split('-');
   return parts.length===3?parts[2]+'/'+parts[1]:'';
 };
-const todayVi=()=>{
-  const now=new Date(),day=String(now.getDate()).padStart(2,'0'),month=String(now.getMonth()+1).padStart(2,'0');
-  return `${day}/${month}/${now.getFullYear()}`;
-};
-const viDateToIso=value=>{
-  const match=String(value||'').trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
-  if(!match)return null;
-  const day=Number(match[1]),month=Number(match[2]),year=Number(match[3]);
-  const date=new Date(Date.UTC(year,month-1,day));
-  if(date.getUTCFullYear()!==year||date.getUTCMonth()!==month-1||date.getUTCDate()!==day)return null;
-  return `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
-};
+const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0');return `${now.getFullYear()}-${month}-${day}`};
 let user=null,current=8,entryType='expense';
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
@@ -145,7 +144,7 @@ async function refresh(){
   ]);
   if(txErr){$('list').innerHTML='<div class="empty">Lỗi tải giao dịch</div>';return}
   const sortedTx=[...(tx||[])].sort((a,b)=>{
-    const byDate=String(b.txn_date||'').localeCompare(String(a.txn_date||''));
+    const byDate=normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month));
     if(byDate)return byDate;
     const byCreated=String(b.created_at||'').localeCompare(String(a.created_at||''));
     if(byCreated)return byCreated;
@@ -153,7 +152,7 @@ async function refresh(){
   });
   $('list').innerHTML=sortedTx.map(x=>{
     const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
-    const d=fmtDate(x.txn_date);
+    const d=fmtDate(x.txn_date,x.month);
     return `<div class="tx"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?'+':'-'}${fmt(amt)}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
@@ -173,7 +172,7 @@ async function refresh(){
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayVi()
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayIso()
 }
 function setType(type){
   entryType=type;
@@ -227,14 +226,14 @@ $('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,err
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
 $('refreshBtn').addEventListener('click',runAppRefresh);
 $('addBtn').addEventListener('click',openAdd);
+$('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
 $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('#quickExpense button,#quickIncome button').forEach(b=>b.addEventListener('click',()=>{$('desc').value=b.dataset.name||'';(b.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
-  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=viDateToIso($('date').value);
-  if(!amount||!desc)return;
-  if(!date){alert('Ngày phải theo định dạng ngày/tháng/năm, ví dụ 11/08/2026.');return}
+  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;
+  if(!amount||!desc||!date)return;
   const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source:'app',source_key:'app-'+crypto.randomUUID()};
   const {error}=await sb.from('transactions').insert(payload);if(error){alert(error.message);return}
   current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
