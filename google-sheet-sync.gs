@@ -155,7 +155,7 @@ function readExpenseSheetRows_(sheet, remoteRows) {
         txn_date: parseExpenseDate_(row[1], displays[index][1], month),
         income: income,
         expense: expense,
-        source: sourceKey.indexOf('app-') === 0 ? 'app' : 'sheet',
+        source: transactionSourceFromKey_(sourceKey),
         source_key: sourceKey,
         updated_at: new Date().toISOString()
       });
@@ -302,6 +302,13 @@ function readSyncId_(note) {
   return value.indexOf(EXPENSE_SYNC.idNotePrefix) === 0
     ? value.slice(EXPENSE_SYNC.idNotePrefix.length).trim()
     : '';
+}
+
+function transactionSourceFromKey_(sourceKey) {
+  const key = String(sourceKey || '');
+  if (key.indexOf('app-') === 0) return 'app';
+  if (key.indexOf('sheet-') === 0) return 'sheet_new';
+  return 'sheet';
 }
 
 function parseExpenseDate_(rawValue, displayValue, month) {
