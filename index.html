@@ -214,7 +214,7 @@ async function renderMonthlyOverview(){
   const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
   const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
   const expenses=rows.filter(row=>Number(row.expense||0)>0);
-  const normalizedName=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').toLowerCase();
+  const normalizedName=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
   const tennisExpense=expenses.filter(row=>normalizedName(row.description).includes('tennis')).reduce((sum,row)=>sum+Number(row.expense||0),0);
   const travelPattern=/(taxi|grab|xang|gui xe|di chuyen|xe om|xanh sm|(^|\s)be(\s|$))/;
   const travelExpense=expenses.filter(row=>travelPattern.test(normalizedName(row.description))).reduce((sum,row)=>sum+Number(row.expense||0),0);
