@@ -10,7 +10,7 @@
 <style>
 :root{--bg:#f4f1ea;--card:#fff;--text:#181714;--muted:#7a756c;--line:#e4dfd4;--green:#1f6a50;--red:#9c4c43;--dark:#171714;--gold:#c7a45a;--gold2:#e6cf91;--goldSoft:#f6edd8}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
-button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
+button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28)}button:focus-visible{outline:3px solid rgba(199,164,90,.38);outline-offset:2px}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
 .pullRefresh{position:fixed;z-index:35;left:50%;top:calc(8px + env(safe-area-inset-top));transform:translate(-50%,-52px);opacity:0;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);font-size:12px;font-weight:800;box-shadow:0 7px 22px rgba(38,32,19,.13);transition:transform .18s ease,opacity .18s ease}.pullRefresh.dragging{transition:none}.pullRefresh.loading{color:#654f1c;border-color:#d8bf7c;background:var(--goldSoft)}
 .header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
 .headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}
@@ -20,8 +20,8 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
 .summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}
 .bottom{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px))}.addBtn{width:100%;min-height:55px;border:1px solid rgba(199,164,90,.7);border-radius:16px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900;box-shadow:0 10px 28px rgba(44,35,17,.22)}
 .overlay{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));max-height:92vh;overflow:auto}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel h2{font-size:23px;margin:0}.closeBtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:750}
-.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:850}.toggle button.active{background:var(--dark);color:#fff3d3;border-color:var(--dark)}
-.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.quick button{border:1px solid var(--line);background:#fafafa;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:750}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
+.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid #d8bf7c;background:#fffaf0;color:#705820;border-radius:12px;padding:11px;font-weight:850}.toggle button.active{background:linear-gradient(145deg,#d8bd78,#b58e3e);color:#241b09;border-color:#b58e3e;box-shadow:0 3px 10px rgba(117,83,20,.18)}
+.quick{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.quick button{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:800}.quick button:active,.quick button.selected{background:#d8bd78;color:#241b09;border-color:#b58e3e}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
 .field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px;caret-color:var(--gold)}.field input:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,90,.2)}.field input.amount{font-size:27px;font-weight:850}.primary{width:100%;border:1px solid rgba(199,164,90,.7);border-radius:14px;padding:14px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900}.dangerlink{width:100%;border:0;background:transparent;color:#8a8174;padding:12px;font-size:12px}
 .dateChoice{display:grid;grid-template-columns:auto 1fr;gap:8px}.todayBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:13px;padding:0 14px;font-weight:850}.dateChoice input{min-width:0;color:#654f1c;accent-color:var(--gold);color-scheme:light}.dateChoice input::selection{background:#d8bd78;color:var(--text)}
 .settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}
@@ -172,7 +172,7 @@ async function refresh(){
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayIso()
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'))
 }
 function setType(type){
   entryType=type;
@@ -230,7 +230,7 @@ $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
 $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
-document.querySelectorAll('#quickExpense button,#quickIncome button').forEach(b=>b.addEventListener('click',()=>{$('desc').value=b.dataset.name||'';(b.dataset.name?$('amount'):$('desc')).focus()}));
+document.querySelectorAll('#quickExpense button,#quickIncome button').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));b.classList.add('selected');$('desc').value=b.dataset.name||'';(b.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
   const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;
   if(!amount||!desc||!date)return;
