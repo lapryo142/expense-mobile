@@ -128,7 +128,10 @@ async function refresh(){
     const d=x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):'';
     return `<div class="tx"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?'+':'-'}${fmt(amt)}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
-  const appRows=(tx||[]).filter(x=>x.source==='app');
+  // monthly_status already contains the historical seed imported from Sheet.
+  // Add every later transaction (from the App or newly entered in Sheet)
+  // without counting the historical seed twice.
+  const appRows=(tx||[]).filter(x=>x.source!=='sheet');
   let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
   appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
   $('bankHero').textContent=fmt(st?.bank_balance||0);
