@@ -12,7 +12,7 @@
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
 button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
 .header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
-.summaryBtn{position:absolute;right:0;top:4px;border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 11px;font-size:12px;font-weight:850}
+.headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}
 .months{display:flex;gap:6px;overflow:auto;margin:13px 0 12px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.months button{border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;background:#e8e3d8;color:#615c52}.months button.active{background:var(--dark);color:#fff4d8}
 .list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);align-items:center}.tx:last-child{border-bottom:0}.txName{font-size:16px;font-weight:750}.txDate{font-size:11px;color:var(--muted);margin-top:3px}.txAmt{font-size:16px;font-weight:850}.inc{color:var(--green)}.exp{color:var(--red)}
 .balance{background:linear-gradient(145deg,#151513,#272116);color:white;border:1px solid rgba(230,207,145,.5);border-radius:20px;padding:20px;margin:14px 0 10px;box-shadow:0 10px 28px rgba(46,38,19,.15)}.balance small{color:var(--gold2);font-weight:850;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.balance .hint{font-size:11px;color:#cfc7b7}
@@ -42,7 +42,10 @@ button,input{font:inherit}.hidden{display:none!important}.app{max-width:430px;ma
 <div id="app" class="app hidden">
   <div class="header">
     <div class="eyebrow">PERSONAL EXPENSE</div><h1>Giao dịch</h1>
-    <button id="summaryBtn" class="summaryBtn">Tổng quan / chỉnh số</button>
+    <div class="headerActions">
+      <button id="refreshBtn" class="headerBtn">↻ Làm mới</button>
+      <button id="summaryBtn" class="headerBtn">Tổng quan</button>
+    </div>
   </div>
   <div id="months" class="months"></div>
 
@@ -104,6 +107,11 @@ const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 const $=id=>document.getElementById(id);
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
+const fmtDate=iso=>{
+  if(!iso)return '';
+  const parts=String(iso).slice(0,10).split('-');
+  return parts.length===3?parts[2]+'/'+parts[1]:'';
+};
 let user=null,current=8,entryType='expense';
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
@@ -123,9 +131,16 @@ async function refresh(){
     sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle()
   ]);
   if(txErr){$('list').innerHTML='<div class="empty">Lỗi tải giao dịch</div>';return}
-  $('list').innerHTML=(tx||[]).map(x=>{
+  const sortedTx=[...(tx||[])].sort((a,b)=>{
+    const byDate=String(b.txn_date||'').localeCompare(String(a.txn_date||''));
+    if(byDate)return byDate;
+    const byCreated=String(b.created_at||'').localeCompare(String(a.created_at||''));
+    if(byCreated)return byCreated;
+    return Number(b.row_order||0)-Number(a.row_order||0);
+  });
+  $('list').innerHTML=sortedTx.map(x=>{
     const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
-    const d=x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):'';
+    const d=fmtDate(x.txn_date);
     return `<div class="tx"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?'+':'-'}${fmt(amt)}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
@@ -156,6 +171,12 @@ function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
 
 $('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showApp();renderMonths();refresh()}});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
+$('refreshBtn').addEventListener('click',async()=>{
+  const button=$('refreshBtn');
+  if(button.disabled)return;
+  button.disabled=true;button.classList.add('refreshing');button.textContent='↻ Đang tải…';
+  try{await refresh()}finally{button.disabled=false;button.classList.remove('refreshing');button.textContent='↻ Làm mới'}
+});
 $('addBtn').addEventListener('click',openAdd);
 $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
