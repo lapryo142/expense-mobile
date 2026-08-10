@@ -13,7 +13,7 @@
 .app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
 h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{display:flex;gap:6px;overflow:auto;margin:12px 0}.months button{border:0;border-radius:999px;padding:8px 12px;font-weight:700}.months .active{background:var(--dark);color:white}
 .balance{background:var(--dark);color:white;border-radius:18px;padding:18px;margin:10px 0 12px}.balance small{color:#bbb;font-weight:700}.balance .big{font-size:32px;font-weight:850;margin:4px 0}.meta{display:flex;gap:14px;color:#ccc;font-size:12px}
-.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}.name{font-size:16px;font-weight:700}.date{font-size:11px;color:var(--muted);margin-top:3px}.amt{font-weight:800}.inc{color:var(--green)}.exp{color:var(--red)}
+.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0 0 12px}.summarycard{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.summarycard.highlight{background:#fff8e8;border-color:#ead7a5}.summarycard .k{font-size:10px;color:var(--muted);font-weight:800;line-height:1.25}.summarycard .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line)}.tx:last-child{border-bottom:0}.name{font-size:16px;font-weight:700}.date{font-size:11px;color:var(--muted);margin-top:3px}.amt{font-weight:800}.inc{color:var(--green)}.exp{color:var(--red)}
 .bottom{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px));display:flex;gap:8px}.bottom button,.primary{border:0;border-radius:15px;padding:14px;font-weight:800;font-size:16px}.bottom button{flex:1}.primary{background:var(--dark);color:#fff}.secondary{background:#fff;border:1px solid var(--line)!important}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,.28);display:none;align-items:flex-end;z-index:5}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:white;border-radius:24px 24px 0 0;padding:18px 16px calc(20px + env(safe-area-inset-bottom))}
 .field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:700;margin-bottom:5px}.field input{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px}.amount{font-size:27px!important;font-weight:800}.toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px}.toggle button{border:1px solid var(--line);background:#fafafa;border-radius:12px;padding:11px;font-weight:800}.toggle .active{background:var(--dark);color:#fff}
@@ -30,12 +30,18 @@ h1{font-size:28px;margin:0}.muted{font-size:12px;color:var(--muted)}.months{disp
 </div>
 
 <div id="main" class="app hidden">
-  <div class="muted">PERSONAL EXPENSE</div><h1>Giao dịch</h1>
+  <div class="muted">PERSONAL EXPENSE</div><h1>Giao dịch</h1><div class="muted" style="margin-top:4px">Các số tổng hợp bên dưới lấy từ Google Sheet đã đồng bộ.</div>
   <div id="months" class="months"></div>
   <div id="importBox" class="import hidden">Supabase chưa có dữ liệu. Bấm một lần để nhập snapshot mới nhất từ Google Sheet của anh.
     <button id="importBtn" class="primary">Import Google Sheet mới nhất</button>
   </div>
   <div class="balance"><small>CÒN LẠI</small><div id="remain" class="big">—</div><div class="meta"><span id="totalIncome">Thu —</span><span id="totalExpense">Chi —</span></div></div>
+  <div class="summarygrid">
+    <div class="summarycard"><div class="k">CÒN LẠI TRONG NGÂN HÀNG</div><div id="bankBalance" class="v">—</div></div>
+    <div class="summarycard highlight"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div></div>
+    <div class="summarycard"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div></div>
+    <div class="summarycard"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div></div>
+  </div>
   <div id="list" class="list"></div>
 </div>
 
@@ -75,7 +81,13 @@ async function refresh(){
  let inc=Number(st?.total_income||0), exp=Number(st?.total_expense||0), rem=Number(st?.remaining||0);
  const appRows=(tx||[]).filter(x=>x.source==='app');
  appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
- $('remain').textContent=fmt(rem);$('totalIncome').textContent='Thu '+fmt(inc);$('totalExpense').textContent='Chi '+fmt(exp);
+ $('remain').textContent=fmt(rem);
+ $('totalIncome').textContent='Thu '+fmt(inc);
+ $('totalExpense').textContent='Chi '+fmt(exp);
+ $('bankBalance').textContent=st?fmt(st.bank_balance):'—';
+ $('foodDifference').textContent=st?fmt(st.food_difference):'—';
+ $('savingsBalance').textContent=st?fmt(st.savings_balance):'—';
+ $('startBalance').textContent=st?fmt(st.start_balance):'—';
  $('list').innerHTML=(tx||[]).map(x=>`<div class="tx"><div><div class="name">${esc(x.description)}</div><div class="date">${x.txn_date?x.txn_date.slice(8,10)+'/'+x.txn_date.slice(5,7):''}</div></div><div class="amt ${x.income?'inc':'exp'}">${x.income?'+':'-'}${fmt(x.income||x.expense)}</div></div>`).join('')||'<div class="tx">Chưa có giao dịch</div>';
 }
 function esc(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
