@@ -19,6 +19,11 @@ const EXPENSE_SYNC = {
   maxAutomaticNewRows: 25,
   descriptionColumns: { 1: 7, 2: 12, 3: 17, 4: 22, 5: 27, 6: 32, 7: 37, 8: 42 },
   idNotePrefix: 'expense-sync-id:',
+  statusRows: {
+    send_wife: { labels: ['đưa vợ', 'gửi vợ'], dateField: 'send_wife_date' },
+    savings_balance: { labels: ['tổng tiết kiệm'], dateField: 'savings_balance_date' },
+    bank_balance: { labels: ['còn lại ngân hàng', 'còn lại trong ngân hàng'], dateField: 'bank_balance_date' }
+  },
   ignoredLabels: [
     'tổng', 'đưa vợ', 'bỏ vào tiết kiệm', 'tiết kiệm', 'tổng tiết kiệm',
     'còn lại', 'còn lại ngân hàng', 'chênh lệch (ăn uống)'
@@ -55,12 +60,16 @@ function syncExpenseBidirectional() {
 
   const remoteRows = fetchTransactions_(config);
   const result = writeMissingRemoteRowsToSheet_(sheet, remoteRows);
+  // Summary rows can move whenever a transaction row is inserted. Resolve each
+  // destination by its visible label on every run instead of using fixed rows.
+  const statusResult = syncMonthlyStatusesToSheet_(config, sheet);
 
   SpreadsheetApp.flush();
   Logger.log(JSON.stringify({
     uploadedFromSheet: sheetRows.length,
     downloadedToSheet: result.inserted,
-    alreadyInSheet: result.existing
+    alreadyInSheet: result.existing,
+    monthlyStatusCellsUpdated: statusResult.updated
   }));
 }
 
@@ -104,6 +113,64 @@ function getExpenseSheet_() {
   const sheet = SpreadsheetApp.getActive().getSheetByName(EXPENSE_SYNC.sheetName);
   if (!sheet) throw new Error('Sheet not found: ' + EXPENSE_SYNC.sheetName);
   return sheet;
+}
+
+function fetchMonthlyStatuses_(config) {
+  const query = [
+    'user_id=eq.' + encodeURIComponent(config.userId),
+    'year=eq.' + EXPENSE_SYNC.year,
+    'select=year,month,bank_balance,bank_balance_date,savings_balance,savings_balance_date,send_wife,send_wife_date,updated_at',
+    'order=month.asc'
+  ].join('&');
+  return requestSupabase_(config, '/rest/v1/monthly_status?' + query, { method: 'get' });
+}
+
+function syncMonthlyStatusesToSheet_(config, sheet) {
+  const statuses = fetchMonthlyStatuses_(config);
+  let updated = 0;
+
+  (statuses || []).forEach(status => {
+    const month = Number(status.month);
+    const descriptionColumn = EXPENSE_SYNC.descriptionColumns[month];
+    if (!descriptionColumn) return;
+
+    Object.keys(EXPENSE_SYNC.statusRows).forEach(field => {
+      const rowConfig = EXPENSE_SYNC.statusRows[field];
+      const value = status[field];
+      if (value === null || value === undefined || value === '') return;
+
+      const targetRow = findSummaryRowByLabels_(sheet, descriptionColumn, rowConfig.labels);
+      if (!targetRow) {
+        throw new Error(
+          'Could not find summary label [' + rowConfig.labels.join(' / ') +
+          '] for month ' + month + ' in column ' + descriptionColumn + '.'
+        );
+      }
+
+      const rawDate = status[rowConfig.dateField] || String(status.updated_at || '').slice(0, 10);
+      const dateValue = rawDate ? new Date(String(rawDate).slice(0, 10) + 'T12:00:00') : '';
+      sheet.getRange(targetRow, descriptionColumn + 1).setValue(dateValue);
+      if (dateValue) sheet.getRange(targetRow, descriptionColumn + 1).setNumberFormat('dd/MM');
+      sheet.getRange(targetRow, descriptionColumn + 3).setValue(toInteger_(value));
+      updated += 2;
+    });
+  });
+
+  return { updated: updated };
+}
+
+function findSummaryRowByLabels_(sheet, descriptionColumn, labels) {
+  const totalRow = findMonthTotalRow_(sheet, descriptionColumn);
+  const lastRow = Math.min(sheet.getLastRow(), totalRow + 20);
+  const count = Math.max(0, lastRow - totalRow);
+  if (!count) return null;
+
+  const wanted = new Set((labels || []).map(normalizeLabel_));
+  const displays = sheet.getRange(totalRow + 1, descriptionColumn, count, 1).getDisplayValues();
+  for (let index = 0; index < displays.length; index += 1) {
+    if (wanted.has(normalizeLabel_(displays[index][0]))) return totalRow + 1 + index;
+  }
+  return null;
 }
 
 function readExpenseSheetRows_(sheet, remoteRows) {
