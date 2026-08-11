@@ -344,11 +344,12 @@ async function renderMonthlyOverview(){
   ];
   const categoryFor=row=>categories.find(category=>category.pattern.test(normalizedName(row.description)))?.name||'Khác';
   const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
-  let trendText='Chưa có dữ liệu tháng trước',trendClass='';
+  let trendText='Chưa có dữ liệu tháng trước',trendNote='',trendClass='';
   if(previousTotals&&previousComparableExpense>0){
     const percent=Math.round(Math.abs(currentComparableExpense-previousComparableExpense)/previousComparableExpense*100);
     const lower=currentComparableExpense<=previousComparableExpense;
-    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}% so với cùng kỳ tháng ${previousMonth} (01–${String(comparisonDay).padStart(2,'0')})`;
+    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}%`;
+    trendNote=`Cùng kỳ tháng ${previousMonth}`;
     trendClass=lower?'trendGood':'trendBad';
   }
   $('overviewStats').innerHTML=`<div class="statGrid">
@@ -357,7 +358,7 @@ async function renderMonthlyOverview(){
     <div class="statBox"><div class="statLabel">SỐ GIAO DỊCH</div><div class="statValue">${rows.length}</div></div>
     <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(currentTotals.expense/Math.max(1,dayCount))}</div></div>
     <div class="statBox wide"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
-    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div></div>
+    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div>${trendNote?`<div class="statNote">${trendNote}</div>`:''}</div>
   </div>`;
   const categoryNames=[...categories.map(category=>category.name),'Khác'];
   $('categoryToggleText').textContent='Chọn danh mục';
