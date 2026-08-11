@@ -91,7 +91,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
-    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220000"></div>
+    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220.000"></div>
     <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
     <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
@@ -145,6 +145,17 @@ const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
 const $=id=>document.getElementById(id);
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
+const formatMoneyInputValue=value=>{
+  const digits=String(value??'').replace(/\D/g,'');
+  return digits?new Intl.NumberFormat('vi-VN').format(Number(digits)):'';
+};
+const bindMoneyInput=id=>{
+  const input=$(id);if(!input)return;
+  input.addEventListener('input',()=>{
+    const formatted=formatMoneyInputValue(input.value);
+    if(input.value!==formatted)input.value=formatted;
+  });
+};
 const normalizedIsoDate=(iso,expectedMonth)=>{
   if(!iso)return '';
   const parts=String(iso).slice(0,10).split('-');
@@ -241,7 +252,7 @@ function bindTransactionLongPress(rows){
   });
 }
 function openTransactionEdit(row){
-  editingTx=row;$('editTxName').textContent=row.description||'';$('editTxAmount').value=Number(row.income||0)||Number(row.expense||0)||'';$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();$('editTxOverlay').classList.add('open');
+  editingTx=row;$('editTxName').textContent=row.description||'';$('editTxAmount').value=formatMoneyInputValue(Number(row.income||0)||Number(row.expense||0)||'');$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();$('editTxOverlay').classList.add('open');
 }
 const statusConfig={
   bank_balance:{title:'Còn lại trong ngân hàng',valueId:'bankHero',dateField:'bank_balance_date'},
@@ -284,7 +295,7 @@ function bindStatusLongPress(){
 async function openStatusEdit(key){
   currentStatus=key;const config=statusConfig[key];if(!config)return;
   const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  $('statusTitle').textContent=config.title;$('statusAmount').value=Number(st?.[key]||0)||'';$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
+  $('statusTitle').textContent=config.title;$('statusAmount').value=formatMoneyInputValue(Number(st?.[key]||0)||'');$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
 }
 function openAdd(){
   $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'))
@@ -435,6 +446,7 @@ $('privacyBtn').addEventListener('click',async()=>{
   if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
 });
 $('refreshBtn').addEventListener('click',runAppRefresh);
+['amount','statusAmount','editTxAmount'].forEach(bindMoneyInput);
 $('addBtn').addEventListener('click',openAdd);
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
 $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
