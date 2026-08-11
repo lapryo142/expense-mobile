@@ -9,8 +9,8 @@
 <meta name="application-name" content="Happy Money">
 <meta name="theme-color" content="#FFC524">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=3">
-<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=3">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=4">
 <title>Happy Money</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -19,11 +19,11 @@
 button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28)}button:focus-visible{outline:3px solid rgba(199,164,90,.38);outline-offset:2px}.hidden{display:none!important}.app{max-width:430px;margin:auto;min-height:100vh;padding:calc(16px + env(safe-area-inset-top)) 14px calc(94px + env(safe-area-inset-bottom))}
 .pullRefresh{position:fixed;z-index:35;left:50%;top:calc(8px + env(safe-area-inset-top));transform:translate(-50%,-52px);opacity:0;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);font-size:12px;font-weight:800;box-shadow:0 7px 22px rgba(38,32,19,.13);transition:transform .18s ease,opacity .18s ease}.pullRefresh.dragging{transition:none}.pullRefresh.loading{color:#654f1c;border-color:#d8bf7c;background:var(--goldSoft)}
 .header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
-.headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}.privacyBtn{width:36px;padding:8px;display:grid;place-items:center}.privacyBtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}
 .months{display:flex;gap:6px;overflow:auto;margin:13px 0 12px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.months button{border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;background:#e8e3d8;color:#615c52}.months button.active{background:var(--dark);color:#fff4d8}
 .list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);align-items:center}.tx:last-child{border-bottom:0}.txName{font-size:16px;font-weight:750}.txDate{font-size:13px;font-weight:650;color:var(--muted);margin-top:4px}.txAmt{font-size:16px;font-weight:850}.tx{user-select:none;-webkit-user-select:none}.tx.holding{background:var(--goldSoft)}.inc{color:var(--green)}.exp{color:var(--red)}
 .balance{background:linear-gradient(145deg,#151513,#272116);color:white;border:1px solid rgba(230,207,145,.5);border-radius:20px;padding:20px;margin:14px 0 10px;box-shadow:0 10px 28px rgba(46,38,19,.15)}.balance small{color:var(--gold2);font-weight:850;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.balance .hint{font-size:11px;color:#cfc7b7}
-.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.asOf{font-size:10px;color:var(--muted);margin-top:5px;font-weight:700}.editableStat{cursor:pointer;transition:transform .12s ease,border-color .12s ease,background-color .12s ease;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y}.editableStat.holding{border-color:var(--gold);background:var(--goldSoft)}.balance.editableStat{cursor:pointer}
+.summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.asOf{font-size:10px;color:var(--muted);margin-top:5px;font-weight:700}.editableStat{cursor:pointer;transition:transform .12s ease,border-color .12s ease,background-color .12s ease;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none}.editableStat.holding{border-color:var(--gold);background:var(--goldSoft)}.balance.editableStat{cursor:pointer}
 .bottom{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px))}.addBtn{width:100%;min-height:55px;border:1px solid rgba(199,164,90,.7);border-radius:16px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900;box-shadow:0 10px 28px rgba(44,35,17,.22)}
 body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;overscroll-behavior:contain;touch-action:none}.overlay.open{display:flex}.panel{width:100%;max-width:430px;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));height:min(92vh,760px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel h2{font-size:23px;margin:0}.closeBtn{border:1px solid var(--line);background:#fff;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:750}
 .toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid #d8bf7c;background:#fffaf0;color:#705820;border-radius:12px;padding:11px;font-weight:850}.toggle button.active{background:linear-gradient(145deg,#d8bd78,#b58e3e);color:#241b09;border-color:#b58e3e;box-shadow:0 3px 10px rgba(117,83,20,.18)}
@@ -52,7 +52,6 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
   <div class="header">
     <div class="eyebrow">HAPPY MONEY</div><h1>Giao dịch</h1>
     <div class="headerActions">
-      <button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button>
       <button id="refreshBtn" class="headerBtn" aria-label="Làm mới" title="Làm mới">↻</button>
       <button id="summaryBtn" class="headerBtn">Tổng quan</button>
     </div>
@@ -65,14 +64,14 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <small>CÒN LẠI TRONG NGÂN HÀNG</small>
     <div id="bankHero" class="big">—</div>
     <div id="bankDate" class="asOf">—</div>
-    <div class="editHint">Nhấn giữ để sửa</div>
+    <div class="editHint">Chạm để sửa số tiền và ngày</div>
   </div>
 
   <div class="summarygrid">
     <div class="card"><div class="k">CÒN LẠI THEO SỔ</div><div id="remain" class="v">—</div><div id="remainDate" class="asOf">—</div></div>
     <div class="card gold"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div><div id="foodDate" class="asOf">—</div></div>
-    <div class="card editableStat" data-status-key="savings_balance" role="button" tabindex="0"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div><div id="savingsDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
-    <div class="card editableStat" data-status-key="send_wife" role="button" tabindex="0"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div><div id="wifeDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
+    <div class="card editableStat" data-status-key="savings_balance" role="button" tabindex="0"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div><div id="savingsDate" class="asOf">—</div><div class="editHint">Nhấn giữ 0,6 giây để sửa</div></div>
+    <div class="card editableStat" data-status-key="send_wife" role="button" tabindex="0"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div><div id="wifeDate" class="asOf">—</div><div class="editHint">Nhấn giữ 0,6 giây để sửa</div></div>
     <div class="card"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div><div id="startDate" class="asOf">—</div></div>
     <div class="card"><div class="k">CHI TRUNG BÌNH / NGÀY</div><div id="dailyExpense" class="v">—</div><div id="dailyDate" class="asOf">—</div></div>
   </div>
@@ -161,16 +160,6 @@ const fmtDate=(iso,expectedMonth)=>{
 };
 const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0');return `${now.getFullYear()}-${month}-${day}`};
 let user=null,current=8,entryType='expense',currentStatus=null,editingTx=null;
-let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
-const privateFmt=value=>privacyHidden?'••••••':fmt(value);
-function updatePrivacyButton(){
-  const button=$('privacyBtn');if(!button)return;
-  button.innerHTML=privacyHidden
-    ? '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3l18 18"/><path d="M10.6 10.6a2 2 0 0 0 2.8 2.8"/><path d="M9.9 4.2A10.7 10.7 0 0 1 12 4c5.5 0 9 6 9 6a17.3 17.3 0 0 1-2.1 2.9"/><path d="M6.6 6.6C4.3 8.1 3 10 3 10s3.5 6 9 6c1 0 1.9-.2 2.7-.5"/></svg>'
-    : '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12s3.5-6 9-6 9 6 9 6-3.5 6-9 6-9-6-9-6z"/><circle cx="12" cy="12" r="2.5"/></svg>';
-  const label=privacyHidden?'Hiện số nhạy cảm':'Ẩn số nhạy cảm';
-  button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(privacyHidden));
-}
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
 function showAuth(){$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
@@ -199,7 +188,7 @@ async function refresh(){
   $('list').innerHTML=sortedTx.map(x=>{
     const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
     const d=fmtDate(x.txn_date,x.month);
-    return `<div class="tx" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?(privacyHidden?'••••••':'+'+fmt(amt)):'-'+fmt(amt)}</div></div>`;
+    return `<div class="tx" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txDate">${d}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?'+':'-'}${fmt(amt)}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
@@ -207,12 +196,12 @@ async function refresh(){
   const appRows=(tx||[]).filter(x=>x.source!=='sheet');
   let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
   appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
-  $('bankHero').textContent=privateFmt(st?.bank_balance||0);
-  $('remain').textContent=privateFmt(rem);
-  $('foodDifference').textContent=privateFmt(rem-Number(st?.bank_balance||0));
-  $('savingsBalance').textContent=privateFmt(st?.savings_balance||0);
-  $('sendWife').textContent=privateFmt(st?.send_wife||0);
-  $('startBalance').textContent=privateFmt(st?.start_balance||0);
+  $('bankHero').textContent=fmt(st?.bank_balance||0);
+  $('remain').textContent=fmt(rem);
+  $('foodDifference').textContent=fmt(rem-Number(st?.bank_balance||0));
+  $('savingsBalance').textContent=fmt(st?.savings_balance||0);
+  $('sendWife').textContent=fmt(st?.send_wife||0);
+  $('startBalance').textContent=fmt(st?.start_balance||0);
   const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`2026-${String(current).padStart(2,'0')}-01`;
   const statusFallback=String(st?.updated_at||'').slice(0,10)||latestDate;
   $('bankDate').textContent='Ngày '+fmtDate(st?.bank_balance_date||statusFallback,current);
@@ -250,35 +239,23 @@ const statusConfig={
 };
 function bindStatusLongPress(){
   document.querySelectorAll('[data-status-key]').forEach(item=>{
-    let timer=null,startX=0,startY=0,activePointerId=null;
-    const cancel=()=>{
-      if(timer!==null)clearTimeout(timer);
-      timer=null;activePointerId=null;item.classList.remove('holding');
+    let timer=null,startX=0,startY=0,longPressOpened=false;
+    const cancel=()=>{clearTimeout(timer);timer=null;item.classList.remove('holding')};
+    const begin=(x,y)=>{
+      cancel();longPressOpened=false;startX=x;startY=y;item.classList.add('holding');
+      timer=setTimeout(()=>{longPressOpened=true;const key=item.dataset.statusKey;cancel();openStatusEdit(key)},600);
     };
-    item.addEventListener('pointerdown',e=>{
-      if(e.pointerType==='mouse'&&e.button!==0)return;
-      cancel();
-      activePointerId=e.pointerId;startX=e.clientX;startY=e.clientY;
-      item.classList.add('holding');
-      timer=setTimeout(()=>{
-        if(activePointerId!==e.pointerId)return;
-        const key=item.dataset.statusKey;
-        cancel();
-        openStatusEdit(key);
-      },600);
-    });
-    item.addEventListener('pointermove',e=>{
-      if(e.pointerId!==activePointerId)return;
-      if(Math.abs(e.clientX-startX)>10||Math.abs(e.clientY-startY)>10)cancel();
-    });
-    item.addEventListener('pointerup',e=>{if(e.pointerId===activePointerId)cancel()});
-    item.addEventListener('pointercancel',cancel);
-    item.addEventListener('lostpointercapture',cancel);
-    item.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation()});
+    item.addEventListener('touchstart',e=>begin(e.touches[0].clientX,e.touches[0].clientY),{passive:true});
+    item.addEventListener('touchmove',e=>{if(Math.abs(e.touches[0].clientX-startX)>10||Math.abs(e.touches[0].clientY-startY)>10)cancel()},{passive:true});
+    item.addEventListener('touchend',cancel,{passive:true});
+    item.addEventListener('touchcancel',cancel,{passive:true});
+    item.addEventListener('mousedown',e=>begin(e.clientX,e.clientY));
+    item.addEventListener('mousemove',e=>{if(Math.abs(e.clientX-startX)>10||Math.abs(e.clientY-startY)>10)cancel()});
+    item.addEventListener('mouseup',cancel);
+    item.addEventListener('mouseleave',cancel);
+    item.addEventListener('click',e=>{e.preventDefault();e.stopPropagation();longPressOpened=false});
     item.addEventListener('contextmenu',e=>e.preventDefault());
-    item.addEventListener('keydown',e=>{
-      if(e.key==='Enter'||e.key===' '){e.preventDefault();openStatusEdit(item.dataset.statusKey)}
-    });
+    item.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();openStatusEdit(item.dataset.statusKey)}});
   });
 }
 async function openStatusEdit(key){
@@ -300,13 +277,6 @@ function monthTotals(rows,status){
   (rows||[]).filter(row=>row.source!=='sheet').forEach(row=>{income+=Number(row.income||0);expense+=Number(row.expense||0)});
   return {income,expense};
 }
-function expenseThroughDay(rows,cutoffDay){
-  return (rows||[]).reduce((sum,row)=>{
-    const normalized=normalizedIsoDate(row.txn_date,row.month);
-    const day=Number(normalized.slice(8,10));
-    return day&&day<=cutoffDay?sum+Number(row.expense||0):sum;
-  },0);
-}
 async function renderMonthlyOverview(){
   $('overviewMonth').textContent=current;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
@@ -322,14 +292,9 @@ async function renderMonthlyOverview(){
   );
   const results=await Promise.all(queries);
   const rows=results[0].data||[],status=results[1].data,currentTotals=monthTotals(rows,status);
-  const previousRows=previousMonth>0?(results[2].data||[]):[];
-  const previousTotals=previousMonth>0?monthTotals(previousRows,results[3].data):null;
+  const previousTotals=previousMonth>0?monthTotals(results[2].data||[],results[3].data):null;
   const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
   const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
-  const previousDaysInMonth=previousMonth>0?new Date(2026,previousMonth,0).getDate():0;
-  const comparisonDay=Math.min(dayCount,previousDaysInMonth||dayCount);
-  const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
-  const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
   const expenses=rows.filter(row=>Number(row.expense||0)>0);
   const normalizedName=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
   const categories=[
@@ -344,21 +309,20 @@ async function renderMonthlyOverview(){
   ];
   const categoryFor=row=>categories.find(category=>category.pattern.test(normalizedName(row.description)))?.name||'Khác';
   const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
-  let trendText='Chưa có dữ liệu tháng trước',trendNote='',trendClass='';
-  if(previousTotals&&previousComparableExpense>0){
-    const percent=Math.round(Math.abs(currentComparableExpense-previousComparableExpense)/previousComparableExpense*100);
-    const lower=currentComparableExpense<=previousComparableExpense;
-    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}%`;
-    trendNote=`Cùng kỳ tháng ${previousMonth}`;
+  let trendText='Chưa có dữ liệu tháng trước',trendClass='';
+  if(previousTotals&&previousTotals.expense>0){
+    const percent=Math.round(Math.abs(currentTotals.expense-previousTotals.expense)/previousTotals.expense*100);
+    const lower=currentTotals.expense<=previousTotals.expense;
+    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}% so với tháng ${previousMonth}`;
     trendClass=lower?'trendGood':'trendBad';
   }
   $('overviewStats').innerHTML=`<div class="statGrid">
-    <div class="statBox"><div class="statLabel">TỔNG THU</div><div class="statValue inc">${privateFmt(currentTotals.income)}</div></div>
+    <div class="statBox"><div class="statLabel">TỔNG THU</div><div class="statValue inc">${fmt(currentTotals.income)}</div></div>
     <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
     <div class="statBox"><div class="statLabel">SỐ GIAO DỊCH</div><div class="statValue">${rows.length}</div></div>
     <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(currentTotals.expense/Math.max(1,dayCount))}</div></div>
     <div class="statBox wide"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
-    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div>${trendNote?`<div class="statNote">${trendNote}</div>`:''}</div>
+    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div></div>
   </div>`;
   const categoryNames=[...categories.map(category=>category.name),'Khác'];
   $('categoryToggleText').textContent='Chọn danh mục';
@@ -427,13 +391,6 @@ document.addEventListener('touchend',()=>{
 
 $('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showApp();renderMonths();refresh()}});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
-$('privacyBtn').addEventListener('click',async()=>{
-  privacyHidden=!privacyHidden;
-  localStorage.setItem('happy_money_privacy_hidden',String(privacyHidden));
-  updatePrivacyButton();
-  await refresh();
-  if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
-});
 $('refreshBtn').addEventListener('click',runAppRefresh);
 $('addBtn').addEventListener('click',openAdd);
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
@@ -475,7 +432,6 @@ $('saveEditTx').addEventListener('click',async()=>{
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;showAuth()});
 
 async function init(){
-  updatePrivacyButton();
   const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
   const {data:{session}}=await sb.auth.getSession();
   if(session){user=session.user;showApp();renderMonths();await refresh()}else showAuth();
