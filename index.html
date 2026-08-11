@@ -300,6 +300,13 @@ function monthTotals(rows,status){
   (rows||[]).filter(row=>row.source!=='sheet').forEach(row=>{income+=Number(row.income||0);expense+=Number(row.expense||0)});
   return {income,expense};
 }
+function expenseThroughDay(rows,cutoffDay){
+  return (rows||[]).reduce((sum,row)=>{
+    const normalized=normalizedIsoDate(row.txn_date,row.month);
+    const day=Number(normalized.slice(8,10));
+    return day&&day<=cutoffDay?sum+Number(row.expense||0):sum;
+  },0);
+}
 async function renderMonthlyOverview(){
   $('overviewMonth').textContent=current;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
@@ -315,9 +322,14 @@ async function renderMonthlyOverview(){
   );
   const results=await Promise.all(queries);
   const rows=results[0].data||[],status=results[1].data,currentTotals=monthTotals(rows,status);
-  const previousTotals=previousMonth>0?monthTotals(results[2].data||[],results[3].data):null;
+  const previousRows=previousMonth>0?(results[2].data||[]):[];
+  const previousTotals=previousMonth>0?monthTotals(previousRows,results[3].data):null;
   const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
   const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
+  const previousDaysInMonth=previousMonth>0?new Date(2026,previousMonth,0).getDate():0;
+  const comparisonDay=Math.min(dayCount,previousDaysInMonth||dayCount);
+  const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
+  const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
   const expenses=rows.filter(row=>Number(row.expense||0)>0);
   const normalizedName=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
   const categories=[
@@ -333,10 +345,10 @@ async function renderMonthlyOverview(){
   const categoryFor=row=>categories.find(category=>category.pattern.test(normalizedName(row.description)))?.name||'Khác';
   const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
   let trendText='Chưa có dữ liệu tháng trước',trendClass='';
-  if(previousTotals&&previousTotals.expense>0){
-    const percent=Math.round(Math.abs(currentTotals.expense-previousTotals.expense)/previousTotals.expense*100);
-    const lower=currentTotals.expense<=previousTotals.expense;
-    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}% so với tháng ${previousMonth}`;
+  if(previousTotals&&previousComparableExpense>0){
+    const percent=Math.round(Math.abs(currentComparableExpense-previousComparableExpense)/previousComparableExpense*100);
+    const lower=currentComparableExpense<=previousComparableExpense;
+    trendText=`Chi ${lower?'giảm':'tăng'} ${percent}% so với cùng kỳ tháng ${previousMonth} (01–${String(comparisonDay).padStart(2,'0')})`;
     trendClass=lower?'trendGood':'trendBad';
   }
   $('overviewStats').innerHTML=`<div class="statGrid">
