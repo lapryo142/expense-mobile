@@ -36,6 +36,10 @@ function syncExpenseBidirectional() {
   // Fetch first so the initial run can adopt the IDs already created by the
   // V8 seed import. Never invent a second ID for an existing Sheet row.
   const initialRemoteRows = fetchTransactions_(config);
+  // Apply explicit App edits to their existing Sheet rows before the normal
+  // Sheet-first upload. This preserves the same source_key and prevents an old
+  // Sheet value from overwriting a deliberate long-press edit in the App.
+  applyPendingAppEditsToSheet_(sheet, initialRemoteRows);
   const sheetRows = readExpenseSheetRows_(sheet, initialRemoteRows);
 
   const remoteIds = new Set(initialRemoteRows.map(row => row.source_key).filter(Boolean));
@@ -208,6 +212,53 @@ function upsertTransactions_(config, rows) {
   );
 }
 
+function applyPendingAppEditsToSheet_(sheet, remoteRows) {
+  const pending = (remoteRows || []).filter(row => row.source === 'app_edited' && row.source_key);
+  pending.forEach(transaction => {
+    const existing = findSheetRowBySyncId_(sheet, transaction.source_key);
+    const targetColumn = EXPENSE_SYNC.descriptionColumns[Number(transaction.month)];
+    if (!targetColumn) return;
+
+    let targetRow;
+    if (existing && existing.column === targetColumn) {
+      targetRow = existing.row;
+    } else {
+      if (existing) {
+        sheet.getRange(existing.row, existing.column, 1, 4).clearContent();
+        sheet.getRange(existing.row, existing.column).clearNote();
+      }
+      targetRow = findWritableRow_(sheet, targetColumn);
+    }
+
+    sheet.getRange(targetRow, targetColumn, 1, 4).setValues([[
+      transaction.description || '',
+      transaction.txn_date ? new Date(transaction.txn_date + 'T12:00:00') : '',
+      toInteger_(transaction.income),
+      toInteger_(transaction.expense)
+    ]]);
+    sheet.getRange(targetRow, targetColumn + 1).setNumberFormat('dd/MM');
+    sheet.getRange(targetRow, targetColumn).setNote(EXPENSE_SYNC.idNotePrefix + transaction.source_key);
+  });
+}
+
+function findSheetRowBySyncId_(sheet, sourceKey) {
+  const wanted = String(sourceKey || '');
+  const months = Object.keys(EXPENSE_SYNC.descriptionColumns);
+  for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
+    const column = EXPENSE_SYNC.descriptionColumns[Number(months[monthIndex])];
+    const totalRow = findMonthTotalRow_(sheet, column);
+    const count = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
+    if (!count) continue;
+    const notes = sheet.getRange(EXPENSE_SYNC.firstDataRow, column, count, 1).getNotes();
+    for (let index = 0; index < notes.length; index += 1) {
+      if (readSyncId_(notes[index][0]) === wanted) {
+        return { row: EXPENSE_SYNC.firstDataRow + index, column: column };
+      }
+    }
+  }
+  return null;
+}
+
 function writeMissingRemoteRowsToSheet_(sheet, remoteRows) {
   const existingIds = collectSheetSyncIds_(sheet);
   const missingRows = remoteRows.filter(row => row.source_key && !existingIds.has(row.source_key));
@@ -349,3 +400,4 @@ function requestSupabase_(config, path, options) {
   }
   return body ? JSON.parse(body) : null;
 }
+
