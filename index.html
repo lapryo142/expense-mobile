@@ -215,7 +215,14 @@ async function refresh(){
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
   // without counting the historical seed twice.
-  const appRows=(tx||[]).filter(x=>x.source!=='sheet');
+  const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
+  const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
+  const asOfIso=`2026-${String(current).padStart(2,'0')}-${String(dayCount).padStart(2,'0')}`;
+  const appRows=(tx||[]).filter(x=>{
+    if(x.source==='sheet')return false;
+    const normalized=normalizedIsoDate(x.txn_date,x.month);
+    return normalized&&Number(normalized.slice(8,10))<=dayCount;
+  });
   let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
   appRows.forEach(x=>{inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
   $('bankHero').textContent=privateFmt(st?.bank_balance||0);
@@ -229,13 +236,11 @@ async function refresh(){
   $('bankDate').textContent='Ngày '+fmtDate(st?.bank_balance_date||statusFallback,current);
   $('savingsDate').textContent='Ngày '+fmtDate(st?.savings_balance_date||statusFallback,current);
   $('wifeDate').textContent='Ngày '+fmtDate(st?.send_wife_date||statusFallback,current);
-  $('remainDate').textContent='Đến '+fmtDate(latestDate,current);
-  $('foodDate').textContent='Đến '+fmtDate(latestDate,current);
+  $('remainDate').textContent='Đến '+fmtDate(asOfIso,current);
+  $('foodDate').textContent='Đến '+fmtDate(asOfIso,current);
   $('startDate').textContent='Ngày 01/'+String(current).padStart(2,'0');
-  const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
-  const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
   $('dailyExpense').textContent=fmt(Math.round(exp/Math.max(1,dayCount)));
-  $('dailyDate').textContent='Đến '+fmtDate(latestDate,current);
+  $('dailyDate').textContent='Đến '+fmtDate(asOfIso,current);
   bindTransactionLongPress(sortedTx);
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
@@ -306,9 +311,14 @@ function setType(type){
   $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');
 }
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
-function monthTotals(rows,status){
+function monthTotals(rows,status,cutoffDay=null){
   let income=Number(status?.total_income||0),expense=Number(status?.total_expense||0);
-  (rows||[]).filter(row=>row.source!=='sheet').forEach(row=>{income+=Number(row.income||0);expense+=Number(row.expense||0)});
+  (rows||[]).filter(row=>{
+    if(row.source==='sheet')return false;
+    if(cutoffDay===null)return true;
+    const normalized=normalizedIsoDate(row.txn_date,row.month);
+    return normalized&&Number(normalized.slice(8,10))<=cutoffDay;
+  }).forEach(row=>{income+=Number(row.income||0);expense+=Number(row.expense||0)});
   return {income,expense};
 }
 function expenseThroughDay(rows,cutoffDay){
@@ -337,6 +347,7 @@ async function renderMonthlyOverview(){
   const previousTotals=previousMonth>0?monthTotals(previousRows,results[3].data):null;
   const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
   const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
+  const currentAsOfTotals=monthTotals(rows,status,dayCount);
   const previousDaysInMonth=previousMonth>0?new Date(2026,previousMonth,0).getDate():0;
   const comparisonDay=Math.min(dayCount,previousDaysInMonth||dayCount);
   const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
@@ -367,7 +378,7 @@ async function renderMonthlyOverview(){
     <div class="statBox"><div class="statLabel">TỔNG THU</div><div class="statValue inc">${privateFmt(currentTotals.income)}</div></div>
     <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
     <div class="statBox"><div class="statLabel">SỐ GIAO DỊCH</div><div class="statValue">${rows.length}</div></div>
-    <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(currentTotals.expense/Math.max(1,dayCount)))}</div></div>
+    <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
     <div class="statBox wide"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC</div><div class="statValue ${trendClass}" style="font-size:16px">${trendText}</div>${trendNote?`<div class="statNote">${trendNote}</div>`:''}</div>
   </div>`;
