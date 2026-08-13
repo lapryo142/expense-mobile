@@ -20,7 +20,7 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28
 .pullRefresh{position:fixed;z-index:35;left:50%;top:calc(8px + env(safe-area-inset-top));transform:translate(-50%,-52px);opacity:0;pointer-events:none;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 13px;color:var(--muted);font-size:12px;font-weight:800;box-shadow:0 7px 22px rgba(38,32,19,.13);transition:transform .18s ease,opacity .18s ease}.pullRefresh.dragging{transition:none}.pullRefresh.loading{color:#654f1c;border-color:#d8bf7c;background:var(--goldSoft)}
 .header{position:relative}.eyebrow{font-size:11px;color:var(--muted);font-weight:800;letter-spacing:.7px}h1{font-size:29px;margin:3px 0 0;letter-spacing:-.7px}
 .headerActions{position:absolute;right:0;top:2px;display:flex;gap:6px}.headerBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:12px;padding:9px 10px;font-size:12px;font-weight:850;white-space:nowrap}.headerBtn.refreshing{opacity:.65}.privacyBtn{width:36px;padding:8px;display:grid;place-items:center}.privacyBtn svg{width:17px;height:17px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.months{display:flex;gap:6px;overflow:auto;margin:13px 0 12px;scrollbar-width:none}.months::-webkit-scrollbar{display:none}.months button{border:0;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:750;background:#e8e3d8;color:#615c52}.months button.active{background:var(--dark);color:#fff4d8}
+.periodPicker{position:relative;margin:13px 0 12px}.periodButton{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid var(--line);border-radius:14px;padding:11px 13px;background:#fff;color:var(--text);font-size:14px;font-weight:850}.periodButton span:last-child{color:#705820}.periodMenu{display:none;position:absolute;z-index:50;top:calc(100% + 6px);left:0;right:0;max-height:280px;overflow:auto;background:#fff;border:1px solid var(--line);border-radius:14px;padding:6px;box-shadow:0 14px 34px rgba(35,29,17,.16)}.periodMenu.open{display:grid}.periodOption{border:0;border-radius:10px;padding:10px 11px;background:transparent;text-align:left;color:var(--text);font-size:13px;font-weight:750}.periodOption.active{background:var(--goldSoft);color:#654f1c}
 .list{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}.tx{display:grid;grid-template-columns:1fr auto;gap:12px;padding:13px 15px;border-bottom:1px solid var(--line);align-items:center}.tx:last-child{border-bottom:0}.txName{font-size:16px;font-weight:750}.txDate{font-size:13px;font-weight:650;color:var(--muted);margin-top:4px}.txMeta{display:flex;align-items:center;gap:6px;flex-wrap:wrap}.txCategory{display:inline-flex;margin-top:5px;padding:3px 7px;border-radius:999px;background:var(--goldSoft);color:#705820;font-size:10px;font-weight:800}.txCategory.transfer{background:#ece9e2;color:#777064}.txAmt{font-size:16px;font-weight:850}.tx{user-select:none;-webkit-user-select:none}.tx.holding{background:var(--goldSoft)}.inc{color:var(--green)}.exp{color:var(--red)}
 .balance{background:linear-gradient(145deg,#151513,#272116);color:white;border:1px solid rgba(230,207,145,.5);border-radius:20px;padding:20px;margin:14px 0 10px;box-shadow:0 10px 28px rgba(46,38,19,.15)}.balance small{color:var(--gold2);font-weight:850;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.balance .hint{font-size:11px;color:#cfc7b7}
 .summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.asOf{font-size:10px;color:var(--muted);margin-top:5px;font-weight:700}.editableStat{cursor:pointer;transition:transform .12s ease,border-color .12s ease,background-color .12s ease;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y}.editableStat.holding{border-color:var(--gold);background:var(--goldSoft)}.balance.editableStat{cursor:pointer}.balance.editableStat.holding{border-color:#d8bd78;background:linear-gradient(145deg,#2f291d,#4b3a1d);color:#fff7e5}
@@ -57,7 +57,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
       <button id="summaryBtn" class="headerBtn">Tổng quan</button>
     </div>
   </div>
-  <div id="months" class="months"></div>
+  <div class="periodPicker"><button id="periodButton" class="periodButton" type="button"><span id="periodLabel">—</span><span>⌄</span></button><div id="periodMenu" class="periodMenu"></div></div>
 
   <div id="list" class="list"></div>
 
@@ -124,6 +124,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
       <div id="topSpending" class="topSpend"><div class="overviewLoading">Đang tải…</div></div>
     </div>
 
+    <div class="overviewSection"><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải toàn bộ giao dịch và category dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Giao dịch.</div></div>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
@@ -181,7 +182,7 @@ const fmtDate=(iso,expectedMonth)=>{
   return parts.length===3?parts[2]+'/'+parts[1]:'';
 };
 const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0');return `${now.getFullYear()}-${month}-${day}`};
-let user=null,current=8,entryType='expense',currentStatus=null,editingTx=null;
+const appNow=new Date();let user=null,current=appNow.getMonth()+1,currentYear=appNow.getFullYear(),entryType='expense',currentStatus=null,editingTx=null;
 let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
 const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
 const INCOME_CATEGORIES=['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'];
@@ -204,7 +205,8 @@ function guessCategory(description){
 }
 const categoryStorageKey=()=>`happy_money_categories_${user?.id||'guest'}`;
 function getCategoryOverrides(){try{return JSON.parse(localStorage.getItem(categoryStorageKey())||'{}')}catch{return {}}}
-function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values))}
+async function hydrateCategoryOverrides(){const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
+async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
 function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Chuyển tiền nội bộ')return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 let categoryManuallySelected=false;
@@ -222,18 +224,19 @@ function updatePrivacyButton(){
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
 function showAuth(){$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
 function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
+const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
+const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
 function renderMonths(){
-  $('months').innerHTML='';
-  for(let m=1;m<=8;m++){
-    const b=document.createElement('button');b.textContent='T'+m;b.className=m===current?'active':'';
-    b.addEventListener('click',()=>{current=m;renderMonths();refresh()});
-    $('months').appendChild(b);
-  }
+  const firstYear=2026,lastYear=Math.max(appNow.getFullYear()+1,currentYear),options=[];
+  for(let year=lastYear;year>=firstYear;year--)for(let month=12;month>=1;month--)options.push({year,month});
+  $('periodLabel').textContent=`Tháng ${current} · ${currentYear}`;
+  $('periodMenu').innerHTML=options.map(item=>`<button type="button" class="periodOption ${item.year===currentYear&&item.month===current?'active':''}" data-year="${item.year}" data-month="${item.month}">Tháng ${item.month} · ${item.year}</button>`).join('');
+  $('periodMenu').querySelectorAll('.periodOption').forEach(button=>button.onclick=()=>{currentYear=Number(button.dataset.year);current=Number(button.dataset.month);$('periodMenu').classList.remove('open');renderMonths();refresh()});
 }
 async function refresh(){
   const [{data:tx,error:txErr},{data:st,error:stErr}]=await Promise.all([
-    sb.from('transactions').select('*').eq('year',2026).eq('month',current).order('txn_date',{ascending:false,nullsFirst:false}).order('row_order',{ascending:false}),
-    sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle()
+    sb.from('transactions').select('*').eq('year',currentYear).eq('month',current).order('txn_date',{ascending:false,nullsFirst:false}).order('row_order',{ascending:false}),
+    sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle()
   ]);
   if(txErr){$('list').innerHTML='<div class="empty">Lỗi tải giao dịch</div>';return}
   const sortedTx=[...(tx||[])].sort((a,b)=>{
@@ -252,9 +255,9 @@ async function refresh(){
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
   // without counting the historical seed twice.
-  const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
-  const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
-  const asOfIso=`2026-${String(current).padStart(2,'0')}-${String(dayCount).padStart(2,'0')}`;
+  const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
+  const dayCount=current===now.getMonth()+1&&now.getFullYear()===currentYear?now.getDate():daysInMonth;
+  const asOfIso=`${currentYear}-${String(current).padStart(2,'0')}-${String(dayCount).padStart(2,'0')}`;
   const appRows=(tx||[]).filter(x=>{
     if(x.source==='sheet')return false;
     const normalized=normalizedIsoDate(x.txn_date,x.month);
@@ -270,7 +273,7 @@ async function refresh(){
   $('savingsBalance').textContent=privateFmt(st?.savings_balance||0);
   $('sendWife').textContent=privateFmt(st?.send_wife||0);
   $('startBalance').textContent=privateFmt(st?.start_balance||0);
-  const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`2026-${String(current).padStart(2,'0')}-01`;
+  const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`${currentYear}-${String(current).padStart(2,'0')}-01`;
   const statusFallback=String(st?.updated_at||'').slice(0,10)||latestDate;
   $('bankDate').textContent='Ngày '+fmtDate(st?.bank_balance_date||statusFallback,current);
   $('savingsDate').textContent='Ngày '+fmtDate(st?.savings_balance_date||statusFallback,current);
@@ -338,7 +341,7 @@ function bindStatusLongPress(){
 }
 async function openStatusEdit(key){
   currentStatus=key;const config=statusConfig[key];if(!config)return;
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
+  const {data:st}=await sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle();
   $('statusTitle').textContent=config.title;$('statusAmount').value=formatMoneyInputValue(Number(st?.[key]||0)||'');$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
 }
 function openAdd(){
@@ -370,40 +373,37 @@ function expenseThroughDay(rows,cutoffDay){
   },0);
 }
 async function renderMonthlyOverview(){
-  $('overviewMonth').textContent=current;
+  $('overviewMonth').textContent=current+' · '+currentYear;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
   $('topSpending').innerHTML='<div class="overviewLoading">Đang tải…</div>';
-  const previousMonth=current-1;
-  const queries=[
-    sb.from('transactions').select('*').eq('year',2026).eq('month',current),
-    sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle()
-  ];
-  if(previousMonth>0)queries.push(
-    sb.from('transactions').select('*').eq('year',2026).eq('month',previousMonth),
-    sb.from('monthly_status').select('*').eq('year',2026).eq('month',previousMonth).maybeSingle()
-  );
-  const results=await Promise.all(queries);
+  const previous=shiftPeriod(currentYear,current,-1),previousMonth=previous.month;
+  const results=await Promise.all([
+    sb.from('transactions').select('*').eq('year',currentYear).eq('month',current),
+    sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle(),
+    sb.from('transactions').select('*').eq('year',previous.year).eq('month',previous.month),
+    sb.from('monthly_status').select('*').eq('year',previous.year).eq('month',previous.month).maybeSingle()
+  ]);
   const rows=results[0].data||[],status=results[1].data,currentTotals=monthTotals(rows,status);
-  const previousRows=previousMonth>0?(results[2].data||[]):[];
-  const previousTotals=previousMonth>0?monthTotals(previousRows,results[3].data):null;
-  const now=new Date(),daysInMonth=new Date(2026,current,0).getDate();
-  const dayCount=current===now.getMonth()+1&&now.getFullYear()===2026?now.getDate():daysInMonth;
+  const previousRows=results[2].data||[],previousTotals=monthTotals(previousRows,results[3].data);
+  const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
+  const dayCount=current===now.getMonth()+1&&now.getFullYear()===currentYear?now.getDate():daysInMonth;
   const currentAsOfTotals=monthTotals(rows,status,dayCount);
-  const previousDaysInMonth=previousMonth>0?new Date(2026,previousMonth,0).getDate():0;
+  const previousDaysInMonth=new Date(previous.year,previous.month,0).getDate();
   const comparisonDay=Math.min(dayCount,previousDaysInMonth||dayCount);
   const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
   const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
   const asOfRows=rows.filter(row=>{const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));return day&&day<=dayCount});
   const expenses=asOfRows.filter(row=>Number(row.expense||0)>0);
-  const historyMonths=Array.from({length:3},(_,index)=>current-index-1).filter(month=>month>0);
-  const {data:historyRows=[]}=historyMonths.length?await sb.from('transactions').select('*').eq('year',2026).in('month',historyMonths):{data:[]};
+  const historyPeriods=Array.from({length:3},(_,index)=>shiftPeriod(currentYear,current,-index-1));
+  const earliest=historyPeriods[historyPeriods.length-1],latest=historyPeriods[0];
+  const {data:historyRows=[]}=await sb.from('transactions').select('*').gte('txn_date',`${earliest.year}-${String(earliest.month).padStart(2,'0')}-01`).lt('txn_date',`${currentYear}-${String(current).padStart(2,'0')}-01`);
   const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
   let trendText='Chưa có dữ liệu tháng trước',trendNote='',trendClass='';
   if(previousTotals&&previousComparableExpense>0){
     const percent=Math.round(Math.abs(currentComparableExpense-previousComparableExpense)/previousComparableExpense*100);
     const lower=currentComparableExpense<=previousComparableExpense;
     trendText=`Chi ${lower?'giảm':'tăng'} ${percent}%`;
-    trendNote=`Cùng kỳ tháng ${previousMonth}`;
+    trendNote=`Cùng kỳ tháng ${previous.month}`;
     trendClass=lower?'trendGood':'trendBad';
   }
   $('overviewStats').innerHTML=`<div class="statGrid">
@@ -423,7 +423,7 @@ async function renderMonthlyOverview(){
   $('categoryTags').querySelectorAll('button').forEach(button=>button.onclick=()=>{
     const name=button.dataset.category,matched=expenses.filter(row=>categoryFor(row)===name);
     const total=matched.reduce((sum,row)=>sum+Number(row.expense||0),0),totalExpense=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0),share=totalExpense?Math.round(total/totalExpense*100):0;
-    const historyTotals=historyMonths.map(month=>historyRows.filter(row=>{const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));return Number(row.month)===month&&day&&day<=dayCount&&Number(row.expense||0)>0&&categoryFor(row)===name}).reduce((sum,row)=>sum+Number(row.expense||0),0));
+    const historyTotals=historyPeriods.map(period=>historyRows.filter(row=>{const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));return Number(row.year)===period.year&&Number(row.month)===period.month&&day&&day<=dayCount&&Number(row.expense||0)>0&&categoryFor(row)===name}).reduce((sum,row)=>sum+Number(row.expense||0),0));
     const average=historyTotals.length?Math.round(historyTotals.reduce((sum,value)=>sum+value,0)/historyTotals.length):0,comparison=average>0?Math.round(Math.abs(total-average)/average*100):null;
     const comparisonText=comparison===null?'Chưa đủ dữ liệu để so sánh':`${total>=average?'Cao':'Thấp'} hơn bình quân cùng kỳ ${comparison}% · Bình quân ${fmt(average)}`;
     $('categoryTags').querySelectorAll('button').forEach(item=>item.classList.toggle('selected',item===button));$('categoryToggleText').textContent=name;$('categoryTags').classList.remove('open');
@@ -485,7 +485,7 @@ document.addEventListener('touchend',()=>{
   if(shouldRefresh)runAppRefresh();else hidePullRefresh();
 },{passive:true});
 
-$('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;showApp();renderMonths();refresh()}});
+$('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;await hydrateCategoryOverrides();showApp();renderMonths();refresh()}});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
 $('privacyBtn').addEventListener('click',async()=>{
   privacyHidden=!privacyHidden;
@@ -510,8 +510,8 @@ $('saveTx').addEventListener('click',async()=>{
   if(!amount||!desc||!date)return;
   const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source:'app',source_key:'app-'+crypto.randomUUID()};
   const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error){alert(error.message);return}
-  if(inserted?.id)saveCategoryOverride(inserted.id,$('category').value);
-  current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
+  if(inserted?.id)await saveCategoryOverride(inserted.id,$('category').value);
+  currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
 });
 $('summaryBtn').addEventListener('click',async()=>{$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
 $('closeSummary').addEventListener('click',()=>$('summaryOverlay').classList.remove('open'));
@@ -522,8 +522,8 @@ $('statusOverlay').addEventListener('click',e=>{if(e.target===$('statusOverlay')
 $('statusTodayBtn').addEventListener('click',()=>{$('statusDate').value=todayIso()});
 $('saveStatus').addEventListener('click',async()=>{
   const config=statusConfig[currentStatus],amount=cleanMoney('statusAmount'),date=$('statusDate').value;if(!config||!date)return;
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',2026).eq('month',current).maybeSingle();
-  const payload={...(st||{}),user_id:user.id,year:2026,month:current,[currentStatus]:amount,[config.dateField]:date,updated_at:new Date().toISOString()};delete payload.id;
+  const {data:st}=await sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle();
+  const payload={...(st||{}),user_id:user.id,year:currentYear,month:current,[currentStatus]:amount,[config.dateField]:date,updated_at:new Date().toISOString()};delete payload.id;
   let {error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'});
   if(error&&String(error.message||'').includes(config.dateField)){delete payload[config.dateField];payload.updated_at=date+'T12:00:00.000Z';({error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'}))}
   if(error){alert(error.message);return}$('statusOverlay').classList.remove('open');refresh();
@@ -535,8 +535,19 @@ $('saveEditTx').addEventListener('click',async()=>{
   if(!editingTx)return;const amount=cleanMoney('editTxAmount'),date=$('editTxDate').value;if(!amount||!date)return;
   const isIncome=Number(editingTx.income||0)>0,payload={txn_date:date,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:'app_edited',updated_at:new Date().toISOString()};
   const {error}=await sb.from('transactions').update(payload).eq('id',editingTx.id).eq('user_id',user.id);if(error){alert(error.message);return}
-  saveCategoryOverride(editingTx.id,$('editTxCategory').value);
-  current=payload.month;$('editTxOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+  await saveCategoryOverride(editingTx.id,$('editTxCategory').value);
+  currentYear=payload.year;current=payload.month;$('editTxOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+});
+$('periodButton').addEventListener('click',()=>{$('periodMenu').classList.toggle('open')});
+document.addEventListener('click',event=>{if(!event.target.closest('.periodPicker'))$('periodMenu').classList.remove('open')});
+$('exportBtn').addEventListener('click',async()=>{
+  const {data:rows,error}=await sb.from('transactions').select('*').order('txn_date',{ascending:true});
+  if(error){alert('Không thể xuất dữ liệu');return}
+  const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+  const lines=[['Ngày','Nội dung','Danh mục','Thu','Chi','Nguồn'].map(quote).join(',')];
+  (rows||[]).forEach(row=>lines.push([normalizedIsoDate(row.txn_date,row.month),row.description,categoryFor(row),Number(row.income||0),Number(row.expense||0),row.source].map(quote).join(',')));
+  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+  link.href=url;link.download=`happy-money-backup-${todayIso()}.csv`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
 });
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;showAuth()});
 
@@ -544,7 +555,7 @@ async function init(){
   updatePrivacyButton();
   const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
   const {data:{session}}=await sb.auth.getSession();
-  if(session){user=session.user;showApp();renderMonths();await refresh()}else showAuth();
+  if(session){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else showAuth();
 }
 init();
 </script>
