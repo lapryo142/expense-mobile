@@ -227,8 +227,11 @@ function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('
 const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
 const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
 function renderMonths(){
-  const firstYear=2026,lastYear=Math.max(appNow.getFullYear()+1,currentYear),options=[];
-  for(let year=lastYear;year>=firstYear;year--)for(let month=12;month>=1;month--)options.push({year,month});
+  const firstYear=2026,lastYear=appNow.getFullYear(),options=[];
+  for(let year=lastYear;year>=firstYear;year--){
+    const lastMonth=year===appNow.getFullYear()?appNow.getMonth()+1:12;
+    for(let month=lastMonth;month>=1;month--)options.push({year,month});
+  }
   $('periodLabel').textContent=`Tháng ${current} · ${currentYear}`;
   $('periodMenu').innerHTML=options.map(item=>`<button type="button" class="periodOption ${item.year===currentYear&&item.month===current?'active':''}" data-year="${item.year}" data-month="${item.month}">Tháng ${item.month} · ${item.year}</button>`).join('');
   $('periodMenu').querySelectorAll('.periodOption').forEach(button=>button.onclick=()=>{currentYear=Number(button.dataset.year);current=Number(button.dataset.month);$('periodMenu').classList.remove('open');renderMonths();refresh()});
