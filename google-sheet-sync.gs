@@ -424,6 +424,8 @@ function readSyncId_(note) {
 
 function transactionSourceFromKey_(sourceKey) {
   const key = String(sourceKey || '');
+  if (key.indexOf('app-pay-later-') === 0) return 'app_pay_later';
+  if (key.indexOf('app-cash-') === 0) return 'app_cash';
   if (key.indexOf('app-') === 0) return 'app';
   if (key.indexOf('sheet-') === 0) return 'sheet_new';
   return 'sheet';
@@ -467,4 +469,3 @@ function requestSupabase_(config, path, options) {
   }
   return body ? JSON.parse(body) : null;
 }
-

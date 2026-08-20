@@ -148,6 +148,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <div id="editTxName" class="statNote" style="margin-top:8px"></div>
     <div class="field"><label>SỐ TIỀN</label><input id="editTxAmount" class="amount" inputmode="numeric"></div>
     <div class="field"><label>DANH MỤC</label><select id="editTxCategory"></select></div>
+    <div id="editPaymentField" class="field"><label>NGUỒN THANH TOÁN</label><select id="editTxPayment"><option value="bank">Techcombank</option><option value="cash">Tiền mặt</option><option value="pay_later">Trả sau</option></select></div>
     <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="editTxTodayBtn" type="button" class="todayBtn">Hôm nay</button><input id="editTxDate" type="date"></div></div>
     <button id="saveEditTx" class="primary">Lưu thay đổi</button>
   </div>
@@ -189,8 +190,13 @@ const appNow=new Date();let user=null,current=appNow.getMonth()+1,currentYear=ap
 let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
 const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
 const INCOME_CATEGORIES=['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'];
-const CATEGORY_NAMES=[...INCOME_CATEGORIES,...EXPENSE_CATEGORIES];
+const TRANSFER_CATEGORY='Chuyển tiền nội bộ';
+const CATEGORY_NAMES=[...INCOME_CATEGORIES,...EXPENSE_CATEGORIES,TRANSFER_CATEGORY];
 const normalizeText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
+const isCashWithdrawalDescription=description=>/(^|[>:\-]\s*)rut tien mat\s*$/.test(normalizeText(description).trim());
+const isCashWithdrawal=row=>Number(row?.expense||0)>0&&isCashWithdrawalDescription(row?.description);
+const paymentMethodFor=row=>row?.payment_method||((row?.source==='app_pay_later'||String(row?.source_key||'').indexOf('app-pay-later-')===0||/(tra sau|pay later)/.test(normalizeText(row?.description)))?'pay_later':row?.source==='app_cash'||String(row?.source_key||'').indexOf('app-cash-')===0?'cash':'bank');
+const isPayLater=row=>paymentMethodFor(row)==='pay_later';
 function guessCategory(description){
   const s=normalizeText(description);
   if(/rut tien mat|(^|\s)tien mat(\s|$)/.test(s))return 'Tiền mặt & lặt vặt';
@@ -210,7 +216,7 @@ const categoryStorageKey=()=>`happy_money_categories_${user?.id||'guest'}`;
 function getCategoryOverrides(){try{return JSON.parse(localStorage.getItem(categoryStorageKey())||'{}')}catch{return {}}}
 async function hydrateCategoryOverrides(){const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
 async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
-function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Chuyển tiền nội bộ')return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
+function categoryFor(row){if(isCashWithdrawal(row))return TRANSFER_CATEGORY;const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 let categoryManuallySelected=false;
 function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;const names=mode==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES;select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
@@ -255,8 +261,9 @@ async function refresh(){
   $('list').innerHTML=sortedTx.map(x=>{
     const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
     const d=fmtDate(x.txn_date,x.month);
-    const category=categoryFor(x),transfer=INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập',payLater=x.source==='app_pay_later';
-    return `<div class="tx" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${isIncome?'inc':'exp'}">${isIncome?(privacyHidden?'••••••':'+'+fmt(amt)):'-'+fmt(amt)}</div></div>`;
+    const category=categoryFor(x),transfer=category===TRANSFER_CATEGORY||(INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập'),payLater=isPayLater(x);
+    const amountText=privacyHidden?'••••••':transfer?'↔ '+fmt(amt):isIncome?'+'+fmt(amt):'-'+fmt(amt);
+    return `<div class="tx" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
@@ -271,15 +278,17 @@ async function refresh(){
   });
   let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
   const sheetFundingIncome=(tx||[]).filter(x=>x.source==='sheet'&&isFundingCategory(x)).reduce((sum,x)=>sum+Number(x.income||0),0);
+  const sheetCashWithdrawals=(tx||[]).filter(x=>x.source==='sheet'&&isCashWithdrawal(x)).reduce((sum,x)=>sum+Number(x.expense||0),0);
   inc-=sheetFundingIncome;
-  appRows.forEach(x=>{if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
+  exp-=sheetCashWithdrawals;rem+=sheetCashWithdrawals;
+  appRows.forEach(x=>{if(isCashWithdrawal(x))return;if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
   $('bankHero').textContent=privateFmt(st?.bank_balance||0);
   $('remain').textContent=privateFmt(rem);
   $('foodDifference').textContent=privateFmt(rem-Number(st?.bank_balance||0));
   $('savingsBalance').textContent=privateFmt(st?.savings_balance||0);
   $('sendWife').textContent=privateFmt(st?.send_wife||0);
   $('startBalance').textContent=privateFmt(st?.start_balance||0);
-  const payLaterTotal=appRows.filter(x=>x.source==='app_pay_later').reduce((sum,x)=>sum+Number(x.expense||0),0);
+  const payLaterTotal=(tx||[]).filter(x=>isPayLater(x)&&!isCashWithdrawal(x)).reduce((sum,x)=>sum+Number(x.expense||0),0);
   $('payLaterTotal').textContent=privateFmt(payLaterTotal);
   const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`${currentYear}-${String(current).padStart(2,'0')}-01`;
   const statusFallback=String(st?.updated_at||'').slice(0,10)||latestDate;
@@ -307,7 +316,7 @@ function bindTransactionLongPress(rows){
   });
 }
 function openTransactionEdit(row){
-  editingTx=row;$('editTxName').textContent=row.description||'';$('editTxAmount').value=formatMoneyInputValue(Number(row.income||0)||Number(row.expense||0)||'');fillCategorySelect('editTxCategory',categoryFor(row),Number(row.income||0)>0?'income':'expense');$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();$('editTxOverlay').classList.add('open');
+  const isIncome=Number(row.income||0)>0,cashWithdrawal=isCashWithdrawal(row);editingTx=row;$('editTxName').textContent=row.description||'';$('editTxAmount').value=formatMoneyInputValue(Number(row.income||0)||Number(row.expense||0)||'');$('editTxCategory').disabled=cashWithdrawal;if(cashWithdrawal){$('editTxCategory').innerHTML=`<option value="${TRANSFER_CATEGORY}">${TRANSFER_CATEGORY}</option>`}else fillCategorySelect('editTxCategory',categoryFor(row),isIncome?'income':'expense');$('editPaymentField').classList.toggle('hidden',isIncome);$('editTxPayment').value=paymentMethodFor(row);$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();$('editTxOverlay').classList.add('open');
 }
 const statusConfig={
   bank_balance:{title:'Còn lại trong ngân hàng',valueId:'bankHero',dateField:'bank_balance_date'},
@@ -369,20 +378,22 @@ function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
 function monthTotals(rows,status,cutoffDay=null){
   let income=Number(status?.total_income||0),expense=Number(status?.total_expense||0);
   const sheetFunding=(rows||[]).filter(row=>row.source==='sheet'&&isFundingCategory(row));
+  const sheetCashWithdrawals=(rows||[]).filter(row=>row.source==='sheet'&&isCashWithdrawal(row));
   income-=sheetFunding.reduce((sum,row)=>sum+Number(row.income||0),0);
+  expense-=sheetCashWithdrawals.reduce((sum,row)=>sum+Number(row.expense||0),0);
   (rows||[]).filter(row=>{
     if(row.source==='sheet')return false;
     if(cutoffDay===null)return true;
     const normalized=normalizedIsoDate(row.txn_date,row.month);
     return normalized&&Number(normalized.slice(8,10))<=cutoffDay;
-  }).forEach(row=>{if(!isFundingCategory(row))income+=Number(row.income||0);expense+=Number(row.expense||0)});
+  }).forEach(row=>{if(isCashWithdrawal(row))return;if(!isFundingCategory(row))income+=Number(row.income||0);expense+=Number(row.expense||0)});
   return {income,expense};
 }
 function expenseThroughDay(rows,cutoffDay){
   return (rows||[]).reduce((sum,row)=>{
     const normalized=normalizedIsoDate(row.txn_date,row.month);
     const day=Number(normalized.slice(8,10));
-    return day&&day<=cutoffDay?sum+Number(row.expense||0):sum;
+    return day&&day<=cutoffDay&&!isCashWithdrawal(row)?sum+Number(row.expense||0):sum;
   },0);
 }
 async function renderMonthlyOverview(){
@@ -406,8 +417,8 @@ async function renderMonthlyOverview(){
   const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
   const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
   const asOfRows=rows.filter(row=>{const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));return day&&day<=dayCount});
-  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0);
-  const payLaterExpense=expenses.filter(row=>row.source==='app_pay_later').reduce((sum,row)=>sum+Number(row.expense||0),0);
+  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0&&!isCashWithdrawal(row));
+  const payLaterExpense=expenses.filter(isPayLater).reduce((sum,row)=>sum+Number(row.expense||0),0);
   const historyPeriods=Array.from({length:3},(_,index)=>shiftPeriod(currentYear,current,-index-1));
   const earliest=historyPeriods[historyPeriods.length-1],latest=historyPeriods[0];
   const {data:historyRows=[]}=await sb.from('transactions').select('*').gte('txn_date',`${earliest.year}-${String(earliest.month).padStart(2,'0')}-01`).lt('txn_date',`${currentYear}-${String(current).padStart(2,'0')}-01`);
@@ -525,7 +536,8 @@ $('saveTx').addEventListener('click',async()=>{
   const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;
   if(!amount||!desc||!date)return;
   const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
-  const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,source_key:'app-'+crypto.randomUUID()};
+  const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
+  const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
   const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error){alert(error.message);return}
   if(inserted?.id)await saveCategoryOverride(inserted.id,$('category').value);
   currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();
@@ -550,7 +562,7 @@ $('editTxOverlay').addEventListener('click',e=>{if(e.target===$('editTxOverlay')
 $('editTxTodayBtn').addEventListener('click',()=>{$('editTxDate').value=todayIso()});
 $('saveEditTx').addEventListener('click',async()=>{
   if(!editingTx)return;const amount=cleanMoney('editTxAmount'),date=$('editTxDate').value;if(!amount||!date)return;
-  const isIncome=Number(editingTx.income||0)>0,preservedSource=['app_pay_later','app_cash'].includes(editingTx.source)?editingTx.source:'app_edited',payload={txn_date:date,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:preservedSource,updated_at:new Date().toISOString()};
+  const isIncome=Number(editingTx.income||0)>0,method=isIncome?null:$('editTxPayment').value,preservedSource=method==='pay_later'?'app_pay_later':method==='cash'?'app_cash':'app_edited',payload={txn_date:date,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:preservedSource,payment_method:method,updated_at:new Date().toISOString()};
   const {error}=await sb.from('transactions').update(payload).eq('id',editingTx.id).eq('user_id',user.id);if(error){alert(error.message);return}
   await saveCategoryOverride(editingTx.id,$('editTxCategory').value);
   currentYear=payload.year;current=payload.month;$('editTxOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();

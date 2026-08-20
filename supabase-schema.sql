@@ -13,6 +13,7 @@ create table if not exists public.transactions (
   income bigint not null default 0,
   expense bigint not null default 0,
   source text not null default 'app',
+  payment_method text check (payment_method is null or payment_method in ('bank','cash','pay_later')),
   source_key text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now(),
