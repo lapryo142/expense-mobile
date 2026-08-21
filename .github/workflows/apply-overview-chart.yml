@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - overview-category-donut
+  pull_request:
+    branches:
+      - main
 
 permissions:
   contents: write
