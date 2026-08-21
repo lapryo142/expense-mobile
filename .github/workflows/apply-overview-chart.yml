@@ -1,0 +1,134 @@
+name: Apply overview category chart
+
+on:
+  push:
+    branches:
+      - overview-category-donut
+
+permissions:
+  contents: write
+
+jobs:
+  patch-overview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: overview-category-donut
+      - name: Patch index.html
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text()
+
+          def replace_once(old, new, label):
+              global text
+              count = text.count(old)
+              if count != 1:
+                  raise SystemExit(f'{label}: expected 1 match, found {count}')
+              text = text.replace(old, new, 1)
+
+          replace_once(
+              '.statBox.wide{grid-column:1/-1}.statLabel',
+              '.statBox.wide{grid-column:1/-1}.statBox.sideStat{min-width:0}.statBox.sideStat .statValue{font-size:16px;overflow-wrap:anywhere}.statBox.payLaterOverview{background:linear-gradient(145deg,#faf3f8,#f2e4f0);border-color:#dec4da}.statBox.payLaterOverview .statLabel{color:#74436d}.statLabel',
+              'overview stat modifiers'
+          )
+
+          replace_once(
+              '.overviewLoading{padding:18px;text-align:center;color:var(--muted);font-size:12px}.categoryToggle',
+              '.overviewLoading{padding:18px;text-align:center;color:var(--muted);font-size:12px}.categoryChart{background:#faf8f3;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}.categoryChartBody{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:center}.categoryDonut{position:relative;width:132px;aspect-ratio:1}.categoryDonut svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}.categoryDonutTrack,.categoryDonutSlice{fill:none;stroke-width:18}.categoryDonutTrack{stroke:#ebe6dc}.categoryDonutCenter{position:absolute;inset:26px;display:grid;place-items:center;text-align:center;background:#faf8f3;border-radius:50%;padding:4px}.categoryDonutCenter strong{display:block;font-size:13px;line-height:1.15;letter-spacing:-.25px}.categoryDonutCenter span{display:block;font-size:9px;color:var(--muted);font-weight:850;margin-top:3px}.categoryLegend{display:grid;gap:8px;min-width:0}.categoryLegendRow{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:7px;align-items:start}.categoryLegendSwatch{width:10px;height:10px;border-radius:50%;margin-top:3px}.categoryLegendName{font-size:11px;font-weight:850;line-height:1.2}.categoryLegendMeta{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.2}.categoryLegendShare{font-size:11px;font-weight:900;white-space:nowrap}.categoryChartEmpty{padding:20px 8px;text-align:center;color:var(--muted);font-size:12px}@media(max-width:360px){.categoryChartBody{grid-template-columns:112px minmax(0,1fr);gap:10px}.categoryDonut{width:112px}.categoryDonutCenter{inset:23px}.categoryLegend{gap:7px}}.categoryToggle',
+              'category chart styles'
+          )
+
+          replace_once(
+              '      <div class="sectionTitle">CHI THEO DANH MỤC</div>\n      <button id="categoryToggle"',
+              '      <div class="sectionTitle">CHI THEO DANH MỤC</div>\n      <div id="categoryChart" class="categoryChart"><div class="overviewLoading">Đang tải biểu đồ…</div></div>\n      <button id="categoryToggle"',
+              'category chart markup'
+          )
+
+          render_function = r'''function renderCategoryChart(expenses){
+  const container=$('categoryChart');if(!container)return;
+  const palette=['#c7a45a','#9c4c43','#5d7a6f','#7a6b99','#b3845d','#6f879c','#a06e78','#8b8a61','#6f6a60','#b7aa99'];
+  const grouped=EXPENSE_CATEGORIES.map(name=>({
+    name,
+    total:(expenses||[]).filter(row=>categoryFor(row)===name).reduce((sum,row)=>sum+Number(row.expense||0),0)
+  })).filter(item=>item.total>0).sort((a,b)=>b.total-a.total);
+  const total=grouped.reduce((sum,item)=>sum+item.total,0);
+  if(!total){container.innerHTML='<div class="categoryChartEmpty">Chưa có khoản chi trong tháng này</div>';return}
+  let offset=0;
+  const slices=grouped.map((item,index)=>{
+    const share=item.total/total*100,color=palette[index%palette.length];
+    const circle=`<circle class="categoryDonutSlice" cx="60" cy="60" r="48" pathLength="100" stroke="${color}" stroke-dasharray="${share} ${100-share}" stroke-dashoffset="${-offset}"></circle>`;
+    offset+=share;return circle;
+  }).join('');
+  const legend=grouped.map((item,index)=>{
+    const share=Math.round(item.total/total*100),color=palette[index%palette.length];
+    return `<div class="categoryLegendRow"><span class="categoryLegendSwatch" style="background:${color}"></span><div><div class="categoryLegendName">${escapeHtml(item.name)}</div><div class="categoryLegendMeta">${fmt(item.total)}</div></div><div class="categoryLegendShare">${share}%</div></div>`;
+  }).join('');
+  const centerTotal=total>=1000000?new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(total)+' ₫':fmt(total);
+  container.innerHTML=`<div class="categoryChartBody"><div class="categoryDonut"><svg viewBox="0 0 120 120" role="img" aria-label="Tỷ trọng chi tiêu theo danh mục"><circle class="categoryDonutTrack" cx="60" cy="60" r="48"></circle>${slices}</svg><div class="categoryDonutCenter"><div><strong>${centerTotal}</strong><span>TỔNG CHI</span></div></div></div><div class="categoryLegend">${legend}</div></div>`;
+}
+'''
+          replace_once(
+              'async function renderMonthlyOverview(){',
+              render_function + 'async function renderMonthlyOverview(){',
+              'category chart renderer'
+          )
+
+          replace_once(
+              "  $('topSpending').innerHTML='<div class=\"overviewLoading\">Đang tải…</div>';\n",
+              "  $('topSpending').innerHTML='<div class=\"overviewLoading\">Đang tải…</div>';\n  $('categoryChart').innerHTML='<div class=\"overviewLoading\">Đang tải biểu đồ…</div>';\n",
+              'category chart loading state'
+          )
+
+          replace_once(
+              '  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0);\n  const payLaterExpense=',
+              '  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0);\n  renderCategoryChart(expenses);\n  const payLaterExpense=',
+              'category chart render call'
+          )
+
+          replace_once(
+              '    <div class="statBox wide"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>\n    <div class="statBox wide"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):\'—\'}</div><div class="statNote">${largest?escapeHtml(largest.description):\'Chưa có khoản chi\'}</div></div>',
+              '    <div class="statBox sideStat payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>\n    <div class="statBox sideStat"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):\'—\'}</div><div class="statNote">${largest?escapeHtml(largest.description):\'Chưa có khoản chi\'}</div></div>',
+              'pay later and largest expense row'
+          )
+
+          replace_once(
+              "  currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();refresh();\n",
+              "  currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();\n",
+              'new transaction refresh'
+          )
+
+          path.write_text(text)
+          PY
+      - name: Validate inline JavaScript
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          text=Path('index.html').read_text()
+          scripts=re.findall(r'<script(?: [^>]*)?>(.*?)</script>',text,flags=re.S)
+          inline=[s for s in scripts if s.strip()]
+          if not inline:
+              raise SystemExit('No inline script found')
+          Path('/tmp/happy-money-inline.js').write_text(inline[-1])
+          PY
+          node --check /tmp/happy-money-inline.js
+          grep -q 'id="categoryChart"' index.html
+          grep -q 'statBox sideStat payLaterOverview' index.html
+      - name: Commit patched app
+        shell: bash
+        run: |
+          if git diff --quiet -- index.html; then
+            echo 'No index.html changes to commit.'
+            exit 0
+          fi
+          git config user.name 'happy-money-bot'
+          git config user.email 'happy-money-bot@users.noreply.github.com'
+          git add -- index.html
+          git commit -m 'Add category spending donut to overview'
+          git push origin HEAD:overview-category-donut
