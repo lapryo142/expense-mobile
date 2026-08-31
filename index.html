@@ -96,7 +96,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
-    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric" placeholder="220.000"></div>
+    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric"></div>
     <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
     <div class="field"><label>DANH MỤC</label><select id="category"></select></div>
     <div id="paymentField" class="field"><label>NGUỒN THANH TOÁN</label><div class="paymentChoice"><button type="button" data-payment="bank" class="active">Techcombank</button><button type="button" data-payment="cash">Tiền mặt</button><button type="button" data-payment="pay_later">Trả sau</button></div><div id="paymentHint" class="paymentHint">Khoản chi được ghi nhận ngay.</div></div>
@@ -550,9 +550,9 @@ $('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('ope
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
-$('category').addEventListener('change',()=>{categoryManuallySelected=true});
+$('category').addEventListener('change',()=>{categoryManuallySelected=true;$('amount').focus()});
 $('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):guessed});
-document.querySelectorAll('#quickExpense button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;$('desc').focus()}));
+document.querySelectorAll('#quickExpense button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;$('amount').focus()}));
 document.querySelectorAll('#quickIncome button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');$('desc').value=button.dataset.name||'';categoryManuallySelected=true;$('category').value=button.dataset.name==='Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập';(button.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
   const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;
