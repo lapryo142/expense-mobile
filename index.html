@@ -216,6 +216,7 @@ async function hydrateCategoryOverrides(){const remote=user?.user_metadata?.happ
 async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
 function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Chuyển tiền nội bộ')return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
+const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
 let categoryManuallySelected=false;
 function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;const names=mode==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES;select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
 const privateFmt=value=>privacyHidden?'••••••':fmt(value);
@@ -256,7 +257,7 @@ async function refresh(){
     if(byCreated)return byCreated;
     return Number(b.row_order||0)-Number(a.row_order||0);
   });
-  $('list').innerHTML=sortedTx.map(x=>{
+  $('list').innerHTML=sortedTx.filter(x=>!isOpeningBalance(x)).map(x=>{
     const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
     const d=fmtDate(x.txn_date,x.month);
     const category=categoryFor(x),transfer=INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập',payLater=isPayLater(x);
@@ -277,7 +278,7 @@ async function refresh(){
   let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
   const sheetFundingIncome=(tx||[]).filter(x=>x.source==='sheet'&&isFundingCategory(x)).reduce((sum,x)=>sum+Number(x.income||0),0);
   inc-=sheetFundingIncome;
-  appRows.forEach(x=>{if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
+  appRows.forEach(x=>{if(isOpeningBalance(x)){if(!Number(st?.start_balance||0))rem+=Number(x.income||0)-Number(x.expense||0);return}if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
   $('bankHero').textContent=privateFmt(st?.bank_balance||0);
   $('remain').textContent=privateFmt(rem);
   $('foodDifference').textContent=privateFmt(rem-Number(st?.bank_balance||0));
