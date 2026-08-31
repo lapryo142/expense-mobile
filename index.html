@@ -199,7 +199,7 @@ function guessCategory(description){
   const s=normalizeText(description);
   if(/rut tien mat|(^|\s)tien mat(\s|$)/.test(s))return 'Tiền mặt & lặt vặt';
   if(/rut tiet kiem|rut tu tiet kiem|chuyen tu tiet kiem/.test(s))return 'Rút tiết kiệm';
-  if(/dau thang tai khoan|^dau thang$/.test(s))return 'Số dư đầu tháng';
+  if(/^(so du )?dau thang( tai khoan)?$/.test(s))return 'Số dư đầu tháng';
   if(/tennis|san tennis|vot|babolat|dan vot|cuon can|le phi giai|danh giai|may giay adidas/.test(s))return 'Tennis';
   if(/taxi|grab|xanh sm|xe om|xang|gui xe|ve que|que len|ve sg|vario|vespa|thay nhot|nhot may|bao tri xe/.test(s))return 'Di chuyển & xe';
   if(/tien dien|tien nuoc|internet|wifi|dien thoai|may lanh|may loc khong khi|binh dun|ban lam viec|sieu thi|gia dung/.test(s))return 'Nhà cửa & hóa đơn';
