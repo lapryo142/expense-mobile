@@ -20,6 +20,7 @@ const EXPENSE_SYNC = {
   firstDataRow: 4,
   maxAutomaticNewRows: 25,
   idNotePrefix: 'expense-sync-id:',
+  statusNotePrefix: 'expense-status-sync:',
   monthNames: {
     january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
     july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
@@ -29,9 +30,11 @@ const EXPENSE_SYNC = {
     savings_balance: { labels: ['tổng tiết kiệm'], dateField: 'savings_balance_date' },
     bank_balance: { labels: ['còn lại ngân hàng', 'còn lại trong ngân hàng'], dateField: 'bank_balance_date' }
   },
+  startBalanceLabels: ['đầu tháng', 'đầu tháng tài khoản', 'số dư đầu tháng', 'số dư đầu tháng tài khoản'],
   ignoredLabels: [
     'tổng', 'đưa vợ', 'gửi vợ', 'bỏ vào tiết kiệm', 'tiết kiệm', 'tổng tiết kiệm',
-    'còn lại', 'còn lại ngân hàng', 'còn lại trong ngân hàng', 'chênh lệch (ăn uống)'
+    'còn lại', 'còn lại ngân hàng', 'còn lại trong ngân hàng', 'chênh lệch (ăn uống)',
+    'đầu tháng', 'đầu tháng tài khoản', 'số dư đầu tháng', 'số dư đầu tháng tài khoản'
   ]
 };
 
@@ -43,6 +46,9 @@ function syncExpenseBidirectional() {
   const totals = { uploadedFromSheet: 0, downloadedToSheet: 0, alreadyInSheet: 0, monthlyStatusCellsUpdated: 0 };
 
   contexts.forEach(context => {
+    const statusResult = syncMonthlyStatusesBidirectional_(config, context);
+    totals.monthlyStatusCellsUpdated += statusResult.updated;
+
     const initialRemoteRows = fetchTransactions_(config, context.year);
     applyPendingAppEditsToSheet_(context, initialRemoteRows);
     const sheetRows = readExpenseSheetRows_(context, initialRemoteRows);
@@ -64,8 +70,6 @@ function syncExpenseBidirectional() {
     totals.downloadedToSheet += result.inserted;
     totals.alreadyInSheet += result.existing;
 
-    const statusResult = syncMonthlyStatusesToSheet_(config, context);
-    totals.monthlyStatusCellsUpdated += statusResult.updated;
   });
 
   SpreadsheetApp.flush();
@@ -124,10 +128,18 @@ function detectMonthColumns_(sheet) {
   const lastColumn = Math.max(1, sheet.getLastColumn());
   const headers = sheet.getRange(EXPENSE_SYNC.monthHeaderRow, 1, 1, lastColumn).getDisplayValues()[0];
   const result = {};
+  const sheetYear = Number(String(sheet.getName() || '').trim());
+  const now = new Date();
+  const currentYear = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy'));
+  const currentMonth = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'M'));
+
+  if (sheetYear > currentYear) return result;
   headers.forEach((value, index) => {
     const key = normalizeLabel_(value);
     const month = EXPENSE_SYNC.monthNames[key];
-    if (month && !result[month]) result[month] = index + 1;
+    if (!month || result[month]) return;
+    if (sheetYear === currentYear && month > currentMonth) return;
+    result[month] = index + 1;
   });
   return result;
 }
@@ -136,14 +148,147 @@ function fetchMonthlyStatuses_(config, year) {
   const query = [
     'user_id=eq.' + encodeURIComponent(config.userId),
     'year=eq.' + year,
-    'select=year,month,bank_balance,bank_balance_date,savings_balance,savings_balance_date,send_wife,send_wife_date,updated_at',
+    'select=user_id,year,month,start_balance,total_income,total_expense,remaining,bank_balance,bank_balance_date,food_difference,savings_balance,savings_balance_date,send_wife,send_wife_date,updated_at',
     'order=month.asc'
   ].join('&');
   return requestSupabase_(config, '/rest/v1/monthly_status?' + query, { method: 'get' });
 }
 
-function syncMonthlyStatusesToSheet_(config, context) {
-  const statuses = fetchMonthlyStatuses_(config, context.year);
+function syncMonthlyStatusesBidirectional_(config, context) {
+  let statuses = fetchMonthlyStatuses_(config, context.year) || [];
+  const byMonth = new Map(statuses.map(status => [Number(status.month), status]));
+  const now = new Date();
+  const currentYear = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy'));
+  const currentMonth = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'M'));
+  const descriptionColumn = context.monthColumns[currentMonth];
+
+  if (context.year === currentYear && descriptionColumn) {
+    const remote = byMonth.get(currentMonth) || null;
+    const sheetStatus = readMonthlyStatusFromSheet_(context, currentMonth, descriptionColumn);
+    const merged = mergeCurrentMonthStatus_(config, context, currentMonth, remote, sheetStatus);
+    if (merged.changed) {
+      upsertMonthlyStatuses_(config, [merged.status]);
+      statuses = fetchMonthlyStatuses_(config, context.year) || [];
+    }
+  }
+
+  const written = syncMonthlyStatusesToSheet_(config, context, statuses);
+  return { updated: written.updated };
+}
+
+function readMonthlyStatusFromSheet_(context, month, descriptionColumn) {
+  const sheet = context.sheet;
+  const totalRow = findMonthTotalRow_(sheet, descriptionColumn);
+  const result = { fields: {} };
+
+  const dataCount = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
+  if (dataCount) {
+    const rows = sheet.getRange(EXPENSE_SYNC.firstDataRow, descriptionColumn, dataCount, 4);
+    const values = rows.getValues();
+    const displays = rows.getDisplayValues();
+    for (let index = 0; index < displays.length; index += 1) {
+      if (EXPENSE_SYNC.startBalanceLabels.indexOf(normalizeLabel_(displays[index][0])) === -1) continue;
+      const row = EXPENSE_SYNC.firstDataRow + index;
+      const value = toInteger_(values[index][2]);
+      if (!value && String(displays[index][2] || '').trim() === '') break;
+      result.fields.start_balance = {
+        value: value,
+        date: context.year + '-' + pad2_(month) + '-01',
+        row: row,
+        valueColumn: descriptionColumn + 2
+      };
+      const descriptionCell = sheet.getRange(row, descriptionColumn);
+      if (readSyncId_(descriptionCell.getNote())) descriptionCell.clearNote();
+      break;
+    }
+  }
+
+  Object.keys(EXPENSE_SYNC.statusRows).forEach(field => {
+    const config = EXPENSE_SYNC.statusRows[field];
+    const row = findSummaryRowByLabels_(sheet, descriptionColumn, config.labels);
+    if (!row) return;
+    const dateCell = sheet.getRange(row, descriptionColumn + 1);
+    const valueCell = sheet.getRange(row, descriptionColumn + 3);
+    const displayValue = valueCell.getDisplayValue();
+    if (!String(displayValue || '').trim()) return;
+    result.fields[field] = {
+      value: toInteger_(valueCell.getValue()),
+      date: parseExpenseDate_(dateCell.getValue(), dateCell.getDisplayValue(), context.year, month),
+      row: row,
+      valueColumn: descriptionColumn + 3
+    };
+  });
+
+  return result;
+}
+
+function mergeCurrentMonthStatus_(config, context, month, remote, sheetStatus) {
+  const base = remote ? Object.assign({}, remote) : {
+    user_id: config.userId,
+    year: context.year,
+    month: month,
+    start_balance: 0,
+    total_income: 0,
+    total_expense: 0,
+    remaining: 0,
+    bank_balance: 0,
+    food_difference: 0,
+    savings_balance: 0,
+    send_wife: 0
+  };
+  let changed = !remote;
+
+  Object.keys(sheetStatus.fields).forEach(field => {
+    const item = sheetStatus.fields[field];
+    const dateField = EXPENSE_SYNC.statusRows[field] && EXPENSE_SYNC.statusRows[field].dateField;
+    const sheetMarker = buildStatusMarker_(field, item.value, item.date);
+    const markerCell = context.sheet.getRange(item.row, item.valueColumn);
+    const previousMarker = String(markerCell.getNote() || '').trim();
+    const remoteMarker = buildStatusMarker_(field, base[field], dateField ? base[dateField] : item.date);
+    const sheetChanged = !previousMarker || previousMarker !== sheetMarker;
+    const remoteChanged = !!previousMarker && previousMarker !== remoteMarker;
+    const sheetWins = !remote || (sheetChanged && !remoteChanged) ||
+      (sheetChanged && remoteChanged && compareStatusDates_(item.date, dateField ? base[dateField] : '') >= 0);
+
+    if (sheetWins) {
+      const oldValue = toInteger_(base[field]);
+      if (oldValue !== item.value) {
+        if (field === 'start_balance') base.remaining = toInteger_(base.remaining) + item.value - oldValue;
+        base[field] = item.value;
+        changed = true;
+      }
+      if (dateField && item.date && String(base[dateField] || '') !== item.date) {
+        base[dateField] = item.date;
+        changed = true;
+      }
+    }
+  });
+
+  base.food_difference = toInteger_(base.remaining) - toInteger_(base.bank_balance);
+  base.updated_at = new Date().toISOString();
+  delete base.id;
+  return { status: base, changed: changed };
+}
+
+function compareStatusDates_(left, right) {
+  return String(left || '').localeCompare(String(right || ''));
+}
+
+function buildStatusMarker_(field, value, date) {
+  return EXPENSE_SYNC.statusNotePrefix + field + '|' + toInteger_(value) + '|' + String(date || '');
+}
+
+function upsertMonthlyStatuses_(config, rows) {
+  if (!rows || !rows.length) return;
+  requestSupabase_(config, '/rest/v1/monthly_status?on_conflict=user_id,year,month', {
+    method: 'post',
+    payload: JSON.stringify(rows),
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }
+  });
+}
+
+function syncMonthlyStatusesToSheet_(config, context, providedStatuses) {
+  const statuses = providedStatuses || fetchMonthlyStatuses_(config, context.year);
   let updated = 0;
 
   (statuses || []).forEach(status => {
@@ -164,8 +309,28 @@ function syncMonthlyStatusesToSheet_(config, context) {
       context.sheet.getRange(targetRow, descriptionColumn + 1).setValue(dateValue);
       if (dateValue) context.sheet.getRange(targetRow, descriptionColumn + 1).setNumberFormat('dd/MM');
       context.sheet.getRange(targetRow, descriptionColumn + 3).setValue(toInteger_(value));
+      context.sheet.getRange(targetRow, descriptionColumn + 3).setNote(buildStatusMarker_(field, value, rawDate));
       updated += 2;
     });
+
+    const startValue = status.start_balance;
+    if (startValue !== null && startValue !== undefined && startValue !== '') {
+      const totalRow = findMonthTotalRow_(context.sheet, descriptionColumn);
+      const count = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
+      if (count) {
+        const displays = context.sheet.getRange(EXPENSE_SYNC.firstDataRow, descriptionColumn, count, 1).getDisplayValues();
+        for (let index = 0; index < displays.length; index += 1) {
+          if (EXPENSE_SYNC.startBalanceLabels.indexOf(normalizeLabel_(displays[index][0])) === -1) continue;
+          const targetRow = EXPENSE_SYNC.firstDataRow + index;
+          context.sheet.getRange(targetRow, descriptionColumn + 2).setValue(toInteger_(startValue));
+          context.sheet.getRange(targetRow, descriptionColumn + 2).setNote(
+            buildStatusMarker_('start_balance', startValue, context.year + '-' + pad2_(month) + '-01')
+          );
+          updated += 1;
+          break;
+        }
+      }
+    }
   });
 
   return { updated: updated };
@@ -406,7 +571,8 @@ function findMonthTotalRow_(sheet, descriptionColumn) {
 }
 
 function isTransactionDescription_(description) {
-  if (!description || /^đầu tháng/i.test(description)) return false;
+  if (!description) return false;
+  if (EXPENSE_SYNC.startBalanceLabels.indexOf(normalizeLabel_(description)) !== -1) return false;
   return EXPENSE_SYNC.ignoredLabels.indexOf(normalizeLabel_(description)) === -1;
 }
 
@@ -429,15 +595,18 @@ function transactionSourceFromKey_(sourceKey) {
 }
 
 function parseExpenseDate_(rawValue, displayValue, year, month) {
+  const match = String(displayValue || '').match(/^(\d{1,2})[\/-](\d{1,2})/);
+  if (match) {
+    const first = Number(match[1]);
+    const second = Number(match[2]);
+    const day = second === Number(month) ? first : first === Number(month) ? second : first;
+    if (day >= 1 && day <= 31) return year + '-' + pad2_(month) + '-' + pad2_(day);
+  }
   if (rawValue instanceof Date && !isNaN(rawValue.getTime())) {
     const day = Number(Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'd'));
     return year + '-' + pad2_(month) + '-' + pad2_(day);
   }
-  const match = String(displayValue || '').match(/^(\d{1,2})[\/-](\d{1,2})/);
-  if (!match) return null;
-  const day = Number(match[1]);
-  if (day < 1 || day > 31) return null;
-  return year + '-' + pad2_(month) + '-' + pad2_(day);
+  return null;
 }
 
 function toInteger_(value) {
