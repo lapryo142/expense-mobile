@@ -1,0 +1,69 @@
+name: Patch Happy Money future-month sync
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+
+jobs:
+  patch-sync:
+    if: github.event.head_commit.message == 'Add one-time future-month sync patch'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Patch google-sheet-sync.gs
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('google-sheet-sync.gs')
+          text = path.read_text()
+          old = '''function detectMonthColumns_(sheet) {
+  const lastColumn = Math.max(1, sheet.getLastColumn());
+  const headers = sheet.getRange(EXPENSE_SYNC.monthHeaderRow, 1, 1, lastColumn).getDisplayValues()[0];
+  const result = {};
+  headers.forEach((value, index) => {
+    const key = normalizeLabel_(value);
+    const month = EXPENSE_SYNC.monthNames[key];
+    if (month && !result[month]) result[month] = index + 1;
+  });
+  return result;
+}
+'''
+          new = '''function detectMonthColumns_(sheet) {
+  const lastColumn = Math.max(1, sheet.getLastColumn());
+  const headers = sheet.getRange(EXPENSE_SYNC.monthHeaderRow, 1, 1, lastColumn).getDisplayValues()[0];
+  const result = {};
+  const sheetYear = Number(String(sheet.getName() || '').trim());
+  const now = new Date();
+  const currentYear = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy'));
+  const currentMonth = Number(Utilities.formatDate(now, Session.getScriptTimeZone(), 'M'));
+
+  // Never sync future year tabs or future month blocks. A month becomes active
+  // automatically when the calendar reaches it.
+  if (sheetYear > currentYear) return result;
+
+  headers.forEach((value, index) => {
+    const key = normalizeLabel_(value);
+    const month = EXPENSE_SYNC.monthNames[key];
+    if (!month || result[month]) return;
+    if (sheetYear === currentYear && month > currentMonth) return;
+    result[month] = index + 1;
+  });
+  return result;
+}
+'''
+          if text.count(old) != 1:
+              raise SystemExit(f'Expected exactly one detectMonthColumns_ function, found {text.count(old)}')
+          path.write_text(text.replace(old, new, 1))
+          PY
+          git config user.name "lapryo142"
+          git config user.email "votatlap@gmail.com"
+          git add google-sheet-sync.gs
+          git commit -m "Ignore future months in Sheet sync"
+          git push origin main
