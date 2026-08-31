@@ -1,97 +1,93 @@
 /**
- * Expense Mobile V8 Clean - bidirectional Google Sheet <-> Supabase sync.
+ * Happy Money - bidirectional Google Sheet <-> Supabase sync.
  *
- * Supabase remains the canonical transaction store. Google Sheet keeps its
+ * Supabase remains the canonical transaction store. Google Sheet keeps the
  * existing horizontal month layout and acts as a second editing surface.
  *
- * Script Properties required:
- *   SUPABASE_URL          https://cmejwdeklvmgqrollnqn.supabase.co
- *   SUPABASE_SERVICE_ROLE Supabase service_role/secret key
- *   APP_USER_ID           Supabase Auth user UUID that owns the data
+ * Year tabs are discovered automatically from numeric tab names (2026, 2027…).
+ * Month blocks are discovered automatically from row 2 headers
+ * (JANUARY ... DECEMBER). No code change is needed when a new month/year is added.
  *
- * Security: never paste the service_role key into this source file.
+ * Script Properties required:
+ *   SUPABASE_URL
+ *   SUPABASE_SERVICE_ROLE
+ *   APP_USER_ID
  */
 
 const EXPENSE_SYNC = {
-  sheetName: '2026',
-  year: 2026,
+  firstSupportedYear: 2026,
+  monthHeaderRow: 2,
   firstDataRow: 4,
   maxAutomaticNewRows: 25,
-  descriptionColumns: { 1: 7, 2: 12, 3: 17, 4: 22, 5: 27, 6: 32, 7: 37, 8: 42 },
   idNotePrefix: 'expense-sync-id:',
+  monthNames: {
+    january: 1, february: 2, march: 3, april: 4, may: 5, june: 6,
+    july: 7, august: 8, september: 9, october: 10, november: 11, december: 12
+  },
   statusRows: {
     send_wife: { labels: ['đưa vợ', 'gửi vợ'], dateField: 'send_wife_date' },
     savings_balance: { labels: ['tổng tiết kiệm'], dateField: 'savings_balance_date' },
     bank_balance: { labels: ['còn lại ngân hàng', 'còn lại trong ngân hàng'], dateField: 'bank_balance_date' }
   },
   ignoredLabels: [
-    'tổng', 'đưa vợ', 'bỏ vào tiết kiệm', 'tiết kiệm', 'tổng tiết kiệm',
-    'còn lại', 'còn lại ngân hàng', 'chênh lệch (ăn uống)'
+    'tổng', 'đưa vợ', 'gửi vợ', 'bỏ vào tiết kiệm', 'tiết kiệm', 'tổng tiết kiệm',
+    'còn lại', 'còn lại ngân hàng', 'còn lại trong ngân hàng', 'chênh lệch (ăn uống)'
   ]
 };
 
-/**
- * Main function for a manual run or a time-driven trigger.
- * Order matters: Sheet edits are uploaded first, then Supabase additions are
- * downloaded. This prevents a remote copy from overwriting the latest Sheet edit.
- */
 function syncExpenseBidirectional() {
   const config = getExpenseSyncConfig_();
-  const sheet = getExpenseSheet_();
-  // Fetch first so the initial run can adopt the IDs already created by the
-  // V8 seed import. Never invent a second ID for an existing Sheet row.
-  const initialRemoteRows = fetchTransactions_(config);
-  // Apply explicit App edits to their existing Sheet rows before the normal
-  // Sheet-first upload. This preserves the same source_key and prevents an old
-  // Sheet value from overwriting a deliberate long-press edit in the App.
-  applyPendingAppEditsToSheet_(sheet, initialRemoteRows);
-  const sheetRows = readExpenseSheetRows_(sheet, initialRemoteRows);
+  const contexts = getExpenseYearContexts_();
+  if (!contexts.length) throw new Error('Không tìm thấy tab năm hợp lệ (ví dụ 2026, 2027).');
 
-  const remoteIds = new Set(initialRemoteRows.map(row => row.source_key).filter(Boolean));
-  const unmatchedSheetRows = sheetRows.filter(row => !remoteIds.has(row.source_key));
-  if (unmatchedSheetRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
-    throw new Error(
-      'Safety stop: ' + unmatchedSheetRows.length +
-      ' Sheet rows did not match Supabase. No database write was made.'
-    );
-  }
+  const totals = { uploadedFromSheet: 0, downloadedToSheet: 0, alreadyInSheet: 0, monthlyStatusCellsUpdated: 0 };
 
-  if (sheetRows.length) upsertTransactions_(config, sheetRows);
+  contexts.forEach(context => {
+    const initialRemoteRows = fetchTransactions_(config, context.year);
+    applyPendingAppEditsToSheet_(context, initialRemoteRows);
+    const sheetRows = readExpenseSheetRows_(context, initialRemoteRows);
 
-  const remoteRows = fetchTransactions_(config);
-  const result = writeMissingRemoteRowsToSheet_(sheet, remoteRows);
-  // Summary rows can move whenever a transaction row is inserted. Resolve each
-  // destination by its visible label on every run instead of using fixed rows.
-  const statusResult = syncMonthlyStatusesToSheet_(config, sheet);
+    const remoteIds = new Set(initialRemoteRows.map(row => row.source_key).filter(Boolean));
+    const unmatchedSheetRows = sheetRows.filter(row => !remoteIds.has(row.source_key));
+    if (unmatchedSheetRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
+      throw new Error(
+        'Safety stop ' + context.year + ': ' + unmatchedSheetRows.length +
+        ' Sheet rows did not match Supabase. No database write was made.'
+      );
+    }
+
+    if (sheetRows.length) upsertTransactions_(config, sheetRows);
+    totals.uploadedFromSheet += sheetRows.length;
+
+    const remoteRows = fetchTransactions_(config, context.year);
+    const result = writeMissingRemoteRowsToSheet_(context, remoteRows);
+    totals.downloadedToSheet += result.inserted;
+    totals.alreadyInSheet += result.existing;
+
+    const statusResult = syncMonthlyStatusesToSheet_(config, context);
+    totals.monthlyStatusCellsUpdated += statusResult.updated;
+  });
 
   SpreadsheetApp.flush();
-  Logger.log(JSON.stringify({
-    uploadedFromSheet: sheetRows.length,
-    downloadedToSheet: result.inserted,
-    alreadyInSheet: result.existing,
-    monthlyStatusCellsUpdated: statusResult.updated
-  }));
+  Logger.log(JSON.stringify(totals));
 }
 
-/** Backwards-compatible name used by the old setup instructions. */
 function syncSheetToSupabase() {
   syncExpenseBidirectional();
 }
 
-/** Run once after adding the script to confirm credentials without writing. */
 function testExpenseSyncConnection() {
   const config = getExpenseSyncConfig_();
-  const rows = fetchTransactions_(config);
-  Logger.log('Supabase connection OK. Transactions found: ' + rows.length);
+  const contexts = getExpenseYearContexts_();
+  const count = contexts.reduce((sum, context) => sum + fetchTransactions_(config, context.year).length, 0);
+  Logger.log('Supabase connection OK. Transactions found: ' + count);
 }
 
-/** Optional helper: creates a 5-minute time-driven trigger. Run only once. */
 function installExpenseSyncTrigger() {
   const handler = 'syncExpenseBidirectional';
   ScriptApp.getProjectTriggers()
     .filter(trigger => trigger.getHandlerFunction() === handler)
     .forEach(trigger => ScriptApp.deleteTrigger(trigger));
-
   ScriptApp.newTrigger(handler).timeBased().everyMinutes(5).create();
   Logger.log('Installed one 5-minute trigger for ' + handler);
 }
@@ -109,29 +105,50 @@ function getExpenseSyncConfig_() {
   return config;
 }
 
-function getExpenseSheet_() {
-  const sheet = SpreadsheetApp.getActive().getSheetByName(EXPENSE_SYNC.sheetName);
-  if (!sheet) throw new Error('Sheet not found: ' + EXPENSE_SYNC.sheetName);
-  return sheet;
+function getExpenseYearContexts_() {
+  return SpreadsheetApp.getActive().getSheets()
+    .map(sheet => {
+      const title = String(sheet.getName() || '').trim();
+      if (!/^\d{4}$/.test(title)) return null;
+      const year = Number(title);
+      if (year < EXPENSE_SYNC.firstSupportedYear) return null;
+      const monthColumns = detectMonthColumns_(sheet);
+      if (!Object.keys(monthColumns).length) return null;
+      return { sheet: sheet, year: year, monthColumns: monthColumns };
+    })
+    .filter(Boolean)
+    .sort((a, b) => a.year - b.year);
 }
 
-function fetchMonthlyStatuses_(config) {
+function detectMonthColumns_(sheet) {
+  const lastColumn = Math.max(1, sheet.getLastColumn());
+  const headers = sheet.getRange(EXPENSE_SYNC.monthHeaderRow, 1, 1, lastColumn).getDisplayValues()[0];
+  const result = {};
+  headers.forEach((value, index) => {
+    const key = normalizeLabel_(value);
+    const month = EXPENSE_SYNC.monthNames[key];
+    if (month && !result[month]) result[month] = index + 1;
+  });
+  return result;
+}
+
+function fetchMonthlyStatuses_(config, year) {
   const query = [
     'user_id=eq.' + encodeURIComponent(config.userId),
-    'year=eq.' + EXPENSE_SYNC.year,
+    'year=eq.' + year,
     'select=year,month,bank_balance,bank_balance_date,savings_balance,savings_balance_date,send_wife,send_wife_date,updated_at',
     'order=month.asc'
   ].join('&');
   return requestSupabase_(config, '/rest/v1/monthly_status?' + query, { method: 'get' });
 }
 
-function syncMonthlyStatusesToSheet_(config, sheet) {
-  const statuses = fetchMonthlyStatuses_(config);
+function syncMonthlyStatusesToSheet_(config, context) {
+  const statuses = fetchMonthlyStatuses_(config, context.year);
   let updated = 0;
 
   (statuses || []).forEach(status => {
     const month = Number(status.month);
-    const descriptionColumn = EXPENSE_SYNC.descriptionColumns[month];
+    const descriptionColumn = context.monthColumns[month];
     if (!descriptionColumn) return;
 
     Object.keys(EXPENSE_SYNC.statusRows).forEach(field => {
@@ -139,19 +156,14 @@ function syncMonthlyStatusesToSheet_(config, sheet) {
       const value = status[field];
       if (value === null || value === undefined || value === '') return;
 
-      const targetRow = findSummaryRowByLabels_(sheet, descriptionColumn, rowConfig.labels);
-      if (!targetRow) {
-        throw new Error(
-          'Could not find summary label [' + rowConfig.labels.join(' / ') +
-          '] for month ' + month + ' in column ' + descriptionColumn + '.'
-        );
-      }
+      const targetRow = findSummaryRowByLabels_(context.sheet, descriptionColumn, rowConfig.labels);
+      if (!targetRow) return;
 
       const rawDate = status[rowConfig.dateField] || String(status.updated_at || '').slice(0, 10);
       const dateValue = rawDate ? new Date(String(rawDate).slice(0, 10) + 'T12:00:00') : '';
-      sheet.getRange(targetRow, descriptionColumn + 1).setValue(dateValue);
-      if (dateValue) sheet.getRange(targetRow, descriptionColumn + 1).setNumberFormat('dd/MM');
-      sheet.getRange(targetRow, descriptionColumn + 3).setValue(toInteger_(value));
+      context.sheet.getRange(targetRow, descriptionColumn + 1).setValue(dateValue);
+      if (dateValue) context.sheet.getRange(targetRow, descriptionColumn + 1).setNumberFormat('dd/MM');
+      context.sheet.getRange(targetRow, descriptionColumn + 3).setValue(toInteger_(value));
       updated += 2;
     });
   });
@@ -164,7 +176,6 @@ function findSummaryRowByLabels_(sheet, descriptionColumn, labels) {
   const lastRow = Math.min(sheet.getLastRow(), totalRow + 20);
   const count = Math.max(0, lastRow - totalRow);
   if (!count) return null;
-
   const wanted = new Set((labels || []).map(normalizeLabel_));
   const displays = sheet.getRange(totalRow + 1, descriptionColumn, count, 1).getDisplayValues();
   for (let index = 0; index < displays.length; index += 1) {
@@ -173,57 +184,64 @@ function findSummaryRowByLabels_(sheet, descriptionColumn, labels) {
   return null;
 }
 
-function readExpenseSheetRows_(sheet, remoteRows) {
+function readExpenseSheetRows_(context, remoteRows) {
   const rows = [];
   const claimedRemoteIds = new Set();
 
-  Object.keys(EXPENSE_SYNC.descriptionColumns).forEach(monthKey => {
-    const month = Number(monthKey);
-    const column = EXPENSE_SYNC.descriptionColumns[month];
-    const totalRow = findMonthTotalRow_(sheet, column);
+  Object.keys(context.monthColumns).map(Number).sort((a, b) => a - b).forEach(month => {
+    const column = context.monthColumns[month];
+    const totalRow = findMonthTotalRow_(context.sheet, column);
     const rowCount = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
     if (!rowCount) return;
 
-    const range = sheet.getRange(EXPENSE_SYNC.firstDataRow, column, rowCount, 4);
+    const range = context.sheet.getRange(EXPENSE_SYNC.firstDataRow, column, rowCount, 4);
     const values = range.getValues();
     const displays = range.getDisplayValues();
-    const notes = sheet.getRange(EXPENSE_SYNC.firstDataRow, column, rowCount, 1).getNotes();
+    const notes = context.sheet.getRange(EXPENSE_SYNC.firstDataRow, column, rowCount, 1).getNotes();
 
     values.forEach((row, index) => {
       const description = String(displays[index][0] || '').trim();
       if (!isTransactionDescription_(description)) return;
-
       const income = toInteger_(row[2]);
       const expense = toInteger_(row[3]);
       if (!income && !expense) return;
 
       const sheetRow = EXPENSE_SYNC.firstDataRow + index;
       let sourceKey = readSyncId_(notes[index][0]);
+
+      // When a month block is copied, Google Sheets also copies notes. A copied
+      // August sync ID must never become the September transaction ID.
+      if (sourceKey && claimedRemoteIds.has(sourceKey)) sourceKey = '';
+      if (sourceKey) {
+        const remoteWithId = (remoteRows || []).find(remote => remote.source_key === sourceKey);
+        if (remoteWithId && (Number(remoteWithId.year) !== context.year || Number(remoteWithId.month) !== month)) {
+          sourceKey = '';
+        }
+      }
+
       if (!sourceKey) {
         const draft = {
-          year: EXPENSE_SYNC.year,
+          year: context.year,
           month: month,
           row_order: sheetRow,
           description: description,
-          txn_date: parseExpenseDate_(row[1], displays[index][1], month),
+          txn_date: parseExpenseDate_(row[1], displays[index][1], context.year, month),
           income: income,
           expense: expense
         };
         const match = findUnclaimedRemoteMatch_(draft, remoteRows || [], claimedRemoteIds);
-        sourceKey = match && match.source_key
-          ? match.source_key
-          : 'sheet-' + Utilities.getUuid();
-        sheet.getRange(sheetRow, column).setNote(EXPENSE_SYNC.idNotePrefix + sourceKey);
+        sourceKey = match && match.source_key ? match.source_key : 'sheet-' + Utilities.getUuid();
+        context.sheet.getRange(sheetRow, column).setNote(EXPENSE_SYNC.idNotePrefix + sourceKey);
       }
       claimedRemoteIds.add(sourceKey);
 
       rows.push({
-        user_id: null, // filled immediately before the API request
-        year: EXPENSE_SYNC.year,
+        user_id: null,
+        year: context.year,
         month: month,
         row_order: sheetRow,
         description: description,
-        txn_date: parseExpenseDate_(row[1], displays[index][1], month),
+        txn_date: parseExpenseDate_(row[1], displays[index][1], context.year, month),
         income: income,
         expense: expense,
         source: transactionSourceFromKey_(sourceKey),
@@ -245,136 +263,118 @@ function findUnclaimedRemoteMatch_(sheetRow, remoteRows, claimedIds) {
       toInteger_(remote.income) === toInteger_(sheetRow.income) &&
       toInteger_(remote.expense) === toInteger_(sheetRow.expense);
   });
-
   if (!candidates.length) return null;
-
-  // Row order is the strongest discriminator for repeated descriptions such as
-  // Tennis, Shopee or Rút tiết kiệm. Date is the fallback when a row moved.
   const sameRow = candidates.find(remote => Number(remote.row_order) === Number(sheetRow.row_order));
   if (sameRow) return sameRow;
   const sameDate = candidates.find(remote => String(remote.txn_date || '') === String(sheetRow.txn_date || ''));
   return sameDate || (candidates.length === 1 ? candidates[0] : null);
 }
 
-function fetchTransactions_(config) {
+function fetchTransactions_(config, year) {
   const query = [
     'user_id=eq.' + encodeURIComponent(config.userId),
-    'year=eq.' + EXPENSE_SYNC.year,
+    'year=eq.' + year,
     'select=id,year,month,row_order,description,txn_date,income,expense,source,source_key,updated_at',
     'order=month.asc,row_order.asc,created_at.asc'
   ].join('&');
-  return requestSupabase_(config, '/rest/v1/transactions?' + query, { method: 'get' });
+  return requestSupabase_(config, '/rest/v1/transactions?' + query, { method: 'get' }) || [];
 }
 
 function upsertTransactions_(config, rows) {
   const payload = rows.map(row => Object.assign({}, row, { user_id: config.userId }));
-  requestSupabase_(
-    config,
-    '/rest/v1/transactions?on_conflict=user_id,source_key',
-    {
-      method: 'post',
-      payload: JSON.stringify(payload),
-      headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }
-    }
-  );
+  requestSupabase_(config, '/rest/v1/transactions?on_conflict=user_id,source_key', {
+    method: 'post',
+    payload: JSON.stringify(payload),
+    headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }
+  });
 }
 
-function applyPendingAppEditsToSheet_(sheet, remoteRows) {
+function applyPendingAppEditsToSheet_(context, remoteRows) {
   const pending = (remoteRows || []).filter(row => row.source === 'app_edited' && row.source_key);
   pending.forEach(transaction => {
-    const existing = findSheetRowBySyncId_(sheet, transaction.source_key);
-    const targetColumn = EXPENSE_SYNC.descriptionColumns[Number(transaction.month)];
+    const targetColumn = context.monthColumns[Number(transaction.month)];
     if (!targetColumn) return;
-
+    const existing = findSheetRowBySyncId_(context, transaction.source_key);
     let targetRow;
+
     if (existing && existing.column === targetColumn) {
       targetRow = existing.row;
     } else {
       if (existing) {
-        sheet.getRange(existing.row, existing.column, 1, 4).clearContent();
-        sheet.getRange(existing.row, existing.column).clearNote();
+        context.sheet.getRange(existing.row, existing.column, 1, 4).clearContent();
+        context.sheet.getRange(existing.row, existing.column).clearNote();
       }
-      targetRow = findWritableRow_(sheet, targetColumn);
+      targetRow = findWritableRow_(context.sheet, targetColumn);
     }
 
-    sheet.getRange(targetRow, targetColumn, 1, 4).setValues([[
+    context.sheet.getRange(targetRow, targetColumn, 1, 4).setValues([[
       transaction.description || '',
       transaction.txn_date ? new Date(transaction.txn_date + 'T12:00:00') : '',
       toInteger_(transaction.income),
       toInteger_(transaction.expense)
     ]]);
-    sheet.getRange(targetRow, targetColumn + 1).setNumberFormat('dd/MM');
-    sheet.getRange(targetRow, targetColumn).setNote(EXPENSE_SYNC.idNotePrefix + transaction.source_key);
+    context.sheet.getRange(targetRow, targetColumn + 1).setNumberFormat('dd/MM');
+    context.sheet.getRange(targetRow, targetColumn).setNote(EXPENSE_SYNC.idNotePrefix + transaction.source_key);
   });
 }
 
-function findSheetRowBySyncId_(sheet, sourceKey) {
+function findSheetRowBySyncId_(context, sourceKey) {
   const wanted = String(sourceKey || '');
-  const months = Object.keys(EXPENSE_SYNC.descriptionColumns);
+  const months = Object.keys(context.monthColumns).map(Number).sort((a, b) => a - b);
   for (let monthIndex = 0; monthIndex < months.length; monthIndex += 1) {
-    const column = EXPENSE_SYNC.descriptionColumns[Number(months[monthIndex])];
-    const totalRow = findMonthTotalRow_(sheet, column);
+    const column = context.monthColumns[months[monthIndex]];
+    const totalRow = findMonthTotalRow_(context.sheet, column);
     const count = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
     if (!count) continue;
-    const notes = sheet.getRange(EXPENSE_SYNC.firstDataRow, column, count, 1).getNotes();
+    const notes = context.sheet.getRange(EXPENSE_SYNC.firstDataRow, column, count, 1).getNotes();
     for (let index = 0; index < notes.length; index += 1) {
-      if (readSyncId_(notes[index][0]) === wanted) {
-        return { row: EXPENSE_SYNC.firstDataRow + index, column: column };
-      }
+      if (readSyncId_(notes[index][0]) === wanted) return { row: EXPENSE_SYNC.firstDataRow + index, column: column };
     }
   }
   return null;
 }
 
-function writeMissingRemoteRowsToSheet_(sheet, remoteRows) {
-  const existingIds = collectSheetSyncIds_(sheet);
-  const missingRows = remoteRows.filter(row => row.source_key && !existingIds.has(row.source_key));
+function writeMissingRemoteRowsToSheet_(context, remoteRows) {
+  const existingIds = collectSheetSyncIds_(context);
+  const missingRows = remoteRows.filter(row => row.source_key && context.monthColumns[Number(row.month)] && !existingIds.has(row.source_key));
   if (missingRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
     throw new Error(
-      'Safety stop: ' + missingRows.length +
+      'Safety stop ' + context.year + ': ' + missingRows.length +
       ' Supabase rows did not match the Sheet. No transaction rows were inserted.'
     );
   }
+
   let inserted = 0;
   let existing = 0;
-
   remoteRows.forEach(transaction => {
     if (!transaction.source_key) return;
-    if (existingIds.has(transaction.source_key)) {
-      existing += 1;
-      return;
-    }
-
-    const month = Number(transaction.month);
-    const column = EXPENSE_SYNC.descriptionColumns[month];
+    if (existingIds.has(transaction.source_key)) { existing += 1; return; }
+    const column = context.monthColumns[Number(transaction.month)];
     if (!column) return;
 
-    const targetRow = findWritableRow_(sheet, column);
-    const values = [[
+    const targetRow = findWritableRow_(context.sheet, column);
+    context.sheet.getRange(targetRow, column, 1, 4).setValues([[
       transaction.description || '',
       transaction.txn_date ? new Date(transaction.txn_date + 'T12:00:00') : '',
       toInteger_(transaction.income),
       toInteger_(transaction.expense)
-    ]];
-
-    sheet.getRange(targetRow, column, 1, 4).setValues(values);
-    sheet.getRange(targetRow, column + 1).setNumberFormat('dd/MM');
-    sheet.getRange(targetRow, column).setNote(EXPENSE_SYNC.idNotePrefix + transaction.source_key);
+    ]]);
+    context.sheet.getRange(targetRow, column + 1).setNumberFormat('dd/MM');
+    context.sheet.getRange(targetRow, column).setNote(EXPENSE_SYNC.idNotePrefix + transaction.source_key);
     existingIds.add(transaction.source_key);
     inserted += 1;
   });
-
   return { inserted: inserted, existing: existing };
 }
 
-function collectSheetSyncIds_(sheet) {
+function collectSheetSyncIds_(context) {
   const ids = new Set();
-  Object.keys(EXPENSE_SYNC.descriptionColumns).forEach(monthKey => {
-    const column = EXPENSE_SYNC.descriptionColumns[Number(monthKey)];
-    const totalRow = findMonthTotalRow_(sheet, column);
+  Object.keys(context.monthColumns).forEach(monthKey => {
+    const column = context.monthColumns[Number(monthKey)];
+    const totalRow = findMonthTotalRow_(context.sheet, column);
     const count = Math.max(0, totalRow - EXPENSE_SYNC.firstDataRow);
     if (!count) return;
-    sheet.getRange(EXPENSE_SYNC.firstDataRow, column, count, 1).getNotes().forEach(row => {
+    context.sheet.getRange(EXPENSE_SYNC.firstDataRow, column, count, 1).getNotes().forEach(row => {
       const id = readSyncId_(row[0]);
       if (id) ids.add(id);
     });
@@ -387,23 +387,22 @@ function findWritableRow_(sheet, descriptionColumn) {
   for (let row = EXPENSE_SYNC.firstDataRow; row < totalRow; row += 1) {
     if (!String(sheet.getRange(row, descriptionColumn).getDisplayValue() || '').trim()) return row;
   }
-
-  // This month has no empty transaction row. Insert a complete spreadsheet row
-  // before the summary line so every month block and its formulas stay aligned.
   sheet.insertRowBefore(totalRow);
   return totalRow;
 }
 
 function findMonthTotalRow_(sheet, descriptionColumn) {
   const lastRow = Math.max(sheet.getLastRow(), EXPENSE_SYNC.firstDataRow);
-  const displays = sheet
-    .getRange(EXPENSE_SYNC.firstDataRow, descriptionColumn, lastRow - EXPENSE_SYNC.firstDataRow + 1, 1)
-    .getDisplayValues();
-
+  const displays = sheet.getRange(
+    EXPENSE_SYNC.firstDataRow,
+    descriptionColumn,
+    lastRow - EXPENSE_SYNC.firstDataRow + 1,
+    1
+  ).getDisplayValues();
   for (let index = 0; index < displays.length; index += 1) {
     if (normalizeLabel_(displays[index][0]) === 'tổng') return EXPENSE_SYNC.firstDataRow + index;
   }
-  throw new Error('Could not find TỔNG row in column ' + descriptionColumn + '.');
+  throw new Error('Could not find TỔNG row in ' + sheet.getName() + ', column ' + descriptionColumn + '.');
 }
 
 function isTransactionDescription_(description) {
@@ -417,9 +416,7 @@ function normalizeLabel_(value) {
 
 function readSyncId_(note) {
   const value = String(note || '').trim();
-  return value.indexOf(EXPENSE_SYNC.idNotePrefix) === 0
-    ? value.slice(EXPENSE_SYNC.idNotePrefix.length).trim()
-    : '';
+  return value.indexOf(EXPENSE_SYNC.idNotePrefix) === 0 ? value.slice(EXPENSE_SYNC.idNotePrefix.length).trim() : '';
 }
 
 function transactionSourceFromKey_(sourceKey) {
@@ -431,16 +428,16 @@ function transactionSourceFromKey_(sourceKey) {
   return 'sheet';
 }
 
-function parseExpenseDate_(rawValue, displayValue, month) {
+function parseExpenseDate_(rawValue, displayValue, year, month) {
   if (rawValue instanceof Date && !isNaN(rawValue.getTime())) {
-    return Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    const day = Number(Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'd'));
+    return year + '-' + pad2_(month) + '-' + pad2_(day);
   }
   const match = String(displayValue || '').match(/^(\d{1,2})[\/-](\d{1,2})/);
   if (!match) return null;
   const day = Number(match[1]);
-  const parsedMonth = Number(match[2]) || month;
-  if (day < 1 || day > 31 || parsedMonth < 1 || parsedMonth > 12) return null;
-  return EXPENSE_SYNC.year + '-' + pad2_(parsedMonth) + '-' + pad2_(day);
+  if (day < 1 || day > 31) return null;
+  return year + '-' + pad2_(month) + '-' + pad2_(day);
 }
 
 function toInteger_(value) {
