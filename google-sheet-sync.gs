@@ -279,11 +279,32 @@ function buildStatusMarker_(field, value, date) {
 
 function upsertMonthlyStatuses_(config, rows) {
   if (!rows || !rows.length) return;
+  const safeRows = rows.map(sanitizeMonthlyStatusDates_);
   requestSupabase_(config, '/rest/v1/monthly_status?on_conflict=user_id,year,month', {
     method: 'post',
-    payload: JSON.stringify(rows),
+    payload: JSON.stringify(safeRows),
     headers: { Prefer: 'resolution=merge-duplicates,return=minimal' }
   });
+}
+
+function sanitizeMonthlyStatusDates_(row) {
+  const clean = Object.assign({}, row);
+  ['bank_balance_date', 'savings_balance_date', 'send_wife_date'].forEach(field => {
+    if (clean[field] && !isValidIsoDate_(clean[field])) clean[field] = null;
+  });
+  return clean;
+}
+
+function isValidIsoDate_(value) {
+  const match = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year &&
+    date.getUTCMonth() === month - 1 &&
+    date.getUTCDate() === day;
 }
 
 function syncMonthlyStatusesToSheet_(config, context, providedStatuses) {
