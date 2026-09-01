@@ -247,8 +247,7 @@ function mergeCurrentMonthStatus_(config, context, month, remote, sheetStatus) {
     const remoteMarker = buildStatusMarker_(field, base[field], dateField ? base[dateField] : item.date);
     const sheetChanged = !previousMarker || previousMarker !== sheetMarker;
     const remoteChanged = !!previousMarker && previousMarker !== remoteMarker;
-    const sheetWins = !remote || (sheetChanged && !remoteChanged) ||
-      (sheetChanged && remoteChanged && compareStatusDates_(item.date, dateField ? base[dateField] : '') >= 0);
+    const sheetWins = !remote || (sheetChanged && !remoteChanged) || (sheetChanged && remoteChanged && compareStatusDates_(item.date, dateField ? base[dateField] : '') >= 0);
 
     if (sheetWins) {
       const oldValue = toInteger_(base[field]);
@@ -323,9 +322,7 @@ function syncMonthlyStatusesToSheet_(config, context, providedStatuses) {
           if (EXPENSE_SYNC.startBalanceLabels.indexOf(normalizeLabel_(displays[index][0])) === -1) continue;
           const targetRow = EXPENSE_SYNC.firstDataRow + index;
           context.sheet.getRange(targetRow, descriptionColumn + 2).setValue(toInteger_(startValue));
-          context.sheet.getRange(targetRow, descriptionColumn + 2).setNote(
-            buildStatusMarker_('start_balance', startValue, context.year + '-' + pad2_(month) + '-01')
-          );
+          context.sheet.getRange(targetRow, descriptionColumn + 2).setNote(buildStatusMarker_('start_balance', startValue, context.year + '-' + pad2_(month) + '-01'));
           updated += 1;
           break;
         }
@@ -595,16 +592,26 @@ function transactionSourceFromKey_(sourceKey) {
 }
 
 function parseExpenseDate_(rawValue, displayValue, year, month) {
+  const expectedYear = Number(year);
+  const expectedMonth = Number(month);
+  const daysInMonth = new Date(expectedYear, expectedMonth, 0).getDate();
   const match = String(displayValue || '').match(/^(\d{1,2})[\/-](\d{1,2})/);
   if (match) {
-    const first = Number(match[1]);
-    const second = Number(match[2]);
-    const day = second === Number(month) ? first : first === Number(month) ? second : first;
-    if (day >= 1 && day <= 31) return year + '-' + pad2_(month) + '-' + pad2_(day);
+    const day = Number(match[1]);
+    const displayedMonth = Number(match[2]);
+    if (displayedMonth !== expectedMonth) return null;
+    if (day >= 1 && day <= daysInMonth) {
+      return expectedYear + '-' + pad2_(expectedMonth) + '-' + pad2_(day);
+    }
+    return null;
   }
   if (rawValue instanceof Date && !isNaN(rawValue.getTime())) {
+    const rawYear = Number(Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'yyyy'));
+    const rawMonth = Number(Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'M'));
     const day = Number(Utilities.formatDate(rawValue, Session.getScriptTimeZone(), 'd'));
-    return year + '-' + pad2_(month) + '-' + pad2_(day);
+    if (rawYear === expectedYear && rawMonth === expectedMonth && day >= 1 && day <= daysInMonth) {
+      return expectedYear + '-' + pad2_(expectedMonth) + '-' + pad2_(day);
+    }
   }
   return null;
 }
