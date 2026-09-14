@@ -275,7 +275,7 @@ async function refresh(){
     const normalized=normalizedIsoDate(x.txn_date,x.month);
     return normalized&&Number(normalized.slice(8,10))<=dayCount;
   });
-  let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0);
+  let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=Number(st?.remaining||0)-Number(st?.send_wife||0);
   const sheetFundingIncome=(tx||[]).filter(x=>x.source==='sheet'&&isFundingCategory(x)).reduce((sum,x)=>sum+Number(x.income||0),0);
   inc-=sheetFundingIncome;
   appRows.forEach(x=>{if(isOpeningBalance(x)){if(!Number(st?.start_balance||0))rem+=Number(x.income||0)-Number(x.expense||0);return}if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
