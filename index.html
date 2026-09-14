@@ -25,7 +25,7 @@ button,input{font:inherit}button{-webkit-tap-highlight-color:rgba(199,164,90,.28
 .balance{background:linear-gradient(145deg,#151513,#272116);color:white;border:1px solid rgba(230,207,145,.5);border-radius:20px;padding:20px;margin:14px 0 10px;box-shadow:0 10px 28px rgba(46,38,19,.15)}.balance small{color:var(--gold2);font-weight:850;letter-spacing:.8px}.balance .big{font-size:34px;font-weight:900;margin:5px 0;color:#fff9e9;letter-spacing:-1px}.balance .hint{font-size:11px;color:#cfc7b7}
 .summarygrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.card{background:#fff;border:1px solid var(--line);border-radius:15px;padding:13px}.card.gold{background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border-color:#d8bd78}.card .k{font-size:10px;color:var(--muted);font-weight:850;line-height:1.2}.card .v{font-size:18px;font-weight:850;margin-top:6px;letter-spacing:-.3px}.asOf{font-size:10px;color:var(--muted);margin-top:5px;font-weight:700}.editableStat{cursor:pointer;transition:transform .12s ease,border-color .12s ease,background-color .12s ease;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;touch-action:pan-y}.editableStat.holding{border-color:var(--gold);background:var(--goldSoft)}.balance.editableStat{cursor:pointer}.balance.editableStat.holding{border-color:#d8bd78;background:linear-gradient(145deg,#2f291d,#4b3a1d);color:#fff7e5}
 .bottom{position:fixed;z-index:40;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));width:min(402px,calc(100% - 28px))}.addBtn{width:100%;min-height:55px;border:1px solid rgba(199,164,90,.7);border-radius:16px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900;box-shadow:0 10px 28px rgba(44,35,17,.22)}
-body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;overscroll-behavior:contain;touch-action:none}.overlay.open{display:flex}.panel{width:100%;max-width:430px;min-width:0;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));height:min(92vh,760px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.formPanel{width:calc(100% - 20px);height:auto;max-height:calc(100dvh - 18px - env(safe-area-inset-top) - env(safe-area-inset-bottom));margin:0 auto calc(8px + env(safe-area-inset-bottom));padding:16px 16px 18px;border-radius:24px;box-shadow:0 16px 42px rgba(24,20,12,.2)}.summaryPanel{width:calc(100% - 20px);height:min(92vh,760px);margin:0 auto calc(8px + env(safe-area-inset-bottom));padding-bottom:18px;border-radius:24px;box-shadow:0 16px 42px rgba(24,20,12,.2);transition:transform .2s ease;will-change:transform}.summaryPanel.summaryDragging{transition:none}.compactOverlay{align-items:center;padding:calc(10px + env(safe-area-inset-top)) 0 calc(10px + env(safe-area-inset-bottom))}.compactOverlay .formPanel{margin:0 auto}.formPanel .field{margin:8px 0}.formPanel .primary{margin-top:3px}.formPanel .toggle{margin-top:12px}.formPanel .quick{margin-bottom:10px}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel h2{font-size:23px;margin:0}.closeBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:800}
+body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inset:0;background:rgba(0,0,0,.35);display:none;align-items:flex-end;overscroll-behavior:contain;touch-action:none}.overlay.open{display:flex}.panel{width:100%;max-width:430px;min-width:0;margin:auto;background:#fff;border-radius:24px 24px 0 0;padding:18px 16px calc(22px + env(safe-area-inset-bottom));height:min(92vh,760px);overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;-webkit-overflow-scrolling:touch}.formPanel{width:calc(100% - 20px);height:auto;max-height:calc(100dvh - 18px - env(safe-area-inset-top) - env(safe-area-inset-bottom));margin:0 auto calc(8px + env(safe-area-inset-bottom));padding:16px 16px 18px;border-radius:24px;box-shadow:0 16px 42px rgba(24,20,12,.2)}.summaryPanel{width:calc(100% - 20px);height:min(92vh,760px);margin:0 auto calc(8px + env(safe-area-inset-bottom));padding-bottom:18px;border-radius:24px;box-shadow:0 16px 42px rgba(24,20,12,.2)}.summaryPanel,.formPanel{transition:transform .2s ease;will-change:transform}.panel.pullDragging{transition:none}.compactOverlay{align-items:center;padding:calc(10px + env(safe-area-inset-top)) 0 calc(10px + env(safe-area-inset-bottom))}.compactOverlay .formPanel{margin:0 auto}.formPanel .field{margin:8px 0}.formPanel .primary{margin-top:3px}.formPanel .toggle{margin-top:12px}.formPanel .quick{margin-bottom:10px}.panelHead{display:flex;align-items:center;justify-content:space-between;gap:10px}.panel h2{font-size:23px;margin:0}.closeBtn{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:10px;padding:8px 10px;font-size:12px;font-weight:800}
 .toggle{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin:14px 0 9px}.toggle button{border:1px solid var(--line);background:#faf8f3;color:var(--muted);border-radius:12px;padding:11px;font-weight:850}.toggle #expenseType.active{background:var(--red);color:#fff;border-color:var(--red);box-shadow:0 3px 10px rgba(156,76,67,.2)}.toggle #incomeType.active{background:var(--green);color:#fff;border-color:var(--green);box-shadow:0 3px 10px rgba(31,106,80,.2)}
 .paymentChoice{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}.paymentChoice button{border:1px solid var(--line);background:#faf8f3;color:var(--muted);border-radius:11px;padding:10px 5px;font-size:12px;font-weight:800}.paymentChoice button.active{border-color:#b58e3e;background:var(--goldSoft);color:#654f1c}.paymentHint{font-size:11px;color:var(--muted);line-height:1.35;margin-top:6px}.txCategory.payLater{background:#f2e4f0;color:#74436d}.payLaterCard{grid-column:1/-1;background:linear-gradient(145deg,#faf3f8,#f2e4f0);border-color:#dec4da}
 .quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-bottom:12px}.quick button{border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:11px;padding:9px 5px;font-size:12px;font-weight:800}.quick button:active,.quick button.selected{background:#d8bd78;color:#241b09;border-color:#b58e3e}.quickIncome{display:none}.quickIncome.show{display:grid}.quickExpense.hide{display:none}
@@ -91,7 +91,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
       <button data-category="Nhà cửa & hóa đơn">Nhà cửa & hóa đơn</button><button data-category="Tennis">Tennis</button>
       <button data-category="Mua sắm">Mua sắm</button><button data-category="Gia đình & quà tặng">Gia đình & quà tặng</button>
       <button data-category="Sunny & sức khỏe">Sunny & sức khỏe</button><button data-category="Giải trí & sách">Giải trí & sách</button>
-      <button data-category="Tiền mặt & lặt vặt">Tiền mặt & lặt vặt</button><button data-category="Chưa phân loại">Chưa phân loại</button>
+      <button data-category="Tiền mặt & lặt vặt">Tiền mặt & lặt vặt</button><button data-category="Dịch vụ số">Dịch vụ số</button>
     </div>
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
@@ -189,7 +189,7 @@ const fmtDate=(iso,expectedMonth)=>{
 const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0');return `${now.getFullYear()}-${month}-${day}`};
 const appNow=new Date();let user=null,current=appNow.getMonth()+1,currentYear=appNow.getFullYear(),entryType='expense',paymentMethod='bank',currentStatus=null,editingTx=null;
 let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
-const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Công cụ & dịch vụ số','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
+const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Dịch vụ số','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
 const INCOME_CATEGORIES=['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'];
 const CATEGORY_NAMES=[...INCOME_CATEGORIES,...EXPENSE_CATEGORIES];
 const normalizeText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
@@ -202,7 +202,7 @@ function guessCategory(description){
   if(/^(so du )?dau thang( tai khoan)?$/.test(s))return 'Số dư đầu tháng';
   if(/tennis|san tennis|vot|babolat|dan vot|cuon can|le phi giai|danh giai|may giay adidas/.test(s))return 'Tennis';
   if(/taxi|grab|xanh sm|xe om|xang|gui xe|ve que|que len|ve sg|vario|vespa|thay nhot|nhot may|bao tri xe/.test(s))return 'Di chuyển & xe';
-  if(/chatgpt|openai|ten mien|domain|hosting|vercel|supabase|cloudflare|godaddy|namecheap|porkbun|notion|canva pro|phan mem|dich vu so/.test(s))return 'Công cụ & dịch vụ số';
+  if(/chatgpt|openai|ten mien|domain|hosting|vercel|supabase|cloudflare|godaddy|namecheap|porkbun|notion|canva pro|phan mem|dich vu so/.test(s))return 'Dịch vụ số';
   if(/tien dien|tien nuoc|internet|wifi|dien thoai|may lanh|may loc khong khi|binh dun|ban lam viec|sieu thi|gia dung/.test(s))return 'Nhà cửa & hóa đơn';
   if(/an uong|do an|hadilao|sushi|cafe|coffee|tra sua|grabfood|shopeefood|mcdonald|an oc|oc lua|nha hang|tien an|banh kem/.test(s))return 'Ăn uống';
   if(/sunny|kham thai|benh vien|nhi dong|tu du|thuoc|suc khoe|nha khoa|ho so khai sinh|tim thai|tien sua|bim/.test(s))return 'Sunny & sức khỏe';
@@ -215,7 +215,7 @@ const categoryStorageKey=()=>`happy_money_categories_${user?.id||'guest'}`;
 function getCategoryOverrides(){try{return JSON.parse(localStorage.getItem(categoryStorageKey())||'{}')}catch{return {}}}
 async function hydrateCategoryOverrides(){const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
 async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
-function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Chuyển tiền nội bộ'||(override==='Chưa phân loại'&&guessed!=='Chưa phân loại'))return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
+function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Công cụ & dịch vụ số')return 'Dịch vụ số';if(override==='Chuyển tiền nội bộ'||(override==='Chưa phân loại'&&guessed!=='Chưa phân loại'))return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
 let categoryManuallySelected=false;
@@ -604,10 +604,46 @@ $('privacyBtn').addEventListener('click',async()=>{
 });
 $('refreshBtn').addEventListener('click',runAppRefresh);
 ['amount','statusAmount','editTxAmount'].forEach(bindMoneyInput);
-$('addBtn').addEventListener('click',openAdd);
+function bindPullToClose(overlayId,panelSelector){
+  const overlay=$(overlayId),panel=overlay.querySelector(panelSelector);
+  let startY=null,distance=0,closeTimer=null;
+  const reset=()=>{
+    if(closeTimer){clearTimeout(closeTimer);closeTimer=null}
+    startY=null;distance=0;panel.classList.remove('pullDragging');panel.style.transform='';
+  };
+  const close=()=>{overlay.classList.remove('open');reset()};
+  panel.addEventListener('touchstart',event=>{
+    if(panel.scrollTop>0)return;
+    startY=event.touches[0].clientY;distance=0;panel.classList.add('pullDragging');
+  },{passive:true});
+  panel.addEventListener('touchmove',event=>{
+    if(startY===null)return;
+    if(panel.scrollTop>0){reset();return}
+    distance=Math.max(0,event.touches[0].clientY-startY);
+    if(!distance){panel.style.transform='';return}
+    event.preventDefault();
+    panel.style.transform=`translateY(${Math.min(130,distance*.55)}px)`;
+  },{passive:false});
+  panel.addEventListener('touchend',()=>{
+    if(startY===null)return;
+    const shouldClose=distance>=145;
+    panel.classList.remove('pullDragging');
+    if(shouldClose){
+      panel.style.transform='translateY(110%)';
+      closeTimer=setTimeout(close,200);
+    }else{
+      panel.style.transform='';startY=null;distance=0;
+    }
+  },{passive:true});
+  panel.addEventListener('touchcancel',reset,{passive:true});
+  return {reset,close};
+}
+const addPull=bindPullToClose('addOverlay','.formPanel');
+const summaryPull=bindPullToClose('summaryOverlay','.summaryPanel');
+$('addBtn').addEventListener('click',()=>{addPull.reset();openAdd()});
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
-$('closeAdd').addEventListener('click',()=>$('addOverlay').classList.remove('open'));
-$('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))$('addOverlay').classList.remove('open')});
+$('closeAdd').addEventListener('click',()=>addPull.close());
+$('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))addPull.close()});
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
 $('category').addEventListener('change',()=>{categoryManuallySelected=true;$('amount').focus()});
@@ -624,46 +660,9 @@ $('saveTx').addEventListener('click',async()=>{
   if(inserted?.id)await saveCategoryOverride(inserted.id,$('category').value);
   currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
 });
-const summaryPanel=$('summaryOverlay').querySelector('.summaryPanel');
-let summaryPullStartY=null,summaryPullDistance=0;
-function resetSummaryPull(){
-  summaryPullStartY=null;summaryPullDistance=0;
-  summaryPanel.classList.remove('summaryDragging');
-  summaryPanel.style.transform='';
-}
-function closeSummary(){
-  $('summaryOverlay').classList.remove('open');
-  resetSummaryPull();
-}
-summaryPanel.addEventListener('touchstart',event=>{
-  if(summaryPanel.scrollTop>0)return;
-  summaryPullStartY=event.touches[0].clientY;summaryPullDistance=0;
-  summaryPanel.classList.add('summaryDragging');
-},{passive:true});
-summaryPanel.addEventListener('touchmove',event=>{
-  if(summaryPullStartY===null)return;
-  if(summaryPanel.scrollTop>0){resetSummaryPull();return}
-  summaryPullDistance=Math.max(0,event.touches[0].clientY-summaryPullStartY);
-  if(!summaryPullDistance){summaryPanel.style.transform='';return}
-  event.preventDefault();
-  summaryPanel.style.transform=`translateY(${Math.min(120,summaryPullDistance*.55)}px)`;
-},{passive:false});
-summaryPanel.addEventListener('touchend',()=>{
-  if(summaryPullStartY===null)return;
-  const shouldClose=summaryPullDistance>=130;
-  summaryPanel.classList.remove('summaryDragging');
-  if(shouldClose){
-    summaryPanel.style.transform='translateY(110%)';
-    setTimeout(closeSummary,200);
-  }else{
-    summaryPanel.style.transform='';
-    summaryPullStartY=null;summaryPullDistance=0;
-  }
-},{passive:true});
-summaryPanel.addEventListener('touchcancel',resetSummaryPull,{passive:true});
-$('summaryBtn').addEventListener('click',async()=>{resetSummaryPull();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
-$('closeSummary').addEventListener('click',closeSummary);
-$('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))closeSummary()});
+$('summaryBtn').addEventListener('click',async()=>{summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
+$('closeSummary').addEventListener('click',()=>summaryPull.close());
+$('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))summaryPull.close()});
 bindStatusLongPress();
 $('closeStatus').addEventListener('click',()=>$('statusOverlay').classList.remove('open'));
 $('statusOverlay').addEventListener('click',e=>{if(e.target===$('statusOverlay'))$('statusOverlay').classList.remove('open')});
