@@ -493,16 +493,20 @@ async function renderMonthlyOverview(){
     trendText=`Chi ${lower?'giảm':'tăng'} ${percent}%`;
     trendClass=lower?'trendGood':'trendBad';
   }
-  const comparisonTone=(currentValue,previousValue)=>currentValue<previousValue?'trendGood':currentValue>previousValue?'trendBad':'';
+  const comparisonTone=(currentValue,previousValue,higherIsBetter)=>{
+    if(currentValue===previousValue)return '';
+    const isBetter=higherIsBetter?currentValue>previousValue:currentValue<previousValue;
+    return isBetter?'trendGood':'trendBad';
+  };
   const comparisonArrow=(currentValue,previousValue)=>currentValue<previousValue?'↓':currentValue>previousValue?'↑':'=';
-  const comparisonRow=(label,previousValue,currentValue,isPrivate=false)=>{
+  const comparisonRow=(label,previousValue,currentValue,isPrivate=false,higherIsBetter=false)=>{
     const display=value=>isPrivate?privateFmt(value):fmt(value);
-    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount">${display(previousValue)}</span><span class="comparisonAmount ${comparisonTone(currentValue,previousValue)}">${comparisonArrow(currentValue,previousValue)} ${display(currentValue)}</span></div>`;
+    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount">${display(previousValue)}</span><span class="comparisonAmount ${comparisonTone(currentValue,previousValue,higherIsBetter)}">${comparisonArrow(currentValue,previousValue)} ${display(currentValue)}</span></div>`;
   };
   const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>CHỈ SỐ</span><span>T${previous.month}</span><span>T${current}</span></div>
     ${comparisonRow('Đã chi',previousComparableExpense,currentComparableExpense)}
-    ${comparisonRow('Còn lại theo sổ',previousComparableRemaining,currentComparableRemaining,true)}
-    ${comparisonRow('Trong ngân hàng',previousComparableBank,currentComparableBank,true)}
+    ${comparisonRow('Còn lại theo sổ',previousComparableRemaining,currentComparableRemaining,true,true)}
+    ${comparisonRow('Trong ngân hàng',previousComparableBank,currentComparableBank,true,true)}
     ${comparisonRow('Chênh lệch ăn uống',previousFoodDifference,currentFoodDifference,true)}
   </div>`:'';
   $('overviewStats').innerHTML=`<div class="statGrid">
