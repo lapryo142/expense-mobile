@@ -513,10 +513,9 @@ async function renderMonthlyOverview(){
   $('overviewStats').innerHTML=`<div class="statGrid">
     <div class="statBox"><div class="statLabel">THU NHẬP THỰC</div><div class="statValue inc">${privateFmt(currentTotals.income)}</div></div>
     <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
-    <div class="statBox"><div class="statLabel">SỐ GIAO DỊCH</div><div class="statValue">${rows.length}</div></div>
     <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
-    <div class="statBox sideStat payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox sideStat"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
+    <div class="statBox wide payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
   const categoryNames=EXPENSE_CATEGORIES;
