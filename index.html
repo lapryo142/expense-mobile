@@ -501,9 +501,9 @@ async function renderMonthlyOverview(){
   const comparisonArrow=(currentValue,previousValue)=>currentValue<previousValue?'↓':currentValue>previousValue?'↑':'=';
   const comparisonRow=(label,previousValue,currentValue,isPrivate=false,higherIsBetter=false)=>{
     const display=value=>isPrivate?privateFmt(value):fmt(value);
-    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount">${display(previousValue)}</span><span class="comparisonAmount ${comparisonTone(currentValue,previousValue,higherIsBetter)}">${comparisonArrow(currentValue,previousValue)} ${display(currentValue)}</span></div>`;
+    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount ${comparisonTone(currentValue,previousValue,higherIsBetter)}">${comparisonArrow(currentValue,previousValue)} ${display(currentValue)}</span><span class="comparisonAmount">${display(previousValue)}</span></div>`;
   };
-  const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>CHỈ SỐ</span><span>T${previous.month}</span><span>T${current}</span></div>
+  const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>CHỈ SỐ</span><span>T${current}</span><span>T${previous.month}</span></div>
     ${comparisonRow('Đã chi',previousComparableExpense,currentComparableExpense)}
     ${comparisonRow('Còn lại theo sổ',previousComparableRemaining,currentComparableRemaining,true,true)}
     ${comparisonRow('Trong ngân hàng',previousComparableBank,currentComparableBank,true,true)}
