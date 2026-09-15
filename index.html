@@ -472,6 +472,8 @@ async function renderMonthlyOverview(){
   const comparisonDay=Math.min(dayCount,previousDaysInMonth||dayCount);
   const currentComparableExpense=expenseThroughDay(rows,comparisonDay);
   const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
+  const currentComparableDailyAverage=Math.round(currentComparableExpense/Math.max(1,comparisonDay));
+  const previousComparableDailyAverage=Math.round(previousComparableExpense/Math.max(1,comparisonDay));
   const currentComparableRemaining=remainingThroughDay(rows,status,comparisonDay);
   const previousComparableRemaining=remainingThroughDay(previousRows,previousStatus,comparisonDay);
   const currentComparableBank=bankBalanceThroughDay(rows,status,comparisonDay);
@@ -509,6 +511,7 @@ async function renderMonthlyOverview(){
   };
   const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>CHỈ SỐ</span><span>T${current}</span><span>T${previous.month}</span></div>
     ${comparisonRow('Đã chi',previousComparableExpense,currentComparableExpense)}
+    ${comparisonRow('Chi trung bình/ngày',previousComparableDailyAverage,currentComparableDailyAverage)}
     ${comparisonRow('Còn lại theo sổ',previousComparableRemaining,currentComparableRemaining,true,true)}
     ${comparisonRow('Trong ngân hàng',previousComparableBank,currentComparableBank,true,true)}
     ${comparisonRow('Chênh lệch ăn uống',previousFoodDifference,currentFoodDifference,true)}
