@@ -50,6 +50,7 @@ function syncExpenseBidirectional() {
     totals.monthlyStatusCellsUpdated += statusResult.updated;
 
     const initialRemoteRows = fetchTransactions_(config, context.year);
+    applyPendingAppDeletionsToSheet_(context, initialRemoteRows);
     applyPendingAppEditsToSheet_(context, initialRemoteRows);
     const sheetRows = readExpenseSheetRows_(context, initialRemoteRows);
 
@@ -473,7 +474,7 @@ function upsertTransactions_(config, rows) {
 }
 
 function applyPendingAppEditsToSheet_(context, remoteRows) {
-  const pending = (remoteRows || []).filter(row => row.source === 'app_edited' && row.source_key);
+  const pending = (remoteRows || []).filter(row => row.source === 'app_edited' && row.source_key && !isDeletedTransaction_(row));
   pending.forEach(transaction => {
     const targetColumn = context.monthColumns[Number(transaction.month)];
     if (!targetColumn) return;
@@ -501,6 +502,22 @@ function applyPendingAppEditsToSheet_(context, remoteRows) {
   });
 }
 
+function isDeletedTransaction_(transaction) {
+  return transaction && transaction.source === 'app_edited' &&
+    !String(transaction.description || '').trim() &&
+    !toInteger_(transaction.income) && !toInteger_(transaction.expense);
+}
+
+function applyPendingAppDeletionsToSheet_(context, remoteRows) {
+  (remoteRows || []).filter(isDeletedTransaction_).forEach(transaction => {
+    if (!transaction.source_key) return;
+    const existing = findSheetRowBySyncId_(context, transaction.source_key);
+    if (!existing) return;
+    context.sheet.getRange(existing.row, existing.column, 1, 4).clearContent();
+    context.sheet.getRange(existing.row, existing.column).clearNote();
+  });
+}
+
 function findSheetRowBySyncId_(context, sourceKey) {
   const wanted = String(sourceKey || '');
   const months = Object.keys(context.monthColumns).map(Number).sort((a, b) => a - b);
@@ -519,7 +536,8 @@ function findSheetRowBySyncId_(context, sourceKey) {
 
 function writeMissingRemoteRowsToSheet_(context, remoteRows) {
   const existingIds = collectSheetSyncIds_(context);
-  const missingRows = remoteRows.filter(row => row.source_key && context.monthColumns[Number(row.month)] && !existingIds.has(row.source_key));
+  const activeRemoteRows = remoteRows.filter(row => !isDeletedTransaction_(row));
+  const missingRows = activeRemoteRows.filter(row => row.source_key && context.monthColumns[Number(row.month)] && !existingIds.has(row.source_key));
   if (missingRows.length > EXPENSE_SYNC.maxAutomaticNewRows) {
     throw new Error(
       'Safety stop ' + context.year + ': ' + missingRows.length +
@@ -529,7 +547,7 @@ function writeMissingRemoteRowsToSheet_(context, remoteRows) {
 
   let inserted = 0;
   let existing = 0;
-  remoteRows.forEach(transaction => {
+  activeRemoteRows.forEach(transaction => {
     if (!transaction.source_key) return;
     if (existingIds.has(transaction.source_key)) { existing += 1; return; }
     const column = context.monthColumns[Number(transaction.month)];
