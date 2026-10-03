@@ -32,22 +32,31 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 .field{margin:10px 0}.field label{display:block;font-size:11px;color:var(--muted);font-weight:800;margin-bottom:5px}.field input,.field select{width:100%;border:1px solid var(--line);border-radius:13px;padding:13px;font-size:17px;background:#fff;color:var(--text);caret-color:var(--gold)}.field input:focus,.field select:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,90,.2)}.field input.amount{font-size:27px;font-weight:850}.primary{width:100%;border:1px solid rgba(199,164,90,.7);border-radius:14px;padding:14px;background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;font-size:16px;font-weight:900}.primary:disabled,.dangerButton:disabled{opacity:.55}.dangerButton{width:100%;border:1px solid #dfbbb6;border-radius:14px;padding:13px;background:#fff8f7;color:var(--red);font-size:14px;font-weight:850;margin-top:8px}.dangerlink{width:100%;border:0;background:transparent;color:#8a8174;padding:12px;font-size:12px}
 .dateChoice{display:flex;gap:8px;min-width:0;max-width:100%;overflow:hidden}.todayBtn{flex:0 0 auto;border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:13px;padding:0 14px;font-weight:850;white-space:nowrap}.dateChoice input[type="date"]{display:block;flex:1 1 0;width:0;max-width:100%;min-width:0;overflow:hidden;color:#654f1c;accent-color:var(--gold);color-scheme:light}.dateChoice input[type="date"]::-webkit-date-and-time-value{min-width:0;text-align:left}.dateChoice input::selection{background:#d8bd78;color:var(--text)}
 .overviewSection{margin-top:16px}.sectionTitle{font-size:11px;color:var(--muted);font-weight:900;letter-spacing:.65px;margin:0 0 8px}.statGrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.statBox{background:#faf8f3;border:1px solid var(--line);border-radius:14px;padding:12px}.statBox.wide{grid-column:1/-1}.statBox.sideStat{min-width:0}.statBox.sideStat .statValue{font-size:16px;overflow-wrap:anywhere}.statBox.payLaterOverview{background:linear-gradient(145deg,#faf3f8,#f2e4f0);border-color:#dec4da}.statBox.payLaterOverview .statLabel{color:#74436d}.comparisonTable{margin-top:10px;border-top:1px solid var(--line)}.comparisonRow{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,.85fr) minmax(0,.85fr);gap:6px;align-items:center;padding:8px 0;border-bottom:1px solid var(--line)}.comparisonRow:last-child{border-bottom:0;padding-bottom:1px}.comparisonRow span:nth-child(n+2){text-align:right}.comparisonHead{padding:7px 0 5px;border-bottom:1px solid var(--line);color:var(--muted);font-size:10px;font-weight:900}.comparisonName{font-size:11px;color:var(--muted);font-weight:850;line-height:1.25}.comparisonAmount{font-size:12.5px;font-weight:900;white-space:nowrap;letter-spacing:-.15px}.statLabel{font-size:10px;color:var(--muted);font-weight:850}.statValue{font-size:18px;font-weight:900;margin-top:5px}.statNote{font-size:11px;color:var(--muted);margin-top:4px}.trendGood{color:var(--green)}.trendBad{color:var(--red)}.topSpend{background:#faf8f3;border:1px solid var(--line);border-radius:14px;overflow:hidden}.topSpendRow{display:grid;grid-template-columns:24px 1fr auto;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--line)}.topSpendRow:last-child{border-bottom:0}.topRank{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:var(--goldSoft);color:#705820;font-size:11px;font-weight:900}.topName{font-size:13px;font-weight:750}.topAmount{font-size:13px;font-weight:850;color:var(--red)}.overviewLoading{padding:18px;text-align:center;color:var(--muted);font-size:12px}.categoryChart{background:#faf8f3;border:1px solid var(--line);border-radius:16px;padding:14px;margin-bottom:10px}.categoryChartBody{display:grid;grid-template-columns:132px minmax(0,1fr);gap:14px;align-items:center}.categoryDonut{position:relative;width:132px;aspect-ratio:1}.categoryDonut svg{display:block;width:100%;height:100%;transform:rotate(-90deg)}.categoryDonutTrack,.categoryDonutSlice{fill:none;stroke-width:18}.categoryDonutTrack{stroke:#ebe6dc}.categoryDonutCenter{position:absolute;inset:26px;display:grid;place-items:center;text-align:center;background:#faf8f3;border-radius:50%;padding:4px}.categoryDonutCenter strong{display:block;font-size:13px;line-height:1.15;letter-spacing:-.25px}.categoryDonutCenter span{display:block;font-size:9px;color:var(--muted);font-weight:850;margin-top:3px}.categoryLegend{display:grid;gap:8px;min-width:0}.categoryLegendRow{display:grid;grid-template-columns:10px minmax(0,1fr) auto;gap:7px;align-items:start}.categoryLegendSwatch{width:10px;height:10px;border-radius:50%;margin-top:3px}.categoryLegendName{font-size:11px;font-weight:850;line-height:1.2}.categoryLegendMeta{font-size:10px;color:var(--muted);margin-top:2px;line-height:1.2}.categoryLegendShare{font-size:11px;font-weight:900;white-space:nowrap}.categoryChartEmpty{padding:20px 8px;text-align:center;color:var(--muted);font-size:12px}@media(max-width:360px){.categoryChartBody{grid-template-columns:112px minmax(0,1fr);gap:10px}.categoryDonut{width:112px}.categoryDonutCenter{inset:23px}.categoryLegend{gap:7px}}.categoryToggle{width:100%;display:flex;justify-content:space-between;align-items:center;border:1px solid #d8bf7c;background:var(--goldSoft);color:#654f1c;border-radius:13px;padding:12px 14px;font-weight:850}.categoryTags{display:none;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px;margin-top:8px}.categoryTags.open{display:grid}.categoryTags button{border:1px solid var(--line);background:#faf8f3;color:#5f594f;border-radius:999px;padding:10px 7px;font-size:13px;font-weight:800}.categoryTags button.selected{border-color:#b58e3e;background:#d8bd78;color:#241b09}.categoryResult{display:none;margin-top:8px;background:linear-gradient(145deg,#fbf5e8,#f1e3bf);border:1px solid #d8bd78;border-radius:14px;padding:13px}.categoryResult.show{display:block}.categoryResultHead{display:flex;justify-content:space-between;gap:10px;align-items:center}.categoryResultName{font-size:14px;color:#705820;font-weight:900}.categoryResultAmount{font-size:20px;font-weight:900;color:#241b09}.categoryResultNote{font-size:13px;line-height:1.45;color:#75684e;margin-top:6px}.categoryTxList{margin-top:12px;border-top:1px solid rgba(181,142,62,.28)}.categoryTxRow{width:100%;display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;text-align:left;border:0;border-bottom:1px solid rgba(181,142,62,.22);background:transparent;color:var(--text);padding:11px 0}.categoryTxRow:last-child{border-bottom:0;padding-bottom:2px}.categoryTxName{font-size:13px;font-weight:800;line-height:1.3}.categoryTxDate{font-size:11px;color:#817458;margin-top:3px}.categoryTxAmount{font-size:13px;font-weight:900;color:var(--red);white-space:nowrap}.settings{display:grid;grid-template-columns:1fr 1fr;gap:8px}.settings .field{margin:0}.reviewList{display:grid;gap:7px}.reviewItem{width:100%;display:grid;grid-template-columns:1fr auto;gap:10px;text-align:left;align-items:center;border:1px solid #e3c5c1;background:#fff8f7;border-radius:12px;padding:10px 11px;color:var(--text)}.reviewName{font-size:12px;font-weight:800}.reviewDate{font-size:10px;color:var(--muted);margin-top:3px}.reviewAmount{font-size:12px;font-weight:850;color:var(--red)}
-.auth{max-width:430px;margin:70px auto;padding:20px}.authbox{background:#fff;border:1px solid var(--line);border-radius:22px;padding:22px;box-shadow:0 12px 35px rgba(60,48,22,.08)}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:6px 0;font-size:16px}.authSecondary{text-align:center;margin-top:12px;font-size:13px;color:var(--muted)}.authSecondary button{border:0;background:transparent;color:#705820;font-weight:850}.status{font-size:12px;color:var(--muted);margin-top:9px}
+.auth{max-width:430px;margin:0 auto;padding:calc(54px + env(safe-area-inset-top)) 24px 32px;min-height:100dvh;display:flex;align-items:center}.authbox{width:100%;background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px 24px;box-shadow:0 12px 35px rgba(60,48,22,.06)}.authHeader{text-align:center;margin-bottom:24px}.authHeader .eyebrow{letter-spacing:1.8px;color:#8b7543}.authHeader h1{font-size:27px;margin-top:9px;letter-spacing:-.7px}.authSubtitle{font-size:14px;line-height:1.5;color:var(--muted);margin:9px 0 0}.faceIcon{width:66px;height:66px;margin:0 auto 19px;display:grid;place-items:center;border:1px solid #e7d8b5;border-radius:20px;background:var(--goldSoft);color:#8b6c2f}.faceIcon svg{width:35px;height:35px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:0;font-size:16px;background:#faf9f6;color:var(--text)}.auth input:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,90,.15)}.authField{display:grid;gap:7px;margin-bottom:14px}.authField label{font-size:12px;font-weight:750;color:#625c50}.auth .primary{font-weight:750}.authSecondary{text-align:center;margin-top:20px;font-size:12px;color:var(--muted)}.authSecondary button,.authTextButton{border:0;background:transparent;color:#705820;font-size:13px;font-weight:700;padding:8px}.authTextButton{display:block;margin:14px auto 0}.authDivider{display:flex;align-items:center;gap:12px;color:#aaa393;font-size:11px;margin:22px 0 14px}.authDivider:before,.authDivider:after{content:"";height:1px;background:var(--line);flex:1}.faceLoginButton{width:100%;min-height:50px;border:1px solid #d8bf7c;border-radius:14px;background:var(--goldSoft);color:#654f1c;display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;font-weight:750}.faceLoginButton svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.auth.passkeyReady .faceLoginButton{background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;border-color:rgba(199,164,90,.7);font-size:15px}.auth.passkeyReady .authbox{padding-top:34px;padding-bottom:27px}.auth.passkeyReady .authHeader{margin-bottom:26px}.auth.isAuthenticating .faceIcon{animation:authPulse 1.4s ease-in-out infinite}.faceLoginButton:disabled{opacity:.6}.status{font-size:12px;color:var(--muted);margin-top:9px}.auth .status{text-align:center;line-height:1.5}.auth #authStatus:empty{display:none}.auth #sessionNote{font-size:11px;margin-top:20px;color:#958d7d}@keyframes authPulse{50%{box-shadow:0 0 0 8px rgba(199,164,90,.09)}}@media(prefers-reduced-motion:reduce){.auth.isAuthenticating .faceIcon{animation:none}}@media(max-height:620px){.auth{padding-top:24px;align-items:flex-start}.authbox{padding-top:24px}}
+
 .empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}.editHint{font-size:10px;color:#9a8f7c;margin-top:5px}.balance .editHint{color:#bfb49e}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
 <div id="auth" class="auth">
   <div class="authbox">
-    <div class="eyebrow">HAPPY MONEY</div><h1>Đăng nhập</h1>
-    <button id="passkeyLoginBtn" class="primary hidden" type="button">Đăng nhập bằng Face ID / passkey</button>
-    <div id="passkeyLoginNote" class="status hidden">Dùng passkey đã tạo cho Happy Money trên thiết bị của bạn.</div>
-    <input id="email" type="email" autocomplete="username" placeholder="Email">
-    <input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu">
-    <button id="loginBtn" class="primary">Đăng nhập</button>
-    <div class="authSecondary">Chưa có tài khoản? <button id="signupBtn">Tạo tài khoản</button></div>
-    <div id="sessionNote" class="status">App sẽ giữ trạng thái đăng nhập trên thiết bị này.</div>
-    <div id="authStatus" class="status"></div>
+    <div class="authHeader">
+      <div id="faceIcon" class="faceIcon hidden"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4H7a3 3 0 0 0-3 3v3m18-6h3a3 3 0 0 1 3 3v3M4 22v3a3 3 0 0 0 3 3h3m12 0h3a3 3 0 0 0 3-3v-3M11 12v3m10-3v3m-5-2v6h-2m-4 3c3 3 9 3 12 0"/></svg></div>
+      <div class="eyebrow">HAPPY MONEY</div>
+      <h1 id="authTitle">Chào mừng trở lại</h1>
+      <p id="authSubtitle" class="authSubtitle">Đăng nhập để quản lý thu chi của bạn.</p>
+    </div>
+    <div id="passwordForm">
+      <div class="authField"><label for="email">Email</label><input id="email" type="email" autocomplete="username webauthn" placeholder="Email của bạn" autocapitalize="none" spellcheck="false"></div>
+      <div class="authField"><label for="password">Mật khẩu</label><input id="password" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu"></div>
+      <button id="loginBtn" class="primary" type="button">Đăng nhập</button>
+      <div class="authSecondary">Chưa có tài khoản? <button id="signupBtn" type="button">Tạo tài khoản</button></div>
+    </div>
+    <div id="passkeyDivider" class="authDivider hidden">hoặc</div>
+    <button id="passkeyLoginBtn" class="faceLoginButton hidden" type="button"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4H7a3 3 0 0 0-3 3v3m18-6h3a3 3 0 0 1 3 3v3M4 22v3a3 3 0 0 0 3 3h3m12 0h3a3 3 0 0 0 3-3v-3M11 12v3m10-3v3m-5-2v6h-2m-4 3c3 3 9 3 12 0"/></svg><span id="passkeyButtonLabel">Đăng nhập bằng Face ID</span></button>
+    <button id="passwordToggleBtn" class="authTextButton hidden" type="button">Dùng mật khẩu</button>
+    <div id="authStatus" class="status" role="status" aria-live="polite"></div>
+    <div id="sessionNote" class="status">Thu chi của bạn, riêng tư và an toàn.</div>
   </div>
 </div>
 
@@ -175,6 +184,7 @@ const authStorage={
 if(passkeyMode())localStorage.removeItem(AUTH_STORAGE_KEY);
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{experimental:{passkey:true},persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:authStorage}});
 let authBusy=false,appUnlocked=false,lockPromise=Promise.resolve();
+let passwordFormOpen=false,autoPasskeyAttempted=false,passkeyAbortController=null;
 const $=id=>document.getElementById(id);
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
 const formatMoneyInputValue=value=>{
@@ -619,14 +629,33 @@ document.addEventListener('touchend',()=>{
   if(shouldRefresh)runAppRefresh();else hidePullRefresh();
 },{passive:true});
 
+function passkeySupported(){return window.isSecureContext&&typeof window.PublicKeyCredential!=='undefined'&&typeof sb.auth.signInWithPasskey==='function'}
 function updatePasskeyUI(){
-  const supported=window.isSecureContext&&typeof window.PublicKeyCredential!=='undefined'&&typeof sb.auth.signInWithPasskey==='function';
+  const supported=passkeySupported(),ready=passkeyMode()&&supported,unlockView=ready&&!passwordFormOpen;
+  $('auth').classList.toggle('passkeyReady',unlockView);
+  $('faceIcon').classList.toggle('hidden',!unlockView);
+  $('passwordForm').classList.toggle('hidden',unlockView);
   $('passkeyLoginBtn').classList.toggle('hidden',!supported);
-  $('passkeyLoginNote').classList.toggle('hidden',!supported);
+  $('passkeyDivider').classList.toggle('hidden',!supported||unlockView);
+  $('passwordToggleBtn').classList.toggle('hidden',!unlockView);
+  $('authTitle').textContent=unlockView?'Mở khóa Happy Money':'Chào mừng trở lại';
+  $('authSubtitle').textContent=unlockView?'Xác thực bằng Face ID để tiếp tục.':'Đăng nhập để quản lý thu chi của bạn.';
+  $('passkeyButtonLabel').textContent=unlockView?'Mở khóa bằng Face ID':'Đăng nhập bằng Face ID';
   $('enablePasskeyBtn').disabled=!supported;
-  $('sessionNote').textContent=passkeyMode()?'Xác thực lại mỗi lần mở app. Có thể dùng mật khẩu khi cần.':'Bật Face ID / passkey trong Tổng quan để xác thực mỗi lần mở app.';
-  $('enablePasskeyBtn').querySelector('span').textContent=passkeyMode()?'Thêm Face ID / passkey cho thiết bị':'Bật đăng nhập bằng Face ID / passkey';
-  if(!supported)$('passkeySetupStatus').textContent='Thiết bị hoặc trình duyệt này chưa hỗ trợ passkey. Bạn vẫn có thể đăng nhập bằng mật khẩu.';
+  $('sessionNote').textContent=ready?'Tự động xác thực khi mở app.':'Thu chi của bạn, riêng tư và an toàn.';
+  $('enablePasskeyBtn').querySelector('span').textContent=passkeyMode()?'Thêm thiết bị đăng nhập':'Bật đăng nhập bằng Face ID';
+  if(!supported)$('passkeySetupStatus').textContent='Bạn vẫn có thể đăng nhập bằng mật khẩu trên thiết bị này.';
+}
+function enablePasskeyMode(){
+  const previousToken=localStorage.getItem(AUTH_STORAGE_KEY);
+  if(previousToken)memoryAuthStorage.set(AUTH_STORAGE_KEY,previousToken);
+  localStorage.setItem(PASSKEY_MODE_KEY,'true');localStorage.removeItem(AUTH_STORAGE_KEY);
+}
+async function tryAutoPasskey(){
+  if(autoPasskeyAttempted||authBusy||appUnlocked||passwordFormOpen||!passkeyMode()||!passkeySupported()||document.visibilityState==='hidden')return;
+  // One request per app opening; cancellation must never cause a prompt loop.
+  autoPasskeyAttempted=true;
+  await loginWith('passkey',true);
 }
 function passkeyError(error){
   if(error?.code==='passkey_disabled')return 'Đăng nhập bằng passkey chưa được bật cho Happy Money. Bạn vẫn có thể dùng mật khẩu.';
@@ -641,21 +670,26 @@ async function completeLogin(data){
   if(document.visibilityState==='hidden'&&passkeyMode()){await sb.auth.signOut({scope:'local'});user=null;showAuth();return}
   showApp();await refresh();
 }
-async function loginWith(method){
+async function loginWith(method,automatic=false){
   if(authBusy)return;
   authBusy=true;$('loginBtn').disabled=true;$('passkeyLoginBtn').disabled=true;
+  $('auth').classList.add('isAuthenticating');
   $('authStatus').textContent=method==='passkey'?'Đang xác thực…':'Đang đăng nhập…';
   try{
     await lockPromise;
+    if(automatic&&(passwordFormOpen||document.visibilityState==='hidden'))return;
     if(method==='password')rememberEmail();
-    const {data,error}=method==='passkey'?await sb.auth.signInWithPasskey():await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(method==='passkey')passkeyAbortController=new AbortController();
+    const {data,error}=method==='passkey'?await sb.auth.signInWithPasskey({options:{signal:passkeyAbortController.signal}}):await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
     if(error)throw error;
+    if(method==='passkey'){enablePasskeyMode();updatePasskeyUI()}
     await completeLogin(data);$('authStatus').textContent='';
-  }catch(error){$('authStatus').textContent=method==='passkey'?passkeyError(error):(error.message||'Không thể đăng nhập.');showAuth()}
-  finally{authBusy=false;$('loginBtn').disabled=false;$('passkeyLoginBtn').disabled=false;if(document.visibilityState==='hidden')lockPasskeyApp()}
+  }catch(error){$('authStatus').textContent=passkeyAbortController?.signal.aborted?'':method==='passkey'?(automatic&&error?.code!=='passkey_disabled'?'Chạm mở khóa để thử lại, hoặc dùng mật khẩu.':passkeyError(error)):(error.message||'Không thể đăng nhập.');showAuth()}
+  finally{passkeyAbortController=null;authBusy=false;$('auth').classList.remove('isAuthenticating');$('loginBtn').disabled=false;$('passkeyLoginBtn').disabled=false;if(document.visibilityState==='hidden')lockPasskeyApp()}
 }
 $('loginBtn').addEventListener('click',()=>loginWith('password'));
 $('passkeyLoginBtn').addEventListener('click',()=>loginWith('passkey'));
+$('passwordToggleBtn').addEventListener('click',()=>{passkeyAbortController?.abort();passwordFormOpen=true;autoPasskeyAttempted=true;$('authStatus').textContent='';updatePasskeyUI();$('password').focus()});
 $('enablePasskeyBtn').addEventListener('click',async()=>{
   if(authBusy||!user)return;
   authBusy=true;$('enablePasskeyBtn').disabled=true;
@@ -664,9 +698,7 @@ $('enablePasskeyBtn').addEventListener('click',async()=>{
     const {data,error}=await sb.auth.registerPasskey();
     if(error)throw error;
     if(!data)throw new Error('Không nhận được passkey.');
-    const previousToken=localStorage.getItem(AUTH_STORAGE_KEY);
-    if(previousToken)memoryAuthStorage.set(AUTH_STORAGE_KEY,previousToken);
-    localStorage.setItem(PASSKEY_MODE_KEY,'true');localStorage.removeItem(AUTH_STORAGE_KEY);
+    enablePasskeyMode();
     updatePasskeyUI();
     $('passkeySetupStatus').textContent='Đã bật. Từ lần mở app tiếp theo, dùng Face ID / passkey để đăng nhập.';
   }catch(error){$('passkeySetupStatus').textContent=passkeyError(error)}
@@ -678,9 +710,14 @@ function lockPasskeyApp(){
   showAuth();user=null;$('password').value='';
   lockPromise=sb.auth.signOut({scope:'local'}).catch(()=>{}).finally(()=>memoryAuthStorage.clear());
 }
-document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')lockPasskeyApp()});
+document.addEventListener('visibilitychange',()=>{
+  if(document.visibilityState==='hidden'){
+    if(!authBusy){autoPasskeyAttempted=false;passwordFormOpen=false;updatePasskeyUI()}
+    lockPasskeyApp();
+  }else tryAutoPasskey();
+});
 window.addEventListener('pagehide',lockPasskeyApp);
-window.addEventListener('pageshow',event=>{if(event.persisted)lockPasskeyApp()});
+window.addEventListener('pageshow',event=>{if(event.persisted){lockPasskeyApp();tryAutoPasskey()}});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
 $('privacyBtn').addEventListener('click',async()=>{
   privacyHidden=!privacyHidden;
@@ -794,14 +831,14 @@ $('exportBtn').addEventListener('click',async()=>{
   const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
   link.href=url;link.download=`happy-money-backup-${todayIso()}.csv`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
 });
-$('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;showAuth()});
+$('logoutBtn').addEventListener('click',async()=>{autoPasskeyAttempted=true;await sb.auth.signOut();user=null;passwordFormOpen=false;updatePasskeyUI();showAuth()});
 
 async function init(){
   updatePrivacyButton();
   updatePasskeyUI();
   const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
   const {data:{session}}=await sb.auth.getSession();
-  if(session&&!passkeyMode()){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else showAuth();
+  if(session&&!passkeyMode()){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else{showAuth();await tryAutoPasskey()}
 }
 init();
 </script>
