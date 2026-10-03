@@ -12,7 +12,7 @@
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=4">
 <title>Happy Money</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.105.0/dist/umd/supabase.js"></script>
 <style>
 :root{--bg:#f4f1ea;--card:#fff;--text:#181714;--muted:#7a756c;--line:#e4dfd4;--green:#1f6a50;--red:#9c4c43;--dark:#171714;--gold:#c7a45a;--gold2:#e6cf91;--goldSoft:#f6edd8}
 *{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Inter,system-ui,sans-serif}
@@ -40,11 +40,13 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 <div id="auth" class="auth">
   <div class="authbox">
     <div class="eyebrow">HAPPY MONEY</div><h1>Đăng nhập</h1>
+    <button id="passkeyLoginBtn" class="primary hidden" type="button">Đăng nhập bằng Face ID / passkey</button>
+    <div id="passkeyLoginNote" class="status hidden">Dùng passkey đã tạo cho Happy Money trên thiết bị của bạn.</div>
     <input id="email" type="email" autocomplete="username" placeholder="Email">
     <input id="password" type="password" autocomplete="current-password" placeholder="Mật khẩu">
     <button id="loginBtn" class="primary">Đăng nhập</button>
     <div class="authSecondary">Chưa có tài khoản? <button id="signupBtn">Tạo tài khoản</button></div>
-    <div class="status">App sẽ giữ trạng thái đăng nhập trên thiết bị này.</div>
+    <div id="sessionNote" class="status">App sẽ giữ trạng thái đăng nhập trên thiết bị này.</div>
     <div id="authStatus" class="status"></div>
   </div>
 </div>
@@ -130,6 +132,7 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 
     <div class="overviewSection"><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải toàn bộ giao dịch và category dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Giao dịch.</div></div>
+    <div class="overviewSection"><button id="enablePasskeyBtn" class="categoryToggle" type="button"><span>Bật đăng nhập bằng Face ID / passkey</span><span>›</span></button><div id="passkeySetupStatus" class="statNote" role="status" style="margin-top:7px">Tạo passkey một lần để đăng nhập khi mở app.</div></div>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
 </div>
@@ -159,7 +162,19 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 <script>
 const SUPABASE_URL="https://cmejwdeklvmgqrollnqn.supabase.co";
 const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:window.localStorage}});
+const PASSKEY_MODE_KEY='happy_money_passkey_login';
+const AUTH_STORAGE_KEY='sb-cmejwdeklvmgqrollnqn-auth-token';
+const passkeyMode=()=>localStorage.getItem(PASSKEY_MODE_KEY)==='true';
+const memoryAuthStorage=new Map();
+// Passkey mode never keeps login tokens on disk. Each app launch needs a new sign-in.
+const authStorage={
+  getItem:key=>passkeyMode()?(memoryAuthStorage.get(key)??null):localStorage.getItem(key),
+  setItem:(key,value)=>{if(passkeyMode())memoryAuthStorage.set(key,value);else localStorage.setItem(key,value)},
+  removeItem:key=>{memoryAuthStorage.delete(key);localStorage.removeItem(key)}
+};
+if(passkeyMode())localStorage.removeItem(AUTH_STORAGE_KEY);
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY,{auth:{experimental:{passkey:true},persistSession:true,autoRefreshToken:true,detectSessionInUrl:true,storage:authStorage}});
+let authBusy=false,appUnlocked=false,lockPromise=Promise.resolve();
 const $=id=>document.getElementById(id);
 const fmt=n=>new Intl.NumberFormat('vi-VN').format(Number(n||0))+' ₫';
 const formatMoneyInputValue=value=>{
@@ -234,8 +249,8 @@ function updatePrivacyButton(){
 }
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
-function showAuth(){$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
-function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
+function showAuth(){appUnlocked=false;document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
+function showApp(){appUnlocked=true;$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
 const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
 const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
 function renderMonths(){
@@ -604,7 +619,68 @@ document.addEventListener('touchend',()=>{
   if(shouldRefresh)runAppRefresh();else hidePullRefresh();
 },{passive:true});
 
-$('loginBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'';if(data?.user){user=data.user;await hydrateCategoryOverrides();showApp();renderMonths();refresh()}});
+function updatePasskeyUI(){
+  const supported=window.isSecureContext&&typeof window.PublicKeyCredential!=='undefined'&&typeof sb.auth.signInWithPasskey==='function';
+  $('passkeyLoginBtn').classList.toggle('hidden',!supported);
+  $('passkeyLoginNote').classList.toggle('hidden',!supported);
+  $('enablePasskeyBtn').disabled=!supported;
+  $('sessionNote').textContent=passkeyMode()?'Xác thực lại mỗi lần mở app. Có thể dùng mật khẩu khi cần.':'Bật Face ID / passkey trong Tổng quan để xác thực mỗi lần mở app.';
+  $('enablePasskeyBtn').querySelector('span').textContent=passkeyMode()?'Thêm Face ID / passkey cho thiết bị':'Bật đăng nhập bằng Face ID / passkey';
+  if(!supported)$('passkeySetupStatus').textContent='Thiết bị hoặc trình duyệt này chưa hỗ trợ passkey. Bạn vẫn có thể đăng nhập bằng mật khẩu.';
+}
+function passkeyError(error){
+  if(error?.code==='passkey_disabled')return 'Đăng nhập bằng passkey chưa được bật cho Happy Money. Bạn vẫn có thể dùng mật khẩu.';
+  if(error?.name==='NotAllowedError'||/cancel|not allowed|timed out/i.test(error?.message||''))return 'Chưa hoàn tất xác thực. Bạn có thể thử lại hoặc dùng mật khẩu.';
+  return 'Không thể xác thực bằng passkey. Vui lòng thử lại hoặc dùng mật khẩu.';
+}
+async function completeLogin(data){
+  if(!data?.user||!data?.session)throw new Error('Không nhận được phiên đăng nhập.');
+  user=data.user;$('password').value='';
+  await hydrateCategoryOverrides();renderMonths();
+  // A backgrounded app must not reveal data after an asynchronous sign-in.
+  if(document.visibilityState==='hidden'&&passkeyMode()){await sb.auth.signOut({scope:'local'});user=null;showAuth();return}
+  showApp();await refresh();
+}
+async function loginWith(method){
+  if(authBusy)return;
+  authBusy=true;$('loginBtn').disabled=true;$('passkeyLoginBtn').disabled=true;
+  $('authStatus').textContent=method==='passkey'?'Đang xác thực…':'Đang đăng nhập…';
+  try{
+    await lockPromise;
+    if(method==='password')rememberEmail();
+    const {data,error}=method==='passkey'?await sb.auth.signInWithPasskey():await sb.auth.signInWithPassword({email:$('email').value.trim(),password:$('password').value});
+    if(error)throw error;
+    await completeLogin(data);$('authStatus').textContent='';
+  }catch(error){$('authStatus').textContent=method==='passkey'?passkeyError(error):(error.message||'Không thể đăng nhập.');showAuth()}
+  finally{authBusy=false;$('loginBtn').disabled=false;$('passkeyLoginBtn').disabled=false;if(document.visibilityState==='hidden')lockPasskeyApp()}
+}
+$('loginBtn').addEventListener('click',()=>loginWith('password'));
+$('passkeyLoginBtn').addEventListener('click',()=>loginWith('passkey'));
+$('enablePasskeyBtn').addEventListener('click',async()=>{
+  if(authBusy||!user)return;
+  authBusy=true;$('enablePasskeyBtn').disabled=true;
+  $('passkeySetupStatus').textContent='Đang tạo passkey…';
+  try{
+    const {data,error}=await sb.auth.registerPasskey();
+    if(error)throw error;
+    if(!data)throw new Error('Không nhận được passkey.');
+    const previousToken=localStorage.getItem(AUTH_STORAGE_KEY);
+    if(previousToken)memoryAuthStorage.set(AUTH_STORAGE_KEY,previousToken);
+    localStorage.setItem(PASSKEY_MODE_KEY,'true');localStorage.removeItem(AUTH_STORAGE_KEY);
+    updatePasskeyUI();
+    $('passkeySetupStatus').textContent='Đã bật. Từ lần mở app tiếp theo, dùng Face ID / passkey để đăng nhập.';
+  }catch(error){$('passkeySetupStatus').textContent=passkeyError(error)}
+  finally{authBusy=false;$('enablePasskeyBtn').disabled=false;if(document.visibilityState==='hidden')lockPasskeyApp()}
+});
+// Returning to a running Home Screen app also requires a fresh server sign-in.
+function lockPasskeyApp(){
+  if(!passkeyMode()||!appUnlocked||authBusy)return;
+  showAuth();user=null;$('password').value='';
+  lockPromise=sb.auth.signOut({scope:'local'}).catch(()=>{}).finally(()=>memoryAuthStorage.clear());
+}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')lockPasskeyApp()});
+window.addEventListener('pagehide',lockPasskeyApp);
+window.addEventListener('pageshow',event=>{if(event.persisted)lockPasskeyApp()});
 $('signupBtn').addEventListener('click',async()=>{rememberEmail();const {data,error}=await sb.auth.signUp({email:$('email').value.trim(),password:$('password').value});$('authStatus').textContent=error?error.message:'Đã tạo tài khoản. Kiểm tra email nếu cần xác nhận.'});
 $('privacyBtn').addEventListener('click',async()=>{
   privacyHidden=!privacyHidden;
@@ -722,9 +798,10 @@ $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=n
 
 async function init(){
   updatePrivacyButton();
+  updatePasskeyUI();
   const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
   const {data:{session}}=await sb.auth.getSession();
-  if(session){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else showAuth();
+  if(session&&!passkeyMode()){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else showAuth();
 }
 init();
 </script>
