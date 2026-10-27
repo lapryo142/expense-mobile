@@ -77,11 +77,32 @@ html,body{background:var(--bg);color:var(--text)}button,input,select{font-family
 .statBox .statValue{font-size:18px;white-space:nowrap;font-variant-numeric:tabular-nums}.statBox.wide .statValue{font-size:22px}.extraStats{margin-top:14px}.extraStats>summary{font-size:12px;color:#b2b69e;padding:10px 0;cursor:pointer}.extraStats>.statGrid{margin-top:9px}body:has(#editTxOverlay.open) .bottom,body:has(#statusOverlay.open) .bottom{display:none}
 @media(max-height:740px){#addOverlay .amountField{margin:10px 0 4px}#addOverlay .amountField input{height:55px;font-size:36px}#addOverlay .toggle{margin-top:6px}.keypad button{min-height:43px}.keypad{gap:5px;padding-top:6px}#addOverlay #saveTx{margin-top:9px}#addOverlay .formPanel{padding-top:calc(10px + env(safe-area-inset-top));padding-bottom:10px}}
 @media(max-width:360px){.app{padding-left:16px;padding-right:16px}.headerActions{position:absolute;top:8px;margin:0}.header h1{font-size:25px}.headerBtn{width:32px;height:32px}#addOverlay .formPanel,#summaryOverlay .summaryPanel{padding-left:16px;padding-right:16px}.tx{grid-template-columns:30px minmax(0,1fr) auto;gap:8px}.txIcon{width:30px;height:30px;font-size:16px}.txAmt{font-size:12px}.txName{font-size:14px}.comparisonAmount{font-size:11px}}
+
+/* Theme switch and input ergonomics. */
+.panelTools{display:flex;align-items:center;gap:8px}.themeToggle{width:36px;height:36px;flex-shrink:0;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:var(--card);color:var(--text);padding:8px}.themeToggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.auth{position:relative}.authTheme{position:absolute;right:22px;top:calc(18px + env(safe-area-inset-top))}#summaryBtn{display:none}
+.overlay,#addOverlay .formPanel{touch-action:auto}#addOverlay .quick{touch-action:pan-x;overflow-x:auto;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch;gap:10px;padding:7px 2px 12px;cursor:grab}#addOverlay .quick.dragging{cursor:grabbing}#addOverlay .quick button{min-height:54px;min-width:132px;padding:12px 17px;font-size:15px;display:flex;align-items:center;justify-content:center;gap:9px;touch-action:pan-x}#addOverlay .quick .categoryEmoji{font-size:21px;line-height:1}.quick .categoryText{white-space:nowrap}#addOverlay .quick button,#addOverlay .quick button *{-webkit-user-select:none;user-select:none}#addOverlay #amount{cursor:text}#keypad [data-key="backspace"] svg{width:26px;height:26px}
+:root[data-theme="light"]{color-scheme:light;--bg:#f7f7f3;--card:#fff;--text:#20221d;--muted:#676c5f;--line:#dddfd5;--green:#3e671f;--red:#9b4434;--dark:#f7f7f3;--gold:#74651b;--gold2:#74651b;--goldSoft:#eeecd7}
+html[data-theme="light"] body{background:var(--bg);color:var(--text)}html[data-theme="light"] input,html[data-theme="light"] select{color-scheme:light}
+html[data-theme="light"] .header .eyebrow,html[data-theme="light"] .txDate,html[data-theme="light"] .txCategory,html[data-theme="light"] .asOf,html[data-theme="light"] .editHint,html[data-theme="light"] .statLabel,html[data-theme="light"] .statBox.payLaterOverview .statLabel,html[data-theme="light"] .statNote,html[data-theme="light"] .comparisonName,html[data-theme="light"] .comparisonHead,html[data-theme="light"] .sectionTitle,html[data-theme="light"] .spendBarAmount small{color:#686e5e}
+html[data-theme="light"] .headerBtn,html[data-theme="light"] .closeBtn,html[data-theme="light"] .periodButton,html[data-theme="light"] .periodMenu,html[data-theme="light"] .card,html[data-theme="light"] .card.gold,html[data-theme="light"] .card.payLaterCard,html[data-theme="light"] .statBox,html[data-theme="light"] .topSpend,html[data-theme="light"] .authbox{background:#fff;color:#24271f;border-color:#dddfd5;box-shadow:none}
+html[data-theme="light"] .periodButton span:last-child,html[data-theme="light"] .periodOption,html[data-theme="light"] .field label,html[data-theme="light"] .authField label{color:#626950}html[data-theme="light"] .periodOption.active{background:#e7eadc;color:#333e1b}
+html[data-theme="light"] .list{background:transparent}html[data-theme="light"] .tx,html[data-theme="light"] .comparisonTable,html[data-theme="light"] .comparisonRow,html[data-theme="light"] .spendBarRow,html[data-theme="light"] .topSpendRow{border-color:#dfe2d6}html[data-theme="light"] .txIcon,html[data-theme="light"] .spendBarIcon{background:#e6ebdb}html[data-theme="light"] .txAmt.exp{color:#2a2e23}html[data-theme="light"] .txCategory.payLater{background:#efe3ee;color:#7c4970}
+html[data-theme="light"] .balance,html[data-theme="light"] .balance.editableStat.holding{background:#e9eddf;border-color:#ccd3bd;color:#222b18}html[data-theme="light"] .balance .big{color:#252f19}html[data-theme="light"] .balance small,html[data-theme="light"] .balance .asOf,html[data-theme="light"] .balance .editHint{color:#626c50}
+html[data-theme="light"] .bottom{background:rgba(247,247,243,.97);border-color:#dddfd5}html[data-theme="light"] .tabbar button{color:#6f7661}html[data-theme="light"] .tabbar button[aria-current="page"]{background:#e7eadc;color:#303d1b}html[data-theme="light"] .tabbar button[aria-current="page"] svg{stroke:#576b2d}
+html[data-theme="light"] .overlay{background:rgba(30,35,20,.3)}html[data-theme="light"] .panel,html[data-theme="light"] .formPanel{background:#fafbf7;border-color:#d6dccb;color:#242b1c}html[data-theme="light"] #addOverlay,html[data-theme="light"] #summaryOverlay,html[data-theme="light"] #addOverlay .formPanel,html[data-theme="light"] #summaryOverlay .summaryPanel{background:#f7f7f3}
+html[data-theme="light"] #addOverlay .toggle{background:#e7e9e0}html[data-theme="light"] #addOverlay .toggle button{color:#666d58}html[data-theme="light"] #addOverlay .toggle button.active{background:#fff;color:#28351a}html[data-theme="light"] #addOverlay .amountField input,html[data-theme="light"] #addOverlay .amountField input::placeholder{background:transparent;color:#242b1d;caret-color:#657c35}html[data-theme="light"] #addOverlay .amountField label{color:#676e5e}
+html[data-theme="light"] #addOverlay .quick button{background:#e9ebe3;border-color:#dfe2d5;color:#61694e}html[data-theme="light"] #addOverlay .quick button.selected{background:#eadbc7;border-color:#bb8b54;color:#623f1b}html[data-theme="light"] #addOverlay .quickIncome button.selected{background:#e0eacb;border-color:#92a566;color:#455e1f}
+html[data-theme="light"] .field input,html[data-theme="light"] .field select,html[data-theme="light"] .auth input,html[data-theme="light"] .exportOptions select{background:#fff;border-color:#d6dccb;color:#26321a}html[data-theme="light"] .field input::placeholder,html[data-theme="light"] #addOverlay #desc::placeholder{color:#747b67}html[data-theme="light"] #addOverlay #desc{background:transparent;border-color:#d6dccb}html[data-theme="light"] .entryOptions summary,html[data-theme="light"] .entryOptions summary:after,html[data-theme="light"] .paymentHint{color:#68764c}html[data-theme="light"] .entryOptions[open]{background:#ebeee3}
+html[data-theme="light"] .paymentChoice button,html[data-theme="light"] .todayBtn,html[data-theme="light"] .categoryTags button{background:#fff;border-color:#d6dccb;color:#626f4f}html[data-theme="light"] .paymentChoice button.active,html[data-theme="light"] .todayBtn[aria-pressed="true"],html[data-theme="light"] .categoryTags button.selected{background:#dce5c9;border-color:#a9b98a;color:#374d1b}html[data-theme="light"] .dateChoice input[type="date"]{color:#3e5029;color-scheme:light}
+html[data-theme="light"] .keypad button{background:#e9ebe3;border-color:#dfe2d5;color:#252e1a}html[data-theme="light"] .keypad button:active{background:#d4dcc2}html[data-theme="light"] .primary,html[data-theme="light"] #addOverlay .primary,html[data-theme="light"] .faceLoginButton,html[data-theme="light"] .auth.passkeyReady .faceLoginButton{background:#2f3a21;color:#fbfff3;border:0}
+html[data-theme="light"] .categoryChart{background:transparent}html[data-theme="light"] .spendBarRow{color:#303d20}html[data-theme="light"] .spendBarRow:hover,html[data-theme="light"] .spendBarRow:focus-visible{background:#ecefe3}html[data-theme="light"] .spendTrack{background:#dce0d0}html[data-theme="light"] .spendFill{filter:brightness(.65) saturate(1.4)}html[data-theme="light"] .categoryToggle{background:#fff;border-color:#d6dccb;color:#455a2b}html[data-theme="light"] .categoryResult{background:#e9efde;border-color:#c9d4b4}html[data-theme="light"] .categoryResultName,html[data-theme="light"] .categoryResultAmount,html[data-theme="light"] .categoryTxAmount{color:#344b1d}html[data-theme="light"] .categoryResultNote,html[data-theme="light"] .categoryTxDate{color:#66764c}html[data-theme="light"] .categoryTxRow,html[data-theme="light"] .categoryTxList{border-color:#c9d4b4}
+html[data-theme="light"] .topRank{background:#e1e8ce;color:#4b6227}html[data-theme="light"] .topAmount{color:#405527}html[data-theme="light"] .reviewItem{background:#faf0e8;border-color:#ddc6af}html[data-theme="light"] .reviewAmount,html[data-theme="light"] #entryError{color:#95472b}html[data-theme="light"] .shortcutHelp{background:#fff;border-color:#d6dccb;color:#626f4f}html[data-theme="light"] .shortcutHelp summary{color:#405527}html[data-theme="light"] .shortcutHelp code{background:#e9efde;color:#344b1d}
+html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubtitle,html[data-theme="light"] .authSecondary,html[data-theme="light"] .status,html[data-theme="light"] .auth #sessionNote{color:#6e765e}html[data-theme="light"] .authTextButton,html[data-theme="light"] .authSecondary button{color:#556c32}html[data-theme="light"] .faceIcon{background:#e9efde;border-color:#c9d4b4;color:#556c32}html[data-theme="light"] .authDivider:before,html[data-theme="light"] .authDivider:after{background:#d6dccb}html[data-theme="light"] .dangerButton{background:#f4e7e2;border-color:#d8b9ac;color:#8e4631}html[data-theme="light"] .dangerlink{color:#8e604e}html[data-theme="light"] .pullRefresh,html[data-theme="light"] .pullRefresh.loading{background:#e9efde;border-color:#c9d4b4;color:#556c32}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
 <div id="auth" class="auth hidden">
-  <div class="authbox">
+  <div class="authbox"><div class="authTheme"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button></div>
     <div class="authHeader">
       <div id="faceIcon" class="faceIcon hidden"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M10 4H7a3 3 0 0 0-3 3v3m18-6h3a3 3 0 0 1 3 3v3M4 22v3a3 3 0 0 0 3 3h3m12 0h3a3 3 0 0 0 3-3v-3M11 12v3m10-3v3m-5-2v6h-2m-4 3c3 3 9 3 12 0"/></svg></div>
       <div class="eyebrow">HAPPY MONEY</div>
@@ -105,7 +126,7 @@ html,body{background:var(--bg);color:var(--text)}button,input,select{font-family
 <div id="app" class="app hidden">
   <div class="header">
     <div class="eyebrow">HAPPY MONEY</div><h1>Lịch sử</h1>
-    <div class="headerActions">
+    <div class="headerActions"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button>
       <button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button>
       <button id="refreshBtn" class="headerBtn" aria-label="Làm mới" title="Làm mới">↻</button>
       <button id="summaryBtn" class="headerBtn" aria-label="Mở thống kê"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m8 10V4m8 16v-7"/></svg></button>
@@ -141,7 +162,7 @@ html,body{background:var(--bg);color:var(--text)}button,input,select{font-family
 
 <div id="addOverlay" class="overlay">
   <div class="panel formPanel">
-    <div class="panelHead"><h2>Ghi giao dịch</h2><button id="closeAdd" class="closeBtn">Đóng</button></div>
+    <div class="panelHead"><h2>Ghi giao dịch</h2><div class="panelTools"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button><button id="closeAdd" class="closeBtn">Đóng</button></div></div>
     <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
     <div class="field amountField"><label for="amount">Anh đã chi bao nhiêu? · ₫</label><input id="amount" class="amount" inputmode="none" aria-label="Số tiền bằng đồng Việt Nam" placeholder="0" autocomplete="off" enterkeyhint="done"></div>
     <div class="entryNote">Nhập số tiền, chọn danh mục rồi lưu. Vuốt các danh mục để xem thêm.</div>
@@ -169,7 +190,7 @@ html,body{background:var(--bg);color:var(--text)}button,input,select{font-family
 
 <div id="summaryOverlay" class="overlay">
   <div class="panel summaryPanel">
-    <div class="panelHead"><h2>Thống kê <span id="overviewMonth" style="display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px"></span></h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
+    <div class="panelHead"><h2>Thống kê <span id="overviewMonth" style="display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px"></span></h2><div class="panelTools"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button><button id="closeSummary" class="closeBtn">Đóng</button></div></div>
     <div id="overviewStats" class="overviewSection"><div class="overviewLoading">Đang tính thống kê…</div></div>
 
     <div class="overviewSection">
@@ -233,11 +254,19 @@ const formatMoneyInputValue=value=>{
   const digits=String(value??'').replace(/\D/g,'');
   return digits?new Intl.NumberFormat('vi-VN').format(Number(digits)):'';
 };
+const moneyCursor=(input,position)=>input.value.slice(0,position??input.value.length).replace(/\D/g,'').length;
+function setMoneyDigits(input,rawDigits,digitPosition){
+  const leadingZeros=(rawDigits.match(/^0+/)||[''])[0].length;
+  const digits=rawDigits.replace(/^0+/,'');input.value=formatMoneyInputValue(digits);
+  const target=Math.max(0,digitPosition-leadingZeros);let seen=0,position=0;
+  while(position<input.value.length&&seen<target){if(/\d/.test(input.value[position]))seen++;position++}
+  input.setSelectionRange(position,position);
+}
 const bindMoneyInput=id=>{
   const input=$(id);if(!input)return;
   input.addEventListener('input',()=>{
-    const formatted=formatMoneyInputValue(input.value);
-    if(input.value!==formatted)input.value=formatted;
+    const digitPosition=moneyCursor(input,input.selectionStart),digits=input.value.replace(/\D/g,'');
+    setMoneyDigits(input,digits,digitPosition);
   });
 };
 const normalizedIsoDate=(iso,expectedMonth)=>{
@@ -611,12 +640,6 @@ async function renderMonthlyOverview(){
     <div class="statBox wide payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
-  const statsGrid=$('overviewStats').querySelector('.statGrid'),statCards=[...statsGrid.children];
-  const extraStats=document.createElement('details');extraStats.className='extraStats';
-  const extraTitle=document.createElement('summary');extraTitle.textContent='Chi tiết tháng & so sánh';
-  const extraGrid=document.createElement('div');extraGrid.className='statGrid';
-  statCards.filter((_,index)=>index!==1&&index!==2).forEach(card=>extraGrid.appendChild(card));
-  statsGrid.replaceChildren(statCards[1],statCards[2]);extraStats.append(extraTitle,extraGrid);$('overviewStats').appendChild(extraStats);
   const categoryNames=EXPENSE_CATEGORIES;
   $('categoryToggleText').textContent='Chọn danh mục';
   $('categoryTags').classList.remove('open');
@@ -776,7 +799,7 @@ function bindPullToClose(overlayId,panelSelector){
   };
   const close=()=>{overlay.classList.remove('open');reset()};
   panel.addEventListener('touchstart',event=>{
-    if(panel.scrollTop>0)return;
+    if(panel.scrollTop>0||event.target.closest('.quick,.keypad,input,select,textarea')){reset();return}
     startY=event.touches[0].clientY;distance=0;panel.classList.add('pullDragging');
   },{passive:true});
   panel.addEventListener('touchmove',event=>{
@@ -812,17 +835,34 @@ function updateTabs(){
   for(const id of ['historyTab','addBtn','statsTab']){if(id===active)$(id).setAttribute('aria-current','page');else $(id).removeAttribute('aria-current')}
 }
 for(const id of ['addOverlay','summaryOverlay'])new MutationObserver(updateTabs).observe($(id),{attributes:true,attributeFilter:['class']});
+$('keypad').addEventListener('pointerdown',event=>{if(event.target.closest('[data-key]'))event.preventDefault()});
 $('keypad').addEventListener('click',event=>{
   const key=event.target.closest('[data-key]')?.dataset.key;if(!key||savingTransaction)return;
-  let digits=$('amount').value.replace(/\D/g,'');
-  if(key==='backspace')digits=digits.slice(0,-1);else if((digits+key).replace(/^0+/,'').length<=15)digits+=key;
-  $('amount').value=formatMoneyInputValue(digits.replace(/^0+/,''));$('entryError').textContent='';
+  const input=$('amount'),digits=input.value.replace(/\D/g,'');
+  let start=moneyCursor(input,input.selectionStart),end=moneyCursor(input,input.selectionEnd),next;
+  if(key==='backspace'){
+    if(start===end){if(start===0)return;start--}
+    next=digits.slice(0,start)+digits.slice(end);
+  }else{
+    next=digits.slice(0,start)+key+digits.slice(end);
+    if(next.replace(/^0+/,'').length>15)return;start+=key.length;
+  }
+  input.focus({preventScroll:true});setMoneyDigits(input,next,start);$('entryError').textContent='';
 });
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso();updateEntryDateButtons()});
 $('yesterdayBtn').addEventListener('click',()=>{$('date').value=yesterdayIso();updateEntryDateButtons()});
 $('date').addEventListener('change',updateEntryDateButtons);
 $('quickEntryUrl').textContent=location.origin+'/?action=add';
-document.querySelectorAll('#quickExpense button').forEach(button=>{button.textContent=(CATEGORY_ICONS[button.dataset.category]||'')+' '+button.dataset.category});
+document.querySelectorAll('#quickExpense button').forEach(button=>{button.innerHTML=`<span class="categoryEmoji" aria-hidden="true">${CATEGORY_ICONS[button.dataset.category]||''}</span><span class="categoryText">${escapeHtml(button.dataset.category)}</span>`});
+document.querySelectorAll('#addOverlay .quick').forEach(rail=>{
+  let origin=null,moved=false,suppressClickUntil=0;
+  rail.addEventListener('pointerdown',event=>{if(event.pointerType!=='mouse'||event.button!==0)return;origin={x:event.clientX,scroll:rail.scrollLeft};moved=false});
+  rail.addEventListener('pointermove',event=>{if(!origin)return;const dx=event.clientX-origin.x;if(Math.abs(dx)>6){moved=true;rail.classList.add('dragging');rail.setPointerCapture(event.pointerId)}if(moved){rail.scrollLeft=origin.scroll-dx;event.preventDefault()}});
+  const end=()=>{if(moved)suppressClickUntil=performance.now()+250;origin=null;rail.classList.remove('dragging')};
+  rail.addEventListener('pointerup',end);rail.addEventListener('pointercancel',end);
+  rail.addEventListener('pointerleave',()=>{if(!moved)end()});
+  rail.addEventListener('click',event=>{if(performance.now()<suppressClickUntil){event.preventDefault();event.stopImmediatePropagation()}},true);
+});
 for(const id of ['amount','desc'])$(id).addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$('saveTx').click()}});
 $('closeAdd').addEventListener('click',()=>addPull.close());
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))addPull.close()});
@@ -917,6 +957,20 @@ $('exportBtn').addEventListener('click',async()=>{
 });
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;passwordFormOpen=false;updatePasskeyUI();showAuth()});
 
+function applyTheme(theme){
+  const light=theme==='light';document.documentElement.dataset.theme=light?'light':'dark';
+  document.querySelector('meta[name="theme-color"]').content=light?'#f7f7f3':'#080808';
+  const label=light?'Chuyển sang giao diện tối':'Chuyển sang giao diện sáng';
+  document.querySelectorAll('.themeToggle').forEach(button=>{
+    button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(light));
+    button.innerHTML=light?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8.7 8.7 0 0 1 8.6 4a8.8 8.8 0 1 0 11.4 11.4Z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>';
+  });
+}
+let savedTheme='dark';try{savedTheme=localStorage.getItem('happy_money_theme')||'dark'}catch{}
+applyTheme(savedTheme);
+document.querySelectorAll('.themeToggle').forEach(button=>button.addEventListener('click',()=>{
+  const theme=document.documentElement.dataset.theme==='light'?'dark':'light';applyTheme(theme);try{localStorage.setItem('happy_money_theme',theme)}catch{}
+}));
 async function init(){
   updatePrivacyButton();
   updatePasskeyUI();

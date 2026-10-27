@@ -63,3 +63,12 @@ Thay định hướng màu kem–vàng của giai đoạn đầu bằng nền g�
 - Kiểm thử Chromium với API giả: các luồng giai đoạn đầu vẫn qua; thêm phím số/xóa, tab điều hướng, layout 320×568, 390×667, 390×844 và 430×932. Nút lưu có thể cuộn tới phía trên thanh điều hướng trên màn hình thấp. Chưa xác nhận bàn phím hệ thống/Safari trên iPhone thật.
 
 Không thay schema, công thức số dư, đồng bộ Sheets hoặc cơ chế giữ phiên đăng nhập trong đợt thiết kế này.
+
+## Giai đoạn 3 — Sáng/Tối, con trỏ và danh mục
+
+- Thêm nút Sáng/Tối tại lịch sử, nhập, thống kê và đăng nhập; lưu lựa chọn trên thiết bị. Light dùng nền trắng ngà, thẻ trắng, chữ xanh đậm; đổi cả form phụ và màu thanh trình duyệt.
+- Bàn phím số chèn/thay thế tại con trỏ hoặc vùng chọn. Xóa lùi đúng chữ số trước con trỏ; không xóa nhầm chữ số cuối. Định dạng phân cách hàng nghìn giữ vị trí con trỏ khi nhập vật lý.
+- Nút danh mục tối thiểu 54 px cao, 132 px rộng, chữ 15 px và biểu tượng 21 px. Cho phép native horizontal pan trên vùng danh mục, tránh cử chỉ đóng panel chiếm thao tác vuốt; hỗ trợ kéo bằng chuột và chặn chọn nhầm khi kết thúc kéo.
+- Khôi phục toàn bộ thẻ thống kê hiển thị trực tiếp, gồm thu nhập, tổng chi, bình quân ngày, khoản chi lớn nhất, dự tính, trả sau và bảng so sánh cùng kỳ tháng trước. Không gói các chỉ số này trong phần thu gọn nữa.
+
+Kiểm chứng Chromium với API giả: kiểm thử hồi quy qua; thêm ca sửa giữa số tiền, thay vùng chọn, xóa ở đầu số, giữ caret khi format, swipe thật bằng CDP làm rail cuộn mà không kéo panel, kích thước chip, nhớ light qua reload và bảng so sánh luôn hiển thị. Đã xem ảnh light ở màn hình nhập/thống kê. Safari/iPhone thật chưa có trong môi trường kiểm thử.
