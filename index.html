@@ -35,6 +35,26 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 .auth{max-width:430px;margin:0 auto;padding:calc(54px + env(safe-area-inset-top)) 24px 32px;min-height:100dvh;display:flex;align-items:center}.authbox{width:100%;background:#fff;border:1px solid var(--line);border-radius:26px;padding:30px 24px;box-shadow:0 12px 35px rgba(60,48,22,.06)}.authHeader{text-align:center;margin-bottom:24px}.authHeader .eyebrow{letter-spacing:1.8px;color:#8b7543}.authHeader h1{font-size:27px;margin-top:9px;letter-spacing:-.7px}.authSubtitle{font-size:14px;line-height:1.5;color:var(--muted);margin:9px 0 0}.faceIcon{width:66px;height:66px;margin:0 auto 19px;display:grid;place-items:center;border:1px solid #e7d8b5;border-radius:20px;background:var(--goldSoft);color:#8b6c2f}.faceIcon svg{width:35px;height:35px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.auth input{width:100%;padding:14px;border:1px solid var(--line);border-radius:13px;margin:0;font-size:16px;background:#faf9f6;color:var(--text)}.auth input:focus{outline:0;border-color:var(--gold);box-shadow:0 0 0 3px rgba(199,164,90,.15)}.authField{display:grid;gap:7px;margin-bottom:14px}.authField label{font-size:12px;font-weight:750;color:#625c50}.auth .primary{font-weight:750}.authSecondary{text-align:center;margin-top:20px;font-size:12px;color:var(--muted)}.authSecondary button,.authTextButton{border:0;background:transparent;color:#705820;font-size:13px;font-weight:700;padding:8px}.authTextButton{display:block;margin:14px auto 0}.authDivider{display:flex;align-items:center;gap:12px;color:#aaa393;font-size:11px;margin:22px 0 14px}.authDivider:before,.authDivider:after{content:"";height:1px;background:var(--line);flex:1}.faceLoginButton{width:100%;min-height:50px;border:1px solid #d8bf7c;border-radius:14px;background:var(--goldSoft);color:#654f1c;display:flex;justify-content:center;align-items:center;gap:10px;font-size:14px;font-weight:750}.faceLoginButton svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.auth.passkeyReady .faceLoginButton{background:linear-gradient(135deg,#1b1a16,#2c2417);color:#fff7e5;border-color:rgba(199,164,90,.7);font-size:15px}.auth.passkeyReady .authbox{padding-top:34px;padding-bottom:27px}.auth.passkeyReady .authHeader{margin-bottom:26px}.auth.isAuthenticating .faceIcon{animation:authPulse 1.4s ease-in-out infinite}.faceLoginButton:disabled{opacity:.6}.status{font-size:12px;color:var(--muted);margin-top:9px}.auth .status{text-align:center;line-height:1.5}.auth #authStatus:empty{display:none}.auth #sessionNote{font-size:11px;margin-top:20px;color:#958d7d}@keyframes authPulse{50%{box-shadow:0 0 0 8px rgba(199,164,90,.09)}}@media(prefers-reduced-motion:reduce){.auth.isAuthenticating .faceIcon{animation:none}}@media(max-height:620px){.auth{padding-top:24px;align-items:flex-start}.authbox{padding-top:24px}}
 
 .empty{padding:30px 16px;text-align:center;color:var(--muted);font-size:13px}.editHint{font-size:10px;color:#9a8f7c;margin-top:5px}.balance .editHint{color:#bfb49e}
+
+/* Fast capture: amount first, compact category chips, and clear secondary actions. */
+#addOverlay .quick{display:flex;overflow-x:auto;gap:7px;padding:3px 0 8px;scrollbar-width:thin}
+#addOverlay .quick button{flex:0 0 auto;border-radius:999px;min-height:42px;padding:9px 13px;background:#faf8f3;border-color:var(--line);color:#5f594f}
+#addOverlay .quick button.selected{background:var(--goldSoft);border-color:#b58e3e;color:#654f1c}
+#addOverlay .quickIncome{display:none}#addOverlay .quickIncome.show{display:flex}#addOverlay .quickExpense.hide{display:none}
+#addOverlay .amountField{margin:17px 0 10px}#addOverlay .amountField input{font-size:38px;letter-spacing:-1px;font-variant-numeric:tabular-nums;background:#faf8f3;padding:14px}
+#addOverlay .entryNote{font-size:12px;color:var(--muted);line-height:1.45;margin:5px 0 8px}
+#addOverlay .dateChoice{flex-wrap:wrap;overflow:visible}#addOverlay .dateChoice input{flex-basis:120px;min-height:44px}
+.todayBtn{min-height:44px;font-size:13px;padding:0 11px}.todayBtn[aria-pressed="true"]{background:#d8bd78;border-color:#b58e3e}
+.categoryLegendRow{width:100%;text-align:left;border:0;background:transparent;color:var(--text);font:inherit;padding:5px 0;border-radius:7px;cursor:pointer}
+.categoryLegendRow:hover,.categoryLegendRow:focus-visible{background:var(--goldSoft)}
+.categoryLegendName{font-size:12px}.categoryLegendMeta,.statLabel{font-size:11px}.statNote{line-height:1.45}
+.txName{overflow-wrap:anywhere;min-width:0}.tx>div:first-child{min-width:0}.txAmt{font-variant-numeric:tabular-nums;white-space:nowrap}
+.tx[role="button"]{cursor:pointer}.tx:focus-visible{outline:2px solid var(--gold);outline-offset:-3px}
+.exportOptions{display:flex;gap:8px;margin:8px 0}.exportOptions select{flex:1;min-width:0;border:1px solid var(--line);border-radius:12px;padding:12px;background:#fff;color:var(--text);font:inherit;font-size:14px}
+.shortcutHelp{margin-top:16px;border:1px solid var(--line);border-radius:14px;padding:13px;font-size:13px;line-height:1.55;color:#625c50}.shortcutHelp summary{font-weight:800;cursor:pointer;color:var(--text)}.shortcutHelp code{display:block;overflow-wrap:anywhere;background:#faf8f3;border-radius:8px;padding:9px;margin:8px 0;font-size:12px}.shortcutHelp ol{padding-left:20px;margin-bottom:0}
+.formError{color:var(--red);font-size:13px;line-height:1.4;min-height:0;margin:8px 0}.formError:empty{display:none}
+.entryOptions{border-top:1px solid var(--line);margin:12px 0;padding-top:11px}.entryOptions summary{font-size:13px;font-weight:750;color:#705820;cursor:pointer;min-height:32px;padding:6px 0}.entryOptions[open] summary{margin-bottom:5px}
+@media(max-width:360px){.headerActions{position:static;margin-top:12px}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -97,6 +117,8 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
   <div class="panel formPanel">
     <div class="panelHead"><h2>Thêm giao dịch</h2><button id="closeAdd" class="closeBtn">Đóng</button></div>
     <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
+    <div class="field amountField"><label for="amount">SỐ TIỀN · VNĐ</label><input id="amount" class="amount" inputmode="numeric" placeholder="0" autocomplete="off" enterkeyhint="done"></div>
+    <div class="entryNote">Nhập số tiền, chọn danh mục rồi lưu. Vuốt các danh mục để xem thêm.</div>
     <div id="quickExpense" class="quick quickExpense">
       <button data-category="Ăn uống">Ăn uống</button><button data-category="Di chuyển & xe">Di chuyển & xe</button>
       <button data-category="Nhà cửa & hóa đơn">Nhà cửa & hóa đơn</button><button data-category="Tennis">Tennis</button>
@@ -107,11 +129,13 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
-    <div class="field"><label>SỐ TIỀN</label><input id="amount" class="amount" inputmode="numeric"></div>
-    <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ví dụ: Tennis"></div>
-    <div class="field"><label>DANH MỤC</label><select id="category"></select></div>
+    <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ghi chú thêm (không bắt buộc)" enterkeyhint="done"></div>
+    <details id="entryOptions" class="entryOptions"><summary id="entryOptionsLabel">Techcombank · Hôm nay · Tùy chọn</summary>
+    <div class="field"><label for="category">DANH MỤC</label><select id="category"></select></div>
     <div id="paymentField" class="field"><label>NGUỒN THANH TOÁN</label><div class="paymentChoice"><button type="button" data-payment="bank" class="active">Techcombank</button><button type="button" data-payment="cash">Tiền mặt</button><button type="button" data-payment="pay_later">Trả sau</button></div><div id="paymentHint" class="paymentHint">Khoản chi được ghi nhận ngay.</div></div>
-    <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
+    <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><button id="yesterdayBtn" type="button" class="todayBtn">Hôm qua</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
+    </details>
+    <div id="entryError" class="formError" role="status" aria-live="polite"></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
   </div>
 </div>
@@ -139,9 +163,10 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
       <div id="topSpending" class="topSpend"><div class="overviewLoading">Đang tải…</div></div>
     </div>
 
-    <div class="overviewSection"><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải toàn bộ giao dịch và category dưới dạng CSV.</div></div>
+    <div class="overviewSection"><div class="sectionTitle">XUẤT DỮ LIỆU</div><div class="exportOptions"><select id="exportRange" aria-label="Khoảng thời gian xuất CSV"><option value="selected">Tháng đang xem</option><option value="year">Năm đang xem</option><option value="all">Toàn bộ dữ liệu</option></select></div><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải giao dịch và danh mục trong khoảng đã chọn dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Giao dịch.</div></div>
     <div class="overviewSection"><button id="enablePasskeyBtn" class="categoryToggle" type="button"><span>Bật đăng nhập bằng Face ID / passkey</span><span>›</span></button><div id="passkeySetupStatus" class="statNote" role="status" style="margin-top:7px">Dùng Face ID khi cần đăng nhập lại.</div></div>
+    <details class="shortcutHelp"><summary>Mở nhanh bằng Back Tap / Siri</summary><p>Tạo một phím tắt iPhone để mở thẳng màn hình Thêm giao dịch:</p><code id="quickEntryUrl"></code><ol><li>Mở ứng dụng Phím tắt → tạo phím tắt mới → thêm tác vụ “Mở URL” với đường dẫn trên.</li><li>Đặt tên “Ghi chi tiêu”. Anh có thể gọi Siri theo tên này hoặc thêm phím tắt ra màn hình chính.</li><li>Để gõ mặt lưng: Cài đặt → Trợ năng → Cảm ứng → Chạm vào mặt sau → Chạm hai lần → chọn phím tắt vừa tạo.</li></ol><p>Phím tắt sẽ mở Happy Money để anh nhập và lưu. iPhone có thể yêu cầu mở khóa; nếu hết phiên, đăng nhập rồi màn hình nhập sẽ tự mở.</p></details>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
 </div>
@@ -236,7 +261,27 @@ async function deleteCategoryOverride(rowId){const values=getCategoryOverrides()
 function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Công cụ & dịch vụ số')return 'Dịch vụ số';if(override==='Chuyển tiền nội bộ'||(override==='Chưa phân loại'&&guessed!=='Chưa phân loại'))return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
-let categoryManuallySelected=false;
+const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻'};
+let categoryManuallySelected=false,savingTransaction=false;
+let quickEntryPending=new URLSearchParams(location.search).get('action')==='add';
+function consumeQuickEntry(){
+  if(!quickEntryPending||!user)return;
+  quickEntryPending=false;openAdd();
+  const url=new URL(location.href);url.searchParams.delete('action');history.replaceState(null,'',url.pathname+url.search+url.hash);
+}
+const yesterdayIso=()=>{const date=new Date();date.setDate(date.getDate()-1);return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`};
+function updateEntryDateButtons(){
+  updateEntryOptionsLabel();
+  $('todayBtn').setAttribute('aria-pressed',String($('date').value===todayIso()));
+  $('yesterdayBtn').setAttribute('aria-pressed',String($('date').value===yesterdayIso()));
+}
+function updateEntryOptionsLabel(){
+  const date=$('date').value,day=date===todayIso()?'Hôm nay':date===yesterdayIso()?'Hôm qua':fmtDate(date);
+  const method=entryType==='income'?'Khoản thu':paymentMethod==='cash'?'Tiền mặt':paymentMethod==='pay_later'?'Trả sau':'Techcombank';
+  $('entryOptionsLabel').textContent=`${method} · ${day||'Chọn ngày'} · Tùy chọn`;
+}
+function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>button.classList.toggle('selected',entryType==='expense'&&button.dataset.category===$('category').value))}
+
 function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;const names=mode==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES;select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
 const privateFmt=value=>privacyHidden?'••••••':fmt(value);
 function updatePrivacyButton(){
@@ -282,7 +327,7 @@ async function refresh(){
     const d=fmtDate(x.txn_date,x.month);
     const category=categoryFor(x),transfer=INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập',payLater=isPayLater(x);
     const amountText=privacyHidden?'••••••':transfer?'↔ '+fmt(amt):isIncome?'+'+fmt(amt):'-'+fmt(amt);
-    return `<div class="tx" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
+    return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(x.description)}" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
@@ -326,6 +371,8 @@ function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;',
 function bindTransactionLongPress(rows){
   const byId=new Map((rows||[]).map(row=>[String(row.id),row]));
   $('list').querySelectorAll('.tx[data-tx-id]').forEach(item=>{
+    item.addEventListener('click',()=>{if(!$('editTxOverlay').classList.contains('open')){const row=byId.get(item.dataset.txId);if(row)openTransactionEdit(row)}});
+    item.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();const row=byId.get(item.dataset.txId);if(row)openTransactionEdit(row)}});
     let timer=null,startX=0,startY=0;
     const cancel=()=>{clearTimeout(timer);timer=null;item.classList.remove('holding')};
     const begin=(x,y)=>{startX=x;startY=y;item.classList.add('holding');timer=setTimeout(()=>{const row=byId.get(item.dataset.txId);cancel();if(row)openTransactionEdit(row)},600)};
@@ -382,17 +429,17 @@ async function openStatusEdit(key){
   $('statusTitle').textContent=config.title;$('statusAmount').value=formatMoneyInputValue(Number(st?.[key]||0)||'');$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
 }
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'))
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('entryOptions').open=false;updateEntryDateButtons();$('amount').focus()
 }
 function setPaymentMethod(method){
-  paymentMethod=method;
+  paymentMethod=method;updateEntryOptionsLabel();
   document.querySelectorAll('[data-payment]').forEach(button=>button.classList.toggle('active',button.dataset.payment===method));
   $('paymentHint').textContent=method==='pay_later'?'Tính vào chi tiêu ngay, nhưng không trừ số còn lại trong ngân hàng.':method==='cash'?'Khoản chi được thanh toán bằng tiền mặt.':'Khoản chi được thanh toán từ Techcombank.';
 }
 function setType(type){
-  entryType=type;
+  entryType=type;updateEntryOptionsLabel();
   $('expenseType').classList.toggle('active',type==='expense');$('incomeType').classList.toggle('active',type==='income');
-  $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?'Thu nhập':guessCategory($('desc').value),type);
+  $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?'Thu nhập':guessCategory($('desc').value),type);syncQuickCategory();
 }
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
 function monthTotals(rows,status,cutoffDay=null){
@@ -465,7 +512,7 @@ function renderCategoryChart(expenses){
   }).join('');
   const legend=grouped.map((item,index)=>{
     const share=Math.round(item.total/total*100),color=palette[index%palette.length];
-    return `<div class="categoryLegendRow"><span class="categoryLegendSwatch" style="background:${color}"></span><div><div class="categoryLegendName">${escapeHtml(item.name)}</div><div class="categoryLegendMeta">${fmt(item.total)}</div></div><div class="categoryLegendShare">${share}%</div></div>`;
+    return `<button type="button" class="categoryLegendRow" data-chart-category="${escapeHtml(item.name)}" aria-label="Xem chi tiết ${escapeHtml(item.name)}"><span class="categoryLegendSwatch" style="background:${color}"></span><div><div class="categoryLegendName">${escapeHtml(item.name)}</div><div class="categoryLegendMeta">${fmt(item.total)}</div></div><div class="categoryLegendShare">${share}%</div></button>`;
   }).join('');
   const centerTotal=total>=1000000?new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(total)+' ₫':fmt(total);
   container.innerHTML=`<div class="categoryChartBody"><div class="categoryDonut"><svg viewBox="0 0 120 120" role="img" aria-label="Tỷ trọng chi tiêu theo danh mục"><circle class="categoryDonutTrack" cx="60" cy="60" r="48"></circle>${slices}</svg><div class="categoryDonutCenter"><div><strong>${centerTotal}</strong><span>TỔNG CHI</span></div></div></div><div class="categoryLegend">${legend}</div></div>`;
@@ -541,6 +588,7 @@ async function renderMonthlyOverview(){
     <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
     <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
     <div class="statBox sideStat"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
+    ${current===now.getMonth()+1&&currentYear===now.getFullYear()?`<div class="statBox wide"><div class="statLabel">DỰ TÍNH TỔNG CHI CUỐI THÁNG</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)*daysInMonth))}</div><div class="statNote">Ước tính nếu giữ mức chi trung bình ${dayCount} ngày qua; chưa tính riêng các khoản sắp đến hạn.</div></div>`:''}
     <div class="statBox wide payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
@@ -563,6 +611,10 @@ async function renderMonthlyOverview(){
     const matchedById=new Map(matchedSorted.map(row=>[String(row.id),row]));
     $('categoryResult').querySelectorAll('[data-category-tx-id]').forEach(item=>item.onclick=()=>{const row=matchedById.get(item.dataset.categoryTxId);if(row)openTransactionEdit(row)});
     $('categoryResult').classList.add('show');
+  });
+  $('categoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.onclick=()=>{
+    const target=[...$('categoryTags').querySelectorAll('button')].find(item=>item.dataset.category===button.dataset.chartCategory);
+    if(target){target.click();$('categoryResult').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
   });
   const uncategorized=expenses.filter(row=>categoryFor(row)==='Chưa phân loại');
   $('uncategorizedSection').classList.toggle('hidden',uncategorized.length===0);
@@ -646,7 +698,7 @@ async function completeLogin(data){
   if(!data?.user||!data?.session)throw new Error('Không nhận được phiên đăng nhập.');
   user=data.user;$('password').value='';
   await hydrateCategoryOverrides();renderMonths();
-  showApp();await refresh();
+  showApp();await refresh();consumeQuickEntry();
 }
 async function loginWith(method){
   if(authBusy)return;
@@ -727,24 +779,42 @@ function bindPullToClose(overlayId,panelSelector){
 const addPull=bindPullToClose('addOverlay','.formPanel');
 const summaryPull=bindPullToClose('summaryOverlay','.summaryPanel');
 $('addBtn').addEventListener('click',()=>{addPull.reset();openAdd()});
-$('todayBtn').addEventListener('click',()=>{$('date').value=todayIso()});
+$('todayBtn').addEventListener('click',()=>{$('date').value=todayIso();updateEntryDateButtons()});
+$('yesterdayBtn').addEventListener('click',()=>{$('date').value=yesterdayIso();updateEntryDateButtons()});
+$('date').addEventListener('change',updateEntryDateButtons);
+$('quickEntryUrl').textContent=location.origin+'/?action=add';
+document.querySelectorAll('#quickExpense button').forEach(button=>{button.textContent=(CATEGORY_ICONS[button.dataset.category]||'')+' '+button.dataset.category});
+for(const id of ['amount','desc'])$(id).addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$('saveTx').click()}});
 $('closeAdd').addEventListener('click',()=>addPull.close());
 $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))addPull.close()});
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
-$('category').addEventListener('change',()=>{categoryManuallySelected=true;$('amount').focus()});
-$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):guessed});
+$('category').addEventListener('change',()=>{categoryManuallySelected=true;syncQuickCategory();$('amount').focus()});
+$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):guessed;syncQuickCategory()});
 document.querySelectorAll('#quickExpense button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;$('amount').focus()}));
 document.querySelectorAll('#quickIncome button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');$('desc').value=button.dataset.name||'';categoryManuallySelected=true;$('category').value=button.dataset.name==='Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập';(button.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
-  const amount=cleanMoney('amount'),desc=$('desc').value.trim(),date=$('date').value;
-  if(!amount||!desc||!date)return;
-  const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
-  const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
-  const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
-  const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error){alert(error.message);return}
-  if(inserted?.id)await saveCategoryOverride(inserted.id,$('category').value);
-  currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+  if(savingTransaction)return;
+  const amount=cleanMoney('amount'),category=$('category').value,date=$('date').value;
+  const desc=$('desc').value.trim()||(categoryManuallySelected&&category!=='Chưa phân loại'?category:'');
+  if(!Number.isSafeInteger(amount)||amount<=0){$('entryError').textContent='Anh nhập số tiền hợp lệ trước nhé.';$('amount').focus();return}
+  if(!desc){$('entryError').textContent='Anh chọn danh mục hoặc nhập nội dung giao dịch nhé.';return}
+  if(!date){$('entryError').textContent='Anh chọn ngày giao dịch nhé.';return}
+  if(!user){$('entryError').textContent='Phiên đăng nhập đã hết. Anh đăng nhập lại nhé.';return}
+  savingTransaction=true;const button=$('saveTx');button.disabled=true;button.textContent='Đang lưu…';$('entryError').textContent='';
+  let saved=false;
+  try{
+    const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
+    const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
+    const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
+    const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error)throw error;
+    saved=true;
+    if(inserted?.id)await saveCategoryOverride(inserted.id,category);
+    currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+  }catch(error){
+    if(saved){$('addOverlay').classList.remove('open');alert('Giao dịch đã lưu. Anh làm mới để tải lại dữ liệu.');}
+    else $('entryError').textContent='Chưa lưu được giao dịch. '+(error.message||'Anh kiểm tra kết nối rồi thử lại nhé.');
+  }finally{savingTransaction=false;button.disabled=false;button.textContent='Lưu giao dịch'}
 });
 $('summaryBtn').addEventListener('click',async()=>{summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
 $('closeSummary').addEventListener('click',()=>summaryPull.close());
@@ -785,13 +855,26 @@ $('deleteEditTx').addEventListener('click',async()=>{
 $('periodButton').addEventListener('click',()=>{$('periodMenu').classList.toggle('open')});
 document.addEventListener('click',event=>{if(!event.target.closest('.periodPicker'))$('periodMenu').classList.remove('open')});
 $('exportBtn').addEventListener('click',async()=>{
-  const {data:rows,error}=await sb.from('transactions').select('*').order('txn_date',{ascending:true});
-  if(error){alert('Không thể xuất dữ liệu');return}
-  const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
-  const lines=[['Ngày','Nội dung','Danh mục','Thu','Chi','Nguồn'].map(quote).join(',')];
-  (rows||[]).filter(row=>!isDeletedTransaction(row)).forEach(row=>lines.push([normalizedIsoDate(row.txn_date,row.month),row.description,categoryFor(row),Number(row.income||0),Number(row.expense||0),row.source].map(quote).join(',')));
-  const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
-  link.href=url;link.download=`happy-money-backup-${todayIso()}.csv`;document.body.appendChild(link);link.click();link.remove();URL.revokeObjectURL(url);
+  const button=$('exportBtn'),range=$('exportRange').value,year=currentYear,month=current;
+  button.disabled=true;button.querySelector('span').textContent='Đang xuất…';
+  try{
+    const rows=[];
+    for(let offset=0;;){
+      let query=sb.from('transactions').select('*').eq('user_id',user.id).order('txn_date',{ascending:true}).order('id',{ascending:true});
+      if(range==='selected')query=query.eq('year',year).eq('month',month);
+      else if(range==='year')query=query.eq('year',year);
+      const {data,error}=await query.range(offset,offset+499);if(error)throw error;
+      if(!data?.length)break;rows.push(...data);offset+=data.length;
+    }
+    const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
+    // Neutralize spreadsheet formulas in user-entered text on CSV open.
+    const textCell=value=>/^[\s]*[=+@-]/.test(String(value||''))?"'"+value:value;
+    const lines=[['Ngày','Nội dung','Danh mục','Thu','Chi','Nguồn'].map(quote).join(',')];
+    rows.filter(row=>!isDeletedTransaction(row)).forEach(row=>lines.push([normalizedIsoDate(row.txn_date,row.month),textCell(row.description),textCell(categoryFor(row)),Number(row.income||0),Number(row.expense||0),row.source].map(quote).join(',')));
+    const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
+    link.href=url;link.download=`happy-money-${range==='selected'?periodId(year,month):range==='year'?year:'all'}-${todayIso()}.csv`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }catch(error){alert('Không thể xuất dữ liệu. '+(error.message||'Anh thử lại nhé.'))}
+  finally{button.disabled=false;button.querySelector('span').textContent='Xuất bản sao dữ liệu'}
 });
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;passwordFormOpen=false;updatePasskeyUI();showAuth()});
 
@@ -800,7 +883,7 @@ async function init(){
   updatePasskeyUI();
   const remembered=localStorage.getItem('expense_login_email')||'';if(remembered)$('email').value=remembered;
   const {data:{session}}=await sb.auth.getSession();
-  if(session){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh()}else showAuth()
+  if(session){user=session.user;await hydrateCategoryOverrides();showApp();renderMonths();await refresh();consumeQuickEntry()}else showAuth()
 }
 init();
 </script>
