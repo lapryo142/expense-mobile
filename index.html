@@ -4,10 +4,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Happy Money">
 <meta name="application-name" content="Happy Money">
-<meta name="theme-color" content="#FFC524">
+<meta name="theme-color" content="#080808">
 <link rel="manifest" href="/manifest.json">
 <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png?v=4">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=4">
@@ -55,6 +55,28 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 .formError{color:var(--red);font-size:13px;line-height:1.4;min-height:0;margin:8px 0}.formError:empty{display:none}
 .entryOptions{border-top:1px solid var(--line);margin:12px 0;padding-top:11px}.entryOptions summary{font-size:13px;font-weight:750;color:#705820;cursor:pointer;min-height:32px;padding:6px 0}.entryOptions[open] summary{margin-bottom:5px}
 @media(max-width:360px){.headerActions{position:static;margin-top:12px}}
+
+/* Tappy-inspired dark interface. Shared tokens cover every screen. */
+:root{color-scheme:dark;--bg:#080808;--card:#161616;--text:#f4f4f2;--muted:#999997;--line:#292929;--green:#a9d57b;--red:#e8aca1;--dark:#080808;--gold:#e4d377;--gold2:#e4d377;--goldSoft:#27251b}
+html,body{background:var(--bg);color:var(--text)}button,input,select{font-family:inherit}button{cursor:pointer}button:focus-visible{outline-color:#e4d377}input,select{color-scheme:dark}
+.app{max-width:460px;padding:calc(22px + env(safe-area-inset-top)) 20px calc(100px + env(safe-area-inset-bottom))}.header .eyebrow{font-size:10px;letter-spacing:2px;color:#8f8f8b}h1{font-size:28px;letter-spacing:-1px;font-weight:750}.headerActions{top:6px;gap:7px}.headerBtn{background:#1a1a1a;border:1px solid #303030;color:#d9d9d5;border-radius:50%;width:36px;height:36px;padding:7px;display:grid;place-items:center}.headerBtn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.periodPicker{margin:24px 0 15px}.periodButton{background:#171717;border:0;color:var(--text);border-radius:999px;font-size:13px;padding:12px 16px}.periodButton span:last-child{color:#a6a6a0}.periodMenu{background:#1c1c1c;border-color:#333}.periodOption{color:#d5d5ce}.periodOption.active{background:#ededdf;color:#161611}
+.list{border:0;border-radius:0;background:transparent}.tx{grid-template-columns:36px minmax(0,1fr) auto;padding:15px 0;gap:11px;border-bottom:1px solid #222;align-items:center}.txIcon{width:36px;height:36px;border-radius:50%;background:#22231c;display:grid;place-items:center;font-size:18px}.txName{font-size:15px;font-weight:650;line-height:1.35}.txDate{font-size:11px;color:#8e8e89;font-weight:500;margin-top:3px}.txCategory{background:transparent;padding:0;color:#aaa9a1;font-size:11px;font-weight:500;margin-top:3px}.txMeta{gap:8px}.txCategory.transfer{background:transparent;color:#aaa9a1}.txCategory.payLater{background:#30242e;color:#e1b4d2;padding:2px 5px}.txAmt{font-size:14px;font-weight:650;letter-spacing:-.35px}.txAmt.exp{color:#f4f4ef}.tx.holding{background:#24231c;border-radius:9px}
+.balance{border:1px solid #303027;background:#191a15;border-radius:17px;padding:20px;margin:28px 0 10px;box-shadow:none}.balance small{font-size:10px;color:#babb9e;letter-spacing:1px}.balance .big{font-size:32px;letter-spacing:-1px;color:#f4f3e7}.balance .asOf,.balance .editHint{color:#8d907a}.summarygrid{gap:10px}.card,.card.gold,.card.payLaterCard{border:0;background:#171717;border-radius:14px;padding:15px}.card .k{font-size:10px;color:#92928a;line-height:1.5;font-weight:550}.card .v{font-size:18px;font-weight:650;letter-spacing:-.5px}.asOf,.editHint{font-size:10px;color:#88887f;font-weight:500}.editableStat.holding{background:#25251d;border-color:#666044}
+.bottom{z-index:140;width:min(460px,100%);bottom:0;background:rgba(8,8,8,.96);border-top:1px solid #252525;padding:8px 14px calc(10px + env(safe-area-inset-bottom));backdrop-filter:blur(18px)}.tabbar{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}.tabbar button,.tabbar .addBtn{min-height:50px;background:transparent;border:0;box-shadow:none;border-radius:14px;color:#8d8d88;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;font-size:10px;font-weight:600;padding:6px}.tabbar svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}.tabbar button[aria-current="page"]{color:#f5f4eb;background:#191919}.tabbar .addBtn svg{width:24px;height:24px}.tabbar button[aria-current="page"] svg{stroke:#e4d377}
+.overlay{background:rgba(0,0,0,.7)}.panel{max-width:460px;background:#101010;color:var(--text);border:1px solid #303030;box-shadow:none}.formPanel{background:#121212}.panel h2{font-size:21px;font-weight:700;letter-spacing:-.6px}.panelHead{gap:10px}.closeBtn{background:#222;border:0;color:#babbb2;min-height:36px;padding:8px 12px;border-radius:999px;font-size:12px;font-weight:600}
+#addOverlay,#summaryOverlay{background:#080808;align-items:stretch;padding-bottom:calc(76px + env(safe-area-inset-bottom))}#addOverlay .formPanel,#summaryOverlay .summaryPanel{width:100%;height:100%;max-height:none;max-width:460px;margin:0 auto;border:0;border-radius:0;box-shadow:none;background:#080808;padding:calc(18px + env(safe-area-inset-top)) 20px 18px;scrollbar-width:thin;will-change:auto}#addOverlay .formPanel{display:flex;flex-direction:column;min-height:0}#addOverlay .panelHead{flex-shrink:0}#addOverlay .panelHead h2{font-size:20px}#addOverlay .toggle{display:flex;justify-content:center;gap:4px;margin:12px auto 2px;padding:4px;background:#171717;border-radius:999px;width:160px;flex-shrink:0}#addOverlay .toggle button{padding:7px 18px;min-height:32px;flex:1;border:0;background:transparent;box-shadow:none;border-radius:999px;color:#999;font-size:12px}#addOverlay .toggle button.active{background:#ecece5;color:#111}
+#addOverlay .amountField{margin:20px 0 13px;text-align:center;flex-shrink:0}#addOverlay .amountField label{font-size:11px;font-weight:500;letter-spacing:.15px;color:#8f8f88;margin-bottom:1px}#addOverlay .amountField input{background:transparent;border:0;box-shadow:none;text-align:center;color:#f7f7ef;font-size:clamp(34px,9vw,48px);font-weight:700;letter-spacing:-1.8px;padding:8px 0;width:100%;border-radius:0;height:70px;caret-color:#e4d377}#addOverlay .amountField input::placeholder{color:#f7f7ef;opacity:1}#addOverlay .entryNote{display:none}
+#addOverlay .quick{margin:0 -2px 4px;padding:5px 2px 10px;flex-shrink:0;scrollbar-width:none}#addOverlay .quick button{min-height:35px;font-size:12px;font-weight:550;padding:7px 12px;background:#1d1d1d;color:#a9aaa1;border:1px solid #292929;white-space:nowrap}#addOverlay .quick button.selected{background:#33241e;border-color:#8a5c40;color:#f5d7ba}#addOverlay .quickIncome button.selected{background:#273020;border-color:#718157;color:#d4e2b3}
+.field label{color:#9b9c92;font-size:10px;letter-spacing:.6px;font-weight:550}.field input,.field select,.auth input,.exportOptions select{background:#1a1a1a;border-color:#333;color:#f1f1e9;box-shadow:none}.field input:focus,.field select:focus,.auth input:focus{border-color:#8d875f;box-shadow:none}.field input::placeholder{color:#85857f}.field input.amount{font-size:28px}.field select{font-size:15px}.field input:not(.amount){font-size:16px}
+#addOverlay .noteField{margin:0 0 6px;flex-shrink:0}#addOverlay .noteField label{display:none}#addOverlay #desc{border:0;border-bottom:1px solid #232323;border-radius:0;background:transparent;text-align:center;padding:10px 5px;font-size:14px;height:42px}#addOverlay #desc::placeholder{color:#77786f;font-size:13px}
+.entryOptions{margin:2px 0 8px;padding:0;border:0;flex-shrink:0}.entryOptions summary{font-size:11px;color:#9b9c90;min-height:32px;padding:9px 0;text-align:center;font-weight:500;list-style:none}.entryOptions summary::-webkit-details-marker{display:none}.entryOptions summary:after{content:'⌄';margin-left:7px;color:#b3b59b}.entryOptions[open]{padding:10px;background:#141414;border-radius:12px}.entryOptions[open] summary:after{content:'⌃'}.paymentChoice button,.todayBtn,.categoryTags button{background:#1f1f1f;border-color:#333;color:#a4a69c;font-weight:550}.paymentChoice button.active,.todayBtn[aria-pressed="true"],.categoryTags button.selected{background:#dadcc9;border-color:#dadcc9;color:#151611}.paymentHint{color:#919486}.dateChoice input[type="date"]{color:#dddfd0;color-scheme:dark}.dateChoice{flex-wrap:wrap}.todayBtn{min-height:40px}.paymentChoice button{font-size:11px}
+.keypad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:auto;padding-top:10px;flex-shrink:0}.keypad button{min-height:50px;border:1px solid #252525;background:#1e1e1e;border-radius:10px;color:#f1f1eb;font-size:22px;font-weight:550;touch-action:manipulation;user-select:none;-webkit-user-select:none}.keypad button:active{background:#36362e}.keypad button[data-key="000"]{font-size:17px;letter-spacing:1px}.keypad svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.6}.primary,#addOverlay .primary{background:#f0f1e8;border:0;box-shadow:none;color:#10110d;border-radius:11px;font-weight:700;min-height:45px;padding:12px;font-size:14px}#addOverlay #saveTx{margin-top:14px;flex-shrink:0}#entryError{margin:6px 0 0;font-size:12px;color:#efb09e}.formError:empty{display:none}
+.overviewSection{margin-top:20px}.sectionTitle{color:#aaa99b;font-size:11px;letter-spacing:1px;font-weight:600}.statBox,.statBox.payLaterOverview{background:#191919;border:0;border-radius:13px;padding:14px}.statLabel,.statBox.payLaterOverview .statLabel{color:#95988d;font-weight:500;font-size:10px;line-height:1.5}.statValue{font-size:22px;font-weight:650;letter-spacing:-.5px}.statNote{color:#9b9d90;font-size:11px;font-weight:400}.comparisonTable,.comparisonRow{border-color:#303030}.comparisonName,.comparisonHead{color:#a2a498}.comparisonAmount{font-weight:550;font-size:12px}.categoryChart{background:transparent;padding:0;border:0;border-radius:0;margin:0 0 15px}.spendBreakdown{display:grid;gap:4px}.spendBarRow{width:100%;background:transparent;border:0;padding:14px 0;text-align:left;color:#edeee4;display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:10px;align-items:center;border-bottom:1px solid #242424}.spendBarRow:hover,.spendBarRow:focus-visible{background:#151515}.spendBarIcon{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:#24251b;font-size:17px}.spendBarName{font-size:13px;font-weight:600}.spendTrack{height:3px;border-radius:5px;background:#2d2d29;margin-top:9px;overflow:hidden}.spendFill{height:100%;width:var(--share);background:var(--bar);border-radius:5px}.spendBarAmount{text-align:right;font-size:13px;font-weight:600;font-variant-numeric:tabular-nums}.spendBarAmount small{display:block;margin-top:7px;font-size:10px;font-weight:500;color:#939789}.categoryToggle{border:1px solid #333;background:#1c1c1c;color:#d2d6c4;border-radius:12px;font-size:13px;font-weight:550}.categoryTags button{font-size:12px}.categoryResult{border:1px solid #424632;background:#191c15;color:#eaedde}.categoryResultName{color:#d7dfbc;font-size:14px}.categoryResultAmount{color:#f1f5df;font-size:20px}.categoryResultNote,.categoryTxDate{color:#a1aa90}.categoryTxRow,.categoryTxList{border-color:#343a2b}.categoryTxAmount{color:#e9e8da}.topSpend{background:#171717;border-color:#282828}.topSpendRow{border-color:#2a2a2a}.topRank{background:#2c3021;color:#dce4b8}.topAmount{color:#e5e8d6}.reviewItem{background:#221b18;border-color:#4c3930}.reviewAmount{color:#e6b29b}.shortcutHelp{background:#171717;border-color:#303030;color:#a6ab9a}.shortcutHelp summary{color:#dedfd2}.shortcutHelp code{background:#252820;color:#d7debe}.exportOptions select{font-size:13px}.dangerButton{background:#2b1e1e;border-color:#613f39;color:#eab3a7}.dangerlink{color:#c2a197}.pullRefresh{background:#24241e;color:#d6d8c7;border-color:#454636}.pullRefresh.loading{background:#313526;color:#e5eecb;border-color:#59673c}
+.authbox{background:#121212;border-color:#282828;box-shadow:none}.authHeader .eyebrow{color:#b7ba9c}.authSubtitle,.authSecondary,.status{color:#a0a192}.faceIcon{background:#272a20;border-color:#484d35;color:#d9dfba}.authField label{color:#b3b5a5}.faceLoginButton,.auth.passkeyReady .faceLoginButton{background:#e7eadb;color:#171a0f;border:0}.authTextButton,.authSecondary button{color:#d1d9b2}.authDivider:before,.authDivider:after{background:#333}.auth #sessionNote{color:#939786}.status{line-height:1.5}
+.statBox .statValue{font-size:18px;white-space:nowrap;font-variant-numeric:tabular-nums}.statBox.wide .statValue{font-size:22px}.extraStats{margin-top:14px}.extraStats>summary{font-size:12px;color:#b2b69e;padding:10px 0;cursor:pointer}.extraStats>.statGrid{margin-top:9px}body:has(#editTxOverlay.open) .bottom,body:has(#statusOverlay.open) .bottom{display:none}
+@media(max-height:740px){#addOverlay .amountField{margin:10px 0 4px}#addOverlay .amountField input{height:55px;font-size:36px}#addOverlay .toggle{margin-top:6px}.keypad button{min-height:43px}.keypad{gap:5px;padding-top:6px}#addOverlay #saveTx{margin-top:9px}#addOverlay .formPanel{padding-top:calc(10px + env(safe-area-inset-top));padding-bottom:10px}}
+@media(max-width:360px){.app{padding-left:16px;padding-right:16px}.headerActions{position:absolute;top:8px;margin:0}.header h1{font-size:25px}.headerBtn{width:32px;height:32px}#addOverlay .formPanel,#summaryOverlay .summaryPanel{padding-left:16px;padding-right:16px}.tx{grid-template-columns:30px minmax(0,1fr) auto;gap:8px}.txIcon{width:30px;height:30px;font-size:16px}.txAmt{font-size:12px}.txName{font-size:14px}.comparisonAmount{font-size:11px}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -82,11 +104,11 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
 
 <div id="app" class="app hidden">
   <div class="header">
-    <div class="eyebrow">HAPPY MONEY</div><h1>Giao dịch</h1>
+    <div class="eyebrow">HAPPY MONEY</div><h1>Lịch sử</h1>
     <div class="headerActions">
       <button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button>
       <button id="refreshBtn" class="headerBtn" aria-label="Làm mới" title="Làm mới">↻</button>
-      <button id="summaryBtn" class="headerBtn">Tổng quan</button>
+      <button id="summaryBtn" class="headerBtn" aria-label="Mở thống kê"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10m8 10V4m8 16v-7"/></svg></button>
     </div>
   </div>
   <div class="periodPicker"><button id="periodButton" class="periodButton" type="button"><span id="periodLabel">—</span><span>⌄</span></button><div id="periodMenu" class="periodMenu"></div></div>
@@ -111,13 +133,17 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
   </div>
 </div>
 
-<div id="bottom" class="bottom hidden"><button id="addBtn" class="addBtn">＋ Thêm giao dịch</button></div>
+<div id="bottom" class="bottom hidden"><nav class="tabbar" aria-label="Điều hướng chính">
+<button id="historyTab" type="button" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 4h14v17l-3-2-4 2-4-2-3 2V4Z M8 9h8M8 13h5"/></svg><span>Lịch sử</span></button>
+<button id="addBtn" class="addBtn" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8v8m-4-4h8"/></svg><span>Nhập</span></button>
+<button id="statsTab" type="button"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h16M6 16v-5m6 5V4m6 12V8"/></svg><span>Thống kê</span></button>
+</nav></div>
 
 <div id="addOverlay" class="overlay">
   <div class="panel formPanel">
-    <div class="panelHead"><h2>Thêm giao dịch</h2><button id="closeAdd" class="closeBtn">Đóng</button></div>
+    <div class="panelHead"><h2>Ghi giao dịch</h2><button id="closeAdd" class="closeBtn">Đóng</button></div>
     <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
-    <div class="field amountField"><label for="amount">SỐ TIỀN · VNĐ</label><input id="amount" class="amount" inputmode="numeric" placeholder="0" autocomplete="off" enterkeyhint="done"></div>
+    <div class="field amountField"><label for="amount">Anh đã chi bao nhiêu? · ₫</label><input id="amount" class="amount" inputmode="none" aria-label="Số tiền bằng đồng Việt Nam" placeholder="0" autocomplete="off" enterkeyhint="done"></div>
     <div class="entryNote">Nhập số tiền, chọn danh mục rồi lưu. Vuốt các danh mục để xem thêm.</div>
     <div id="quickExpense" class="quick quickExpense">
       <button data-category="Ăn uống">Ăn uống</button><button data-category="Di chuyển & xe">Di chuyển & xe</button>
@@ -129,20 +155,21 @@ body:has(.overlay.open){overflow:hidden}.overlay{position:fixed;z-index:100;inse
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
-    <div class="field"><label>NỘI DUNG</label><input id="desc" placeholder="Ghi chú thêm (không bắt buộc)" enterkeyhint="done"></div>
+    <div class="field noteField"><label for="desc">NỘI DUNG</label><input id="desc" placeholder="Ghi chú thêm (không bắt buộc)" enterkeyhint="done"></div>
     <details id="entryOptions" class="entryOptions"><summary id="entryOptionsLabel">Techcombank · Hôm nay · Tùy chọn</summary>
     <div class="field"><label for="category">DANH MỤC</label><select id="category"></select></div>
     <div id="paymentField" class="field"><label>NGUỒN THANH TOÁN</label><div class="paymentChoice"><button type="button" data-payment="bank" class="active">Techcombank</button><button type="button" data-payment="cash">Tiền mặt</button><button type="button" data-payment="pay_later">Trả sau</button></div><div id="paymentHint" class="paymentHint">Khoản chi được ghi nhận ngay.</div></div>
     <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><button id="yesterdayBtn" type="button" class="todayBtn">Hôm qua</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
     </details>
     <div id="entryError" class="formError" role="status" aria-live="polite"></div>
+<div id="keypad" class="keypad" role="group" aria-label="Bàn phím nhập số tiền"><button type="button" data-key="1" aria-label="1">1</button><button type="button" data-key="2" aria-label="2">2</button><button type="button" data-key="3" aria-label="3">3</button><button type="button" data-key="4" aria-label="4">4</button><button type="button" data-key="5" aria-label="5">5</button><button type="button" data-key="6" aria-label="6">6</button><button type="button" data-key="7" aria-label="7">7</button><button type="button" data-key="8" aria-label="8">8</button><button type="button" data-key="9" aria-label="9">9</button><button type="button" data-key="000" aria-label="Thêm ba số không">000</button><button type="button" data-key="0" aria-label="0">0</button><button type="button" data-key="backspace" aria-label="Xóa một chữ số"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5-7 7 7 7h12V5H9Zm3 4 6 6m0-6-6 6"/></svg></button></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
   </div>
 </div>
 
 <div id="summaryOverlay" class="overlay">
   <div class="panel summaryPanel">
-    <div class="panelHead"><h2>Tổng quan tháng <span id="overviewMonth"></span></h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
+    <div class="panelHead"><h2>Thống kê <span id="overviewMonth" style="display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px"></span></h2><button id="closeSummary" class="closeBtn">Đóng</button></div>
     <div id="overviewStats" class="overviewSection"><div class="overviewLoading">Đang tính thống kê…</div></div>
 
     <div class="overviewSection">
@@ -327,7 +354,7 @@ async function refresh(){
     const d=fmtDate(x.txn_date,x.month);
     const category=categoryFor(x),transfer=INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập',payLater=isPayLater(x);
     const amountText=privacyHidden?'••••••':transfer?'↔ '+fmt(amt):isIncome?'+'+fmt(amt):'-'+fmt(amt);
-    return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(x.description)}" data-tx-id="${x.id}"><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
+    return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(x.description)}" data-tx-id="${x.id}"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(isIncome?'↙':'•')}</div><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
   }).join('')||'<div class="empty">Chưa có giao dịch</div>';
   // monthly_status already contains the historical seed imported from Sheet.
   // Add every later transaction (from the App or newly entered in Sheet)
@@ -437,7 +464,7 @@ function setPaymentMethod(method){
   $('paymentHint').textContent=method==='pay_later'?'Tính vào chi tiêu ngay, nhưng không trừ số còn lại trong ngân hàng.':method==='cash'?'Khoản chi được thanh toán bằng tiền mặt.':'Khoản chi được thanh toán từ Techcombank.';
 }
 function setType(type){
-  entryType=type;updateEntryOptionsLabel();
+  entryType=type;document.querySelector('label[for="amount"]').textContent=type==='income'?'Anh đã thu bao nhiêu? · ₫':'Anh đã chi bao nhiêu? · ₫';updateEntryOptionsLabel();
   $('expenseType').classList.toggle('active',type==='expense');$('incomeType').classList.toggle('active',type==='income');
   $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?'Thu nhập':guessCategory($('desc').value),type);syncQuickCategory();
 }
@@ -497,25 +524,17 @@ function bankBalanceThroughDay(rows,status,cutoffDay){
 }
 function renderCategoryChart(expenses){
   const container=$('categoryChart');if(!container)return;
-  const palette=['#c7a45a','#9c4c43','#5d7a6f','#7a6b99','#b3845d','#6f879c','#a06e78','#8b8a61','#6f6a60','#b7aa99'];
   const grouped=EXPENSE_CATEGORIES.map(name=>({
     name,
     total:(expenses||[]).filter(row=>categoryFor(row)===name).reduce((sum,row)=>sum+Number(row.expense||0),0)
   })).filter(item=>item.total>0).sort((a,b)=>b.total-a.total);
   const total=grouped.reduce((sum,item)=>sum+item.total,0);
   if(!total){container.innerHTML='<div class="categoryChartEmpty">Chưa có khoản chi trong tháng này</div>';return}
-  let offset=0;
-  const slices=grouped.map((item,index)=>{
-    const share=item.total/total*100,color=palette[index%palette.length];
-    const circle=`<circle class="categoryDonutSlice" cx="60" cy="60" r="48" pathLength="100" stroke="${color}" stroke-dasharray="${share} ${100-share}" stroke-dashoffset="${-offset}"></circle>`;
-    offset+=share;return circle;
-  }).join('');
-  const legend=grouped.map((item,index)=>{
-    const share=Math.round(item.total/total*100),color=palette[index%palette.length];
-    return `<button type="button" class="categoryLegendRow" data-chart-category="${escapeHtml(item.name)}" aria-label="Xem chi tiết ${escapeHtml(item.name)}"><span class="categoryLegendSwatch" style="background:${color}"></span><div><div class="categoryLegendName">${escapeHtml(item.name)}</div><div class="categoryLegendMeta">${fmt(item.total)}</div></div><div class="categoryLegendShare">${share}%</div></button>`;
-  }).join('');
-  const centerTotal=total>=1000000?new Intl.NumberFormat('vi-VN',{notation:'compact',maximumFractionDigits:1}).format(total)+' ₫':fmt(total);
-  container.innerHTML=`<div class="categoryChartBody"><div class="categoryDonut"><svg viewBox="0 0 120 120" role="img" aria-label="Tỷ trọng chi tiêu theo danh mục"><circle class="categoryDonutTrack" cx="60" cy="60" r="48"></circle>${slices}</svg><div class="categoryDonutCenter"><div><strong>${centerTotal}</strong><span>TỔNG CHI</span></div></div></div><div class="categoryLegend">${legend}</div></div>`;
+  const palette=['#e1d263','#b8d992','#c6a5db','#e4a386','#9dbed6','#e0ba83','#acc9b1','#d2a5b2','#c4c58e','#9ba9be'];
+  container.innerHTML='<div class="spendBreakdown">'+grouped.map((item,index)=>{
+    const share=item.total/total*100;
+    return `<button type="button" class="spendBarRow" data-chart-category="${escapeHtml(item.name)}" aria-label="Xem chi tiết ${escapeHtml(item.name)}"><span class="spendBarIcon" aria-hidden="true">${CATEGORY_ICONS[item.name]||'•'}</span><div><div class="spendBarName">${escapeHtml(item.name)}</div><div class="spendTrack"><div class="spendFill" style="--share:${share}%;--bar:${palette[index%palette.length]}"></div></div></div><div class="spendBarAmount">${fmt(item.total)}<small>${Math.round(share)}%</small></div></button>`;
+  }).join('')+'</div>';
 }
 async function renderMonthlyOverview(){
   $('overviewMonth').textContent=current+' · '+currentYear;
@@ -592,6 +611,12 @@ async function renderMonthlyOverview(){
     <div class="statBox wide payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
+  const statsGrid=$('overviewStats').querySelector('.statGrid'),statCards=[...statsGrid.children];
+  const extraStats=document.createElement('details');extraStats.className='extraStats';
+  const extraTitle=document.createElement('summary');extraTitle.textContent='Chi tiết tháng & so sánh';
+  const extraGrid=document.createElement('div');extraGrid.className='statGrid';
+  statCards.filter((_,index)=>index!==1&&index!==2).forEach(card=>extraGrid.appendChild(card));
+  statsGrid.replaceChildren(statCards[1],statCards[2]);extraStats.append(extraTitle,extraGrid);$('overviewStats').appendChild(extraStats);
   const categoryNames=EXPENSE_CATEGORIES;
   $('categoryToggleText').textContent='Chọn danh mục';
   $('categoryTags').classList.remove('open');
@@ -778,7 +803,21 @@ function bindPullToClose(overlayId,panelSelector){
 }
 const addPull=bindPullToClose('addOverlay','.formPanel');
 const summaryPull=bindPullToClose('summaryOverlay','.summaryPanel');
-$('addBtn').addEventListener('click',()=>{addPull.reset();openAdd()});
+function showHistory(){addPull.close();summaryPull.close()}
+$('historyTab').addEventListener('click',showHistory);
+$('statsTab').addEventListener('click',()=>{addPull.close();$('summaryBtn').click()});
+$('addBtn').addEventListener('click',()=>{if($('addOverlay').classList.contains('open'))return;summaryPull.close();addPull.reset();openAdd()});
+function updateTabs(){
+  const active=$('addOverlay').classList.contains('open')?'addBtn':$('summaryOverlay').classList.contains('open')?'statsTab':'historyTab';
+  for(const id of ['historyTab','addBtn','statsTab']){if(id===active)$(id).setAttribute('aria-current','page');else $(id).removeAttribute('aria-current')}
+}
+for(const id of ['addOverlay','summaryOverlay'])new MutationObserver(updateTabs).observe($(id),{attributes:true,attributeFilter:['class']});
+$('keypad').addEventListener('click',event=>{
+  const key=event.target.closest('[data-key]')?.dataset.key;if(!key||savingTransaction)return;
+  let digits=$('amount').value.replace(/\D/g,'');
+  if(key==='backspace')digits=digits.slice(0,-1);else if((digits+key).replace(/^0+/,'').length<=15)digits+=key;
+  $('amount').value=formatMoneyInputValue(digits.replace(/^0+/,''));$('entryError').textContent='';
+});
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso();updateEntryDateButtons()});
 $('yesterdayBtn').addEventListener('click',()=>{$('date').value=yesterdayIso();updateEntryDateButtons()});
 $('date').addEventListener('change',updateEntryDateButtons);
@@ -816,7 +855,7 @@ $('saveTx').addEventListener('click',async()=>{
     else $('entryError').textContent='Chưa lưu được giao dịch. '+(error.message||'Anh kiểm tra kết nối rồi thử lại nhé.');
   }finally{savingTransaction=false;button.disabled=false;button.textContent='Lưu giao dịch'}
 });
-$('summaryBtn').addEventListener('click',async()=>{summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
+$('summaryBtn').addEventListener('click',async()=>{addPull.close();summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
 $('closeSummary').addEventListener('click',()=>summaryPull.close());
 $('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))summaryPull.close()});
 bindStatusLongPress();

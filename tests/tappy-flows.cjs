@@ -33,8 +33,8 @@ window.supabase={createClient:()=>({auth:{
  };return query;
 }})};
 `;
-async function boot(browser,{width=390,date='2026-10-28T10:00:00+07:00',session=true,url='https://happy.test/'}={}){
- const page=await browser.newPage({viewport:{width,height:844},isMobile:true,hasTouch:true,timezoneId:'Asia/Ho_Chi_Minh',acceptDownloads:true});
+async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:00',session=true,url='https://happy.test/'}={}){
+ const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,timezoneId:'Asia/Ho_Chi_Minh',acceptDownloads:true});
  await page.clock.setFixedTime(new Date(date));
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
  await page.route('**/*',async route=>{
@@ -51,7 +51,7 @@ async function boot(browser,{width=390,date='2026-10-28T10:00:00+07:00',session=
   const {page,errors}=await boot(browser);
   await page.locator('#addBtn').click();assert.equal(await page.locator('#amount').evaluate(e=>e===document.activeElement),true);
   await page.locator('#saveTx').click();assert.match(await page.locator('#entryError').innerText(),/số tiền/);
-  await page.locator('#amount').fill('50000');await page.locator('#amount').dispatchEvent('input');assert.equal(await page.locator('#amount').inputValue(),'50.000');
+  for(const key of ['5','0','0','0','0'])await page.locator(`[data-key="${key}"]`).click();await page.locator('[data-key="backspace"]').click();await page.locator('[data-key="0"]').click();assert.equal(await page.locator('#amount').inputValue(),'50.000');
   await page.locator('#quickExpense [data-category="Ăn uống"]').click();await page.locator('#entryOptions summary').click();await page.locator('#yesterdayBtn').click();
   assert.equal(await page.locator('#date').inputValue(),'2026-10-27');assert.equal(await page.locator('#yesterdayBtn').getAttribute('aria-pressed'),'true');
   await page.evaluate(()=>fixture.delay=200);
@@ -59,9 +59,9 @@ async function boot(browser,{width=390,date='2026-10-28T10:00:00+07:00',session=
   await page.locator('#addOverlay').waitFor({state:'hidden'});
   const inserts=await page.evaluate(()=>fixture.inserts);assert.equal(inserts.length,1);assert.equal(inserts[0].description,'Ăn uống');assert.equal(inserts[0].expense,50000);assert.equal(inserts[0].income,0);assert.equal(inserts[0].payment_method,'bank');
   await page.locator('.tx').first().click();await page.locator('#editTxOverlay').waitFor({state:'visible'});await page.locator('#closeEditTx').click();
-  await page.locator('#summaryBtn').click();await page.locator('[data-chart-category="Tennis"]').click();assert.equal(await page.locator('.categoryResultName').innerText(),'Tennis');assert.match(await page.locator('.categoryResultAmount').innerText(),/250\.000/);
-  assert.match(await page.locator('#overviewStats').innerText(),/DỰ TÍNH TỔNG CHI CUỐI THÁNG/);
-  await page.locator('#closeSummary').click();await page.locator('#addBtn').click();await page.locator('#incomeType').click();assert.equal(await page.locator('#quickExpense').isVisible(),false);assert.equal(await page.locator('#quickIncome').isVisible(),true);
+  await page.locator('#statsTab').click();assert.equal(await page.locator('#statsTab').getAttribute('aria-current'),'page');await page.locator('[data-chart-category="Tennis"]').click();assert.equal(await page.locator('.categoryResultName').innerText(),'Tennis');assert.match(await page.locator('.categoryResultAmount').innerText(),/250\.000/);
+  await page.locator('.extraStats summary').click();assert.match(await page.locator('#overviewStats').innerText(),/DỰ TÍNH TỔNG CHI CUỐI THÁNG/);
+  await page.locator('#historyTab').click();await page.locator('#summaryOverlay').waitFor({state:'hidden'});await page.locator('#addBtn').click();assert.equal(await page.locator('#addBtn').getAttribute('aria-current'),'page');await page.locator('#incomeType').click();assert.equal(await page.locator('#quickExpense').isVisible(),false);assert.equal(await page.locator('#quickIncome').isVisible(),true);
   await page.locator('#quickIncome [data-name="Lương"]').click();await page.locator('#amount').fill('24000000');await page.locator('#saveTx').click();await page.locator('#addOverlay').waitFor({state:'hidden'});
   const income=await page.evaluate(()=>fixture.inserts.at(-1));assert.equal(income.income,24000000);assert.equal(income.expense,0);assert.equal(income.payment_method,null);
   // Failure retains entered data and makes retry possible.
@@ -80,11 +80,14 @@ async function boot(browser,{width=390,date='2026-10-28T10:00:00+07:00',session=
    if(!session){await p.locator('#email').fill('fixture@example.test');await p.locator('#password').fill('fixture-password');await p.locator('#loginBtn').click()}
    await p.locator('#addOverlay').waitFor({state:'visible'});await p.locator('#entryOptions summary').click();await p.locator('#yesterdayBtn').click();assert.equal(await p.locator('#date').inputValue(),'2026-02-28');assert.equal(new URL(p.url()).searchParams.has('action'),false);assert.deepEqual(e,[]);await p.close();
   }
-  for(const width of [320,390,430]){
-   const {page:p}=await boot(browser,{width});await p.locator('#addBtn').click();await p.locator('#amount').evaluate(e=>e.blur());
+  for(const [width,height] of [[320,568],[390,667],[390,844],[430,932]]){
+   const {page:p}=await boot(browser,{width,height});await p.screenshot({path:'/tmp/happy-history-'+width+'-'+height+'.png'});await p.locator('#addBtn').click();await p.locator('#amount').evaluate(e=>e.blur());
    assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
    assert.equal(await p.locator('#addOverlay .formPanel').evaluate(e=>e.scrollWidth<=e.clientWidth),true);
-   await p.screenshot({path:'/tmp/happy-entry-'+width+'.png'});await p.close();
+   await p.locator('#saveTx').scrollIntoViewIfNeeded();
+   const save=await p.locator('#saveTx').boundingBox(),nav=await p.locator('#bottom').boundingBox();assert.ok(save.y+save.height<=nav.y+1,'save button must stay above navigation');
+   await p.screenshot({path:'/tmp/happy-entry-'+width+'.png'});
+   await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('[data-chart-category]'));await p.locator('#summaryOverlay .summaryPanel').evaluate(e=>e.scrollTop=0);await p.screenshot({path:'/tmp/happy-stats-'+width+'-'+height+'.png'});await p.close();
   }
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }

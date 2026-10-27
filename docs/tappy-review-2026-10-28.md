@@ -51,3 +51,15 @@ Vẫn có bộ chọn đầy đủ để các danh mục cuối không bị khó
 - [Supabase: insert](https://supabase.com/docs/reference/javascript/insert): giữ cách trả bản ghi bằng `.select()` khi lưu.
 
 Kết quả: Chromium chạy qua toàn bộ các luồng nêu trên, không có lỗi JavaScript; kiểm tra ảnh tại 320, 390 và 430 px. Nguồn tiền/ngày/bộ chọn danh mục đầy đủ nằm trong mục Tùy chọn thu gọn. WebKit không có sẵn trong môi trường và tải bản trình duyệt chính thức thất bại, vì vậy chưa xác nhận Safari/iPhone thật. Bản kiểm thử dùng Chromium 133 từ gói `@sparticuz/chromium@133.0.0` với `CHROMIUM_EXECUTABLE_PATH`, qua Playwright 1.62.1.
+
+## Giai đoạn 2 — giao diện gần Tappy theo yêu cầu tiếp theo
+
+Thay định hướng màu kem–vàng của giai đoạn đầu bằng nền gần đen, surface than, chữ trắng ngà và điểm nhấn màu nhẹ. Dùng cùng hệ màu cho lịch sử, nhập, thống kê, các form sửa số/giao dịch, đăng nhập, xuất CSV và menu.
+
+- Điều hướng ba tab cố định: Lịch sử / Nhập / Thống kê; có trạng thái tab hiện tại cho công cụ trợ năng.
+- Màn hình nhập toàn chiều cao: số tiền lớn ở giữa, chip danh mục cuộn ngang, ghi chú tối giản, tùy chọn thu gọn, bàn phím số 12 phím có `000` và xóa. Ô tiền dùng `inputmode=none` để ưu tiên bàn phím trong app trên điện thoại; bàn phím vật lý vẫn dùng được.
+- Lịch sử dùng biểu tượng danh mục tròn và số tiền canh phải. Giữ bảng số dư cá nhân bên dưới và cách chỉnh hiện có.
+- Thống kê ưu tiên tổng chi và bình quân ngày; phần so sánh/thu nhập/dự tính nằm trong Chi tiết tháng & so sánh. Thay donut bằng thanh tỷ trọng màu có thể chạm để mở giao dịch.
+- Kiểm thử Chromium với API giả: các luồng giai đoạn đầu vẫn qua; thêm phím số/xóa, tab điều hướng, layout 320×568, 390×667, 390×844 và 430×932. Nút lưu có thể cuộn tới phía trên thanh điều hướng trên màn hình thấp. Chưa xác nhận bàn phím hệ thống/Safari trên iPhone thật.
+
+Không thay schema, công thức số dư, đồng bộ Sheets hoặc cơ chế giữ phiên đăng nhập trong đợt thiết kế này.
