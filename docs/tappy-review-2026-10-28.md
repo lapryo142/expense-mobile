@@ -86,3 +86,14 @@ Kiểm chứng Chromium với API giả: kiểm thử hồi quy qua; thêm ca s�
 Kiểm chứng Chromium: toàn bộ hồi quy qua; thêm tổng chi lịch sử, font/caret, note mode ở 390×430 mô phỏng phần màn hình còn lại khi bàn phím mở, không tràn ngang, giữ ghi chú khi quay về số, lưu khoản trả sau, trang danh mục/quay lại/sửa, các đường gọi haptic. Ảnh đã kiểm tra ở màn hình nhập, ghi chú và danh mục. Đây không phải kiểm chứng Safari/iOS vật lý.
 
 Nguồn bổ sung: [App Store Tappy — Credit](https://apps.apple.com/us/app/tappy-daily-expense-tracker/id6777520962), [WebKit Safari 18 — native switch haptics](https://webkit.org/blog/15865/webkit-features-in-safari-18-0/).
+
+## Giai đoạn 5 — áp dụng ba screenshot Tappy do người dùng cung cấp (29/10/2026)
+
+- Khi focus ghi chú, giữ số tiền, danh mục và ngày; chỉ ẩn keypad, chuyển về dòng ghi chú không khung, nút Lưu ở dưới. Chọn ngày dùng pill nhỏ không viền; thứ tự danh mục → ngày → ghi chú theo ảnh.
+- Danh mục thống kê nằm trong một thẻ bo tròn, mỗi hàng có vạch màu trái, emoji, tên/tiền/mũi tên, thanh tỷ trọng và phần trăm. Dùng màu ổn định theo danh mục, không đổi màu khi thứ hạng thay đổi.
+- Hai số đầu trang là Tổng chi và Còn lại theo sổ (không giả định có ngân sách). Dự tính cuối tháng thành hai dòng nhỏ theo ảnh, giữ công thức. Các chỉ số khác và so sánh cùng kỳ vẫn hiển thị sau danh mục.
+- Trang danh mục dùng tiêu đề giữa, nút về Thống kê, hero icon tròn + tổng tiền + số giao dịch/tháng; danh sách có chấm màu. Bỏ riêng so sánh lịch sử trong trang này. Có edge swipe từ 32 px bên trái, ngưỡng ngang 80 px và lọc cuộn dọc; tích hợp History API để Back/Forward trình duyệt đúng trạng thái.
+- Tạo màn hình Settings, mở từ icon hai thanh trượt ở góc phải Lịch sử/Thống kê. Chuyển mọi mục dưới Top chi nhiều nhất sang Settings: CSV, thông tin sửa số dư, Face ID, phím tắt, đăng xuất; thêm Giao diện và ẩn số. Top chi nhiều nhất vẫn trên Thống kê.
+- Bỏ nút Đóng ở Thống kê, bỏ nút refresh nhìn thấy được (giữ kéo xuống làm mới); các theme toggle chỉ còn trong Settings. Tổng chi lịch sử nằm sau toàn bộ giao dịch.
+
+Kiểm chứng Chromium với fixture: hồi quy qua; thêm vị trí tổng chi theo DOM, mở Settings từ hai màn hình, các chức năng cũ trong Settings và light/dark lưu qua reload, note mode giữ bố cục không khung, dự tính nhỏ, không còn bộ chọn danh mục, không có so sánh trong trang danh mục, swipe bắt đầu ở giữa/gesture dọc không đóng, edge swipe hợp lệ đóng, Back/Forward phục hồi trang. Đã xem ảnh nhập ghi chú, thống kê, Settings và danh mục. iPhone thật/Safari vẫn cần xác nhận thao tác hệ thống.
