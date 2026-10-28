@@ -72,3 +72,17 @@ Không thay schema, công thức số dư, đồng bộ Sheets hoặc cơ chế 
 - Khôi phục toàn bộ thẻ thống kê hiển thị trực tiếp, gồm thu nhập, tổng chi, bình quân ngày, khoản chi lớn nhất, dự tính, trả sau và bảng so sánh cùng kỳ tháng trước. Không gói các chỉ số này trong phần thu gọn nữa.
 
 Kiểm chứng Chromium với API giả: kiểm thử hồi quy qua; thêm ca sửa giữa số tiền, thay vùng chọn, xóa ở đầu số, giữ caret khi format, swipe thật bằng CDP làm rail cuộn mà không kéo panel, kích thước chip, nhớ light qua reload và bảng so sánh luôn hiển thị. Đã xem ảnh light ở màn hình nhập/thống kê. Safari/iPhone thật chưa có trong môi trường kiểm thử.
+
+## Giai đoạn 4 — tinh chỉnh luồng Nhập và trang danh mục (29/10/2026)
+
+- Tăng cỡ/độ đậm của số tiền, keypad và chip; ẩn caret số tiền, tiêu đề nhập và nút Đóng. Giữ tab Lịch sử để rời màn hình.
+- Đưa Hôm nay / Hôm qua / Chọn ngày ra trực tiếp. Bỏ khối Techcombank khỏi màn hình nhập; giữ Trả sau và Tiền mặt thành toggle riêng, mặc định giao dịch thường vẫn dùng phương thức bank như trước.
+- Credit của Tappy là hoàn tiền/ghi có (App Store, lịch sử 1.2.4), không phải trả sau. Theo điều kiện người dùng, không thêm Credit vào luồng trả sau.
+- Ghi chú dùng textarea 18 px trở lên, tự xuống dòng. Khi focus, chuyển sang note mode, ẩn keypad và các phần nhập khác, giữ Lưu và nút quay lại keypad. Theo dõi visualViewport khi bàn phím hệ thống thay đổi chiều cao; không vô hiệu pinch zoom toàn ứng dụng.
+- Thêm best-effort tap haptic: navigator.vibrate trên nền tảng hỗ trợ, fallback native input[checkbox][switch] trên iOS có hỗ trợ, chỉ gọi trong thao tác click thật. Cài đặt Keyboard Feedback không tự áp dụng cho custom keypad. Chỉ kiểm chứng wiring bằng spy/switch toggle, chưa xác nhận rung trên iPhone thật.
+- Lịch sử hiển thị tổng chi tháng từ cùng monthTotals như thống kê, có áp dụng chế độ ẩn số.
+- Bỏ bộ chọn danh mục trùng lặp ở thống kê. Mỗi thanh danh mục mở màn hình riêng, có tổng chi, tỷ trọng, so sánh hiện có và danh sách giao dịch; quay lại giữ màn hình thống kê bên dưới. Màn hình sửa giao dịch có z-index cao hơn trang danh mục; danh mục được tải lại sau chỉnh/xóa.
+
+Kiểm chứng Chromium: toàn bộ hồi quy qua; thêm tổng chi lịch sử, font/caret, note mode ở 390×430 mô phỏng phần màn hình còn lại khi bàn phím mở, không tràn ngang, giữ ghi chú khi quay về số, lưu khoản trả sau, trang danh mục/quay lại/sửa, các đường gọi haptic. Ảnh đã kiểm tra ở màn hình nhập, ghi chú và danh mục. Đây không phải kiểm chứng Safari/iOS vật lý.
+
+Nguồn bổ sung: [App Store Tappy — Credit](https://apps.apple.com/us/app/tappy-daily-expense-tracker/id6777520962), [WebKit Safari 18 — native switch haptics](https://webkit.org/blog/15865/webkit-features-in-safari-18-0/).

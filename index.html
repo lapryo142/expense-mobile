@@ -98,6 +98,18 @@ html[data-theme="light"] .keypad button{background:#e9ebe3;border-color:#dfe2d5;
 html[data-theme="light"] .categoryChart{background:transparent}html[data-theme="light"] .spendBarRow{color:#303d20}html[data-theme="light"] .spendBarRow:hover,html[data-theme="light"] .spendBarRow:focus-visible{background:#ecefe3}html[data-theme="light"] .spendTrack{background:#dce0d0}html[data-theme="light"] .spendFill{filter:brightness(.65) saturate(1.4)}html[data-theme="light"] .categoryToggle{background:#fff;border-color:#d6dccb;color:#455a2b}html[data-theme="light"] .categoryResult{background:#e9efde;border-color:#c9d4b4}html[data-theme="light"] .categoryResultName,html[data-theme="light"] .categoryResultAmount,html[data-theme="light"] .categoryTxAmount{color:#344b1d}html[data-theme="light"] .categoryResultNote,html[data-theme="light"] .categoryTxDate{color:#66764c}html[data-theme="light"] .categoryTxRow,html[data-theme="light"] .categoryTxList{border-color:#c9d4b4}
 html[data-theme="light"] .topRank{background:#e1e8ce;color:#4b6227}html[data-theme="light"] .topAmount{color:#405527}html[data-theme="light"] .reviewItem{background:#faf0e8;border-color:#ddc6af}html[data-theme="light"] .reviewAmount,html[data-theme="light"] #entryError{color:#95472b}html[data-theme="light"] .shortcutHelp{background:#fff;border-color:#d6dccb;color:#626f4f}html[data-theme="light"] .shortcutHelp summary{color:#405527}html[data-theme="light"] .shortcutHelp code{background:#e9efde;color:#344b1d}
 html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubtitle,html[data-theme="light"] .authSecondary,html[data-theme="light"] .status,html[data-theme="light"] .auth #sessionNote{color:#6e765e}html[data-theme="light"] .authTextButton,html[data-theme="light"] .authSecondary button{color:#556c32}html[data-theme="light"] .faceIcon{background:#e9efde;border-color:#c9d4b4;color:#556c32}html[data-theme="light"] .authDivider:before,html[data-theme="light"] .authDivider:after{background:#d6dccb}html[data-theme="light"] .dangerButton{background:#f4e7e2;border-color:#d8b9ac;color:#8e4631}html[data-theme="light"] .dangerlink{color:#8e604e}html[data-theme="light"] .pullRefresh,html[data-theme="light"] .pullRefresh.loading{background:#e9efde;border-color:#c9d4b4;color:#556c32}
+
+/* Larger, calmer capture screen and dedicated category pages. */
+#addOverlay .panelHead h2,#closeAdd{display:none}#addOverlay .panelHead{justify-content:flex-end;min-height:36px}#addOverlay .amountField{margin:19px 0 17px}#addOverlay .amountField label{font-size:15px;font-weight:650}#addOverlay .amountField input{font-size:clamp(44px,13vw,62px);font-weight:800;height:86px;letter-spacing:-2px;caret-color:transparent!important}#addOverlay .toggle button{font-size:15px;font-weight:750;min-height:38px}#addOverlay .quick button{min-height:58px;font-size:17px;font-weight:750;padding:14px 20px}#addOverlay #desc,#addOverlay #desc::placeholder{font-size:18px!important;font-weight:600}#addOverlay #desc{height:50px;max-width:100%}#addOverlay .keypad button{font-size:30px;font-weight:750;min-height:57px}#addOverlay .keypad button[data-key="000"]{font-size:25px}#addOverlay #saveTx{font-size:18px;font-weight:800;min-height:50px}
+.entryDateRow{display:flex;justify-content:center;gap:6px;margin:6px 0 8px;flex-shrink:0}.entryDateRow button,.datePick{position:relative;flex:1;min-height:42px;padding:10px 8px;border:1px solid var(--line);border-radius:999px;background:var(--card);color:var(--muted);font-size:14px;font-weight:750;text-align:center;white-space:nowrap;overflow:hidden}.entryDateRow button[aria-pressed="true"],.datePick.selected{background:#e1e4d5;color:#252e18;border-color:#e1e4d5}.datePick input[type="date"]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:18px}.datePick input::-webkit-calendar-picker-indicator{position:absolute;inset:0;width:100%;height:100%;cursor:pointer}
+.entryPaymentRow{display:flex;align-items:center;justify-content:center;gap:8px;min-height:38px;margin:3px 0 4px;flex-shrink:0}.entryPaymentRow button{background:transparent;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-size:14px;font-weight:700}.entryPaymentRow button[aria-pressed="true"]{background:#302333;border-color:#a278a5;color:#eacdec}.entryPaymentRow button.hidden{display:none}#entryOptions{display:none}#addOverlay{height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto}#addOverlay .formPanel{max-width:460px;overflow-x:hidden;overscroll-behavior:contain}#addOverlay.noteMode .keypad,#addOverlay.noteMode .toggle,#addOverlay.noteMode .amountField,#addOverlay.noteMode .quick,#addOverlay.noteMode .entryDateRow,#addOverlay.noteMode .entryPaymentRow{display:none!important}#addOverlay.noteMode .noteField{margin-top:24px}#addOverlay.noteMode .noteField label{display:block;font-size:16px;font-weight:750;text-align:center}.noteReturn{display:none;border:0;background:transparent;color:var(--text);width:40px;height:40px;margin-right:auto;padding:8px}.noteReturn svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2}#addOverlay.noteMode .noteReturn{display:block}#addOverlay.noteMode #saveTx{margin-top:auto}body:has(#addOverlay.noteMode) .bottom{display:none}#addOverlay.noteMode{padding-bottom:12px}html{overflow-x:clip}body{max-width:100%}#addOverlay input{min-width:0;box-sizing:border-box}
+.historySummary{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid var(--line);border-radius:15px;padding:17px 16px;margin:0 0 15px}.historySummary span{font-size:14px;font-weight:650;color:var(--muted)}.historySummary strong{font-size:24px;font-weight:800;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+#editTxOverlay,#statusOverlay{z-index:160}#categoryOverlay{z-index:110;background:var(--bg);align-items:stretch;padding-bottom:calc(78px + env(safe-area-inset-bottom))}#categoryOverlay .categoryPanel{max-width:460px;width:100%;height:100%;margin:0 auto;padding:calc(20px + env(safe-area-inset-top)) 20px 20px;background:var(--bg);border:0;border-radius:0;overflow-y:auto;touch-action:pan-y}.categoryBack{border:0;background:transparent;color:var(--text);font-size:16px;font-weight:750;padding:10px 0;display:flex;align-items:center;gap:7px}.categoryBack svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2}.categoryPageTop{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}#categoryResult{display:block;background:transparent!important;border:0!important;padding:0;color:var(--text)}#categoryResult .categoryResultHead{display:block}#categoryResult .categoryResultName{font-size:25px;font-weight:800;color:var(--text)}#categoryResult .categoryResultAmount{font-size:37px;font-weight:800;letter-spacing:-1px;margin:10px 0;color:var(--text)}#categoryResult .categoryResultNote{font-size:14px;font-weight:550;line-height:1.7;color:var(--muted)}#categoryResult .categoryTxList{border-top:1px solid var(--line);margin-top:24px}#categoryResult .categoryTxRow{padding:18px 0;border-color:var(--line)}#categoryResult .categoryTxName{font-size:16px;font-weight:700;color:var(--text)}#categoryResult .categoryTxDate{font-size:13px;color:var(--muted)}#categoryResult .categoryTxAmount{font-size:16px;font-weight:800;color:var(--text)}.spendBarName{font-size:15px;font-weight:750}.spendBarAmount{font-size:15px;font-weight:750}.txName{font-size:16px;font-weight:750}.txAmt{font-size:16px;font-weight:800}.statLabel{font-size:12px!important;font-weight:650}.comparisonName{font-size:12px;font-weight:650}.comparisonAmount{font-weight:750}
+.hapticProbe{position:fixed;left:-100px;top:-100px;width:1px;height:1px;opacity:.01;pointer-events:none;overflow:hidden}
+html[data-theme="light"] #addOverlay .amountField input{caret-color:transparent!important}html[data-theme="light"] .entryDateRow button[aria-pressed="true"],html[data-theme="light"] .datePick.selected{background:#dce5c9;border-color:#a9b98a;color:#374d1b}html[data-theme="light"] .entryPaymentRow button[aria-pressed="true"]{background:#efe3ee;border-color:#caa3c9;color:#70436c}
+@media(max-height:740px){#addOverlay .panelHead{min-height:28px}#addOverlay .amountField{margin:8px 0}#addOverlay .amountField input{height:65px;font-size:48px}#addOverlay .quick button{min-height:52px;padding:10px 17px}#addOverlay .keypad button{min-height:46px;font-size:28px}#addOverlay #desc{height:42px}.entryDateRow{margin:3px 0 5px}.entryPaymentRow{margin:0}#addOverlay .toggle{margin:2px auto}.entryDateRow button,.datePick{min-height:38px;padding:8px 6px}}
+
+#addOverlay .panelHead{position:relative;height:0;min-height:0!important;z-index:2}#addOverlay .panelTools{position:absolute;right:0;top:0}#addOverlay .toggle{margin:0 auto 4px}#addOverlay .amountField{margin:12px 0}#addOverlay textarea#desc{width:100%;max-width:100%;min-width:0;resize:none;font-family:inherit;line-height:1.5;overflow-y:auto;box-sizing:border-box;color:var(--text)}#addOverlay.noteMode .panelHead{height:40px;min-height:40px!important}#addOverlay.noteMode textarea#desc{height:150px;text-align:left;padding:14px;border:1px solid var(--line);border-radius:14px;background:var(--card)}#addOverlay .noteField{min-width:0}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -134,6 +146,7 @@ html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubt
   </div>
   <div class="periodPicker"><button id="periodButton" class="periodButton" type="button"><span id="periodLabel">—</span><span>⌄</span></button><div id="periodMenu" class="periodMenu"></div></div>
 
+  <div class="historySummary"><span>Tổng chi trong tháng</span><strong id="historyTotal">—</strong></div>
   <div id="list" class="list"></div>
 
   <div class="balance editableStat" data-status-key="bank_balance" role="button" tabindex="0">
@@ -162,7 +175,7 @@ html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubt
 
 <div id="addOverlay" class="overlay">
   <div class="panel formPanel">
-    <div class="panelHead"><h2>Ghi giao dịch</h2><div class="panelTools"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button><button id="closeAdd" class="closeBtn">Đóng</button></div></div>
+    <div class="panelHead"><button id="noteReturn" class="noteReturn" type="button" aria-label="Quay lại bàn phím số"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Ghi giao dịch</h2><div class="panelTools"><button type="button" class="themeToggle" aria-label="Chuyển sang giao diện sáng" title="Chuyển sang giao diện sáng"></button><button id="closeAdd" class="closeBtn">Đóng</button></div></div>
     <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
     <div class="field amountField"><label for="amount">Anh đã chi bao nhiêu? · ₫</label><input id="amount" class="amount" inputmode="none" aria-label="Số tiền bằng đồng Việt Nam" placeholder="0" autocomplete="off" enterkeyhint="done"></div>
     <div class="entryNote">Nhập số tiền, chọn danh mục rồi lưu. Vuốt các danh mục để xem thêm.</div>
@@ -176,12 +189,10 @@ html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubt
     <div id="quickIncome" class="quick quickIncome">
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
-    <div class="field noteField"><label for="desc">NỘI DUNG</label><input id="desc" placeholder="Ghi chú thêm (không bắt buộc)" enterkeyhint="done"></div>
-    <details id="entryOptions" class="entryOptions"><summary id="entryOptionsLabel">Techcombank · Hôm nay · Tùy chọn</summary>
-    <div class="field"><label for="category">DANH MỤC</label><select id="category"></select></div>
-    <div id="paymentField" class="field"><label>NGUỒN THANH TOÁN</label><div class="paymentChoice"><button type="button" data-payment="bank" class="active">Techcombank</button><button type="button" data-payment="cash">Tiền mặt</button><button type="button" data-payment="pay_later">Trả sau</button></div><div id="paymentHint" class="paymentHint">Khoản chi được ghi nhận ngay.</div></div>
-    <div class="field"><label>NGÀY</label><div class="dateChoice"><button id="todayBtn" type="button" class="todayBtn">Hôm nay</button><button id="yesterdayBtn" type="button" class="todayBtn">Hôm qua</button><input id="date" type="date" aria-label="Chọn ngày khác"></div></div>
-    </details>
+    <div class="field noteField"><label for="desc">NỘI DUNG</label><textarea id="desc" rows="1" placeholder="Ghi chú thêm (không bắt buộc)" enterkeyhint="done"></textarea></div>
+    <div class="entryDateRow"><button id="todayBtn" type="button">Hôm nay</button><button id="yesterdayBtn" type="button">Hôm qua</button><label id="datePick" class="datePick"><span id="datePickText">Chọn ngày</span><input id="date" type="date" aria-label="Chọn ngày"></label></div>
+    <div id="paymentField" class="entryPaymentRow"><button id="payLaterToggle" type="button" aria-pressed="false">Trả sau</button><button id="cashToggle" type="button" aria-pressed="false">Tiền mặt</button></div>
+    <select id="category" class="hidden" aria-label="Danh mục"></select>
     <div id="entryError" class="formError" role="status" aria-live="polite"></div>
 <div id="keypad" class="keypad" role="group" aria-label="Bàn phím nhập số tiền"><button type="button" data-key="1" aria-label="1">1</button><button type="button" data-key="2" aria-label="2">2</button><button type="button" data-key="3" aria-label="3">3</button><button type="button" data-key="4" aria-label="4">4</button><button type="button" data-key="5" aria-label="5">5</button><button type="button" data-key="6" aria-label="6">6</button><button type="button" data-key="7" aria-label="7">7</button><button type="button" data-key="8" aria-label="8">8</button><button type="button" data-key="9" aria-label="9">9</button><button type="button" data-key="000" aria-label="Thêm ba số không">000</button><button type="button" data-key="0" aria-label="0">0</button><button type="button" data-key="backspace" aria-label="Xóa một chữ số"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5-7 7 7 7h12V5H9Zm3 4 6 6m0-6-6 6"/></svg></button></div>
     <button id="saveTx" class="primary">Lưu giao dịch</button>
@@ -196,9 +207,7 @@ html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubt
     <div class="overviewSection">
       <div class="sectionTitle">CHI THEO DANH MỤC</div>
       <div id="categoryChart" class="categoryChart"><div class="overviewLoading">Đang tải biểu đồ…</div></div>
-      <button id="categoryToggle" class="categoryToggle" type="button"><span id="categoryToggleText">Chọn danh mục</span><span>⌄</span></button>
-      <div id="categoryTags" class="categoryTags"></div>
-      <div id="categoryResult" class="categoryResult"></div>
+
     </div>
 
     <div id="uncategorizedSection" class="overviewSection">
@@ -218,6 +227,11 @@ html[data-theme="light"] .authHeader .eyebrow,html[data-theme="light"] .authSubt
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
   </div>
 </div>
+
+<div id="categoryOverlay" class="overlay" role="region" aria-label="Chi tiết danh mục">
+  <div class="panel categoryPanel"><div class="categoryPageTop"><button id="categoryBack" type="button" class="categoryBack"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg>Thống kê</button><button type="button" class="themeToggle" aria-label="Đổi giao diện"></button></div><div id="categoryResult" class="categoryResult"></div></div>
+</div>
+<label class="hapticProbe" aria-hidden="true"><input id="hapticSwitch" type="checkbox" switch tabindex="-1"></label>
 
 <div id="statusOverlay" class="overlay compactOverlay">
   <div class="panel formPanel">
@@ -318,7 +332,7 @@ function categoryFor(row){const guessed=guessCategory(row?.description),override
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
 const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻'};
-let categoryManuallySelected=false,savingTransaction=false;
+let categoryManuallySelected=false,savingTransaction=false,activeCategoryName=null;
 let quickEntryPending=new URLSearchParams(location.search).get('action')==='add';
 function consumeQuickEntry(){
   if(!quickEntryPending||!user)return;
@@ -327,14 +341,9 @@ function consumeQuickEntry(){
 }
 const yesterdayIso=()=>{const date=new Date();date.setDate(date.getDate()-1);return `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')}`};
 function updateEntryDateButtons(){
-  updateEntryOptionsLabel();
   $('todayBtn').setAttribute('aria-pressed',String($('date').value===todayIso()));
   $('yesterdayBtn').setAttribute('aria-pressed',String($('date').value===yesterdayIso()));
-}
-function updateEntryOptionsLabel(){
-  const date=$('date').value,day=date===todayIso()?'Hôm nay':date===yesterdayIso()?'Hôm qua':fmtDate(date);
-  const method=entryType==='income'?'Khoản thu':paymentMethod==='cash'?'Tiền mặt':paymentMethod==='pay_later'?'Trả sau':'Techcombank';
-  $('entryOptionsLabel').textContent=`${method} · ${day||'Chọn ngày'} · Tùy chọn`;
+  const custom=$('date').value!==todayIso()&&$('date').value!==yesterdayIso();$('datePick').classList.toggle('selected',custom);$('datePickText').textContent=custom?fmtDate($('date').value):'Chọn ngày';
 }
 function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>button.classList.toggle('selected',entryType==='expense'&&button.dataset.category===$('category').value))}
 
@@ -419,6 +428,7 @@ async function refresh(){
   $('remainDate').textContent='Đến '+fmtDate(asOfIso,current);
   $('foodDate').textContent='Đến '+fmtDate(asOfIso,current);
   $('startDate').textContent='Ngày 01/'+String(current).padStart(2,'0');
+  $('historyTotal').textContent=privateFmt(monthTotals(activeTx,st).expense);
   $('dailyExpense').textContent=fmt(Math.round(exp/Math.max(1,dayCount)));
   $('dailyDate').textContent='Đến '+fmtDate(asOfIso,current);
   bindTransactionLongPress(sortedTx);
@@ -485,15 +495,15 @@ async function openStatusEdit(key){
   $('statusTitle').textContent=config.title;$('statusAmount').value=formatMoneyInputValue(Number(st?.[key]||0)||'');$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
 }
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('entryOptions').open=false;updateEntryDateButtons();$('amount').focus()
+  $('addOverlay').classList.add('open');$('amount').value='';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('addOverlay').classList.remove('noteMode');updateEntryDateButtons();$('amount').focus()
 }
 function setPaymentMethod(method){
-  paymentMethod=method;updateEntryOptionsLabel();
+  paymentMethod=method;$('payLaterToggle').setAttribute('aria-pressed',String(method==='pay_later'));$('cashToggle').setAttribute('aria-pressed',String(method==='cash'));
   document.querySelectorAll('[data-payment]').forEach(button=>button.classList.toggle('active',button.dataset.payment===method));
-  $('paymentHint').textContent=method==='pay_later'?'Tính vào chi tiêu ngay, nhưng không trừ số còn lại trong ngân hàng.':method==='cash'?'Khoản chi được thanh toán bằng tiền mặt.':'Khoản chi được thanh toán từ Techcombank.';
+
 }
 function setType(type){
-  entryType=type;document.querySelector('label[for="amount"]').textContent=type==='income'?'Anh đã thu bao nhiêu? · ₫':'Anh đã chi bao nhiêu? · ₫';updateEntryOptionsLabel();
+  entryType=type;document.querySelector('label[for="amount"]').textContent=type==='income'?'Anh đã thu bao nhiêu? · ₫':'Anh đã chi bao nhiêu? · ₫';
   $('expenseType').classList.toggle('active',type==='expense');$('incomeType').classList.toggle('active',type==='income');
   $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?'Thu nhập':guessCategory($('desc').value),type);syncQuickCategory();
 }
@@ -640,30 +650,24 @@ async function renderMonthlyOverview(){
     <div class="statBox wide payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
-  const categoryNames=EXPENSE_CATEGORIES;
-  $('categoryToggleText').textContent='Chọn danh mục';
-  $('categoryTags').classList.remove('open');
-  $('categoryResult').classList.remove('show');
-  $('categoryTags').innerHTML=categoryNames.map(name=>`<button type="button" data-category="${escapeHtml(name)}">${escapeHtml(name)}</button>`).join('');
-  $('categoryToggle').onclick=()=>$('categoryTags').classList.toggle('open');
-  $('categoryTags').querySelectorAll('button').forEach(button=>button.onclick=()=>{
-    const name=button.dataset.category,matched=expenses.filter(row=>categoryFor(row)===name);
+  const openCategory=name=>{
+    activeCategoryName=name;
+    const matched=expenses.filter(row=>categoryFor(row)===name);
     const matchedSorted=[...matched].sort((a,b)=>normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month))||String(b.created_at||'').localeCompare(String(a.created_at||'')));
     const total=matched.reduce((sum,row)=>sum+Number(row.expense||0),0),totalExpense=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0),share=totalExpense?Math.round(total/totalExpense*100):0;
     const historyTotals=historyPeriods.map(period=>historyRows.filter(row=>{const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));return Number(row.year)===period.year&&Number(row.month)===period.month&&day&&day<=dayCount&&Number(row.expense||0)>0&&categoryFor(row)===name}).reduce((sum,row)=>sum+Number(row.expense||0),0));
     const average=historyTotals.length?Math.round(historyTotals.reduce((sum,value)=>sum+value,0)/historyTotals.length):0,comparison=average>0?Math.round(Math.abs(total-average)/average*100):null;
     const comparisonText=comparison===null?'Chưa đủ dữ liệu để so sánh':`${total>=average?'Cao':'Thấp'} hơn bình quân cùng kỳ ${comparison}% · Bình quân ${fmt(average)}`;
-    $('categoryTags').querySelectorAll('button').forEach(item=>item.classList.toggle('selected',item===button));$('categoryToggleText').textContent=name;$('categoryTags').classList.remove('open');
     const transactionList=matchedSorted.map(row=>`<button type="button" class="categoryTxRow" data-category-tx-id="${row.id}"><div><div class="categoryTxName">${escapeHtml(row.description||'Không có nội dung')}</div><div class="categoryTxDate">${fmtDate(row.txn_date,row.month)}</div></div><div class="categoryTxAmount">${fmt(row.expense)}</div></button>`).join('');
     $('categoryResult').innerHTML=`<div class="categoryResultHead"><div class="categoryResultName">${escapeHtml(name)}</div><div class="categoryResultAmount">${fmt(total)}</div></div><div class="categoryResultNote">${matched.length} giao dịch · ${share}% tổng chi<br>${comparisonText}</div><div class="categoryTxList">${transactionList||'<div class="overviewLoading">Chưa có giao dịch</div>'}</div>`;
     const matchedById=new Map(matchedSorted.map(row=>[String(row.id),row]));
     $('categoryResult').querySelectorAll('[data-category-tx-id]').forEach(item=>item.onclick=()=>{const row=matchedById.get(item.dataset.categoryTxId);if(row)openTransactionEdit(row)});
-    $('categoryResult').classList.add('show');
-  });
-  $('categoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.onclick=()=>{
-    const target=[...$('categoryTags').querySelectorAll('button')].find(item=>item.dataset.category===button.dataset.chartCategory);
-    if(target){target.click();$('categoryResult').scrollIntoView({block:'nearest',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'})}
-  });
+    $('categoryOverlay').classList.add('open');
+    document.querySelector('#categoryOverlay .categoryPanel').scrollTop=0;
+    $('categoryBack').focus({preventScroll:true});
+  };
+  $('categoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.onclick=()=>openCategory(button.dataset.chartCategory));
+  if(activeCategoryName&&$('categoryOverlay').classList.contains('open'))openCategory(activeCategoryName);
   const uncategorized=expenses.filter(row=>categoryFor(row)==='Chưa phân loại');
   $('uncategorizedSection').classList.toggle('hidden',uncategorized.length===0);
   $('uncategorizedList').innerHTML=uncategorized.map(row=>`<button class="reviewItem" data-review-id="${row.id}"><div><div class="reviewName">${escapeHtml(row.description||'Không có nội dung')}</div><div class="reviewDate">${fmtDate(row.txn_date,row.month)} · Chạm để phân loại</div></div><div class="reviewAmount">${fmt(row.expense)}</div></button>`).join('');
@@ -826,15 +830,38 @@ function bindPullToClose(overlayId,panelSelector){
 }
 const addPull=bindPullToClose('addOverlay','.formPanel');
 const summaryPull=bindPullToClose('summaryOverlay','.summaryPanel');
-function showHistory(){addPull.close();summaryPull.close()}
+function closeCategory(){activeCategoryName=null;$('categoryOverlay').classList.remove('open')}
+$('categoryBack').addEventListener('click',()=>{closeCategory();const first=$('categoryChart').querySelector('[data-chart-category]');first?.focus({preventScroll:true})});
+function showHistory(){closeCategory();addPull.close();summaryPull.close()}
 $('historyTab').addEventListener('click',showHistory);
-$('statsTab').addEventListener('click',()=>{addPull.close();$('summaryBtn').click()});
-$('addBtn').addEventListener('click',()=>{if($('addOverlay').classList.contains('open'))return;summaryPull.close();addPull.reset();openAdd()});
+$('statsTab').addEventListener('click',()=>{closeCategory();addPull.close();$('summaryBtn').click()});
+$('addBtn').addEventListener('click',()=>{closeCategory();if($('addOverlay').classList.contains('open'))return;summaryPull.close();addPull.reset();openAdd()});
 function updateTabs(){
   const active=$('addOverlay').classList.contains('open')?'addBtn':$('summaryOverlay').classList.contains('open')?'statsTab':'historyTab';
   for(const id of ['historyTab','addBtn','statsTab']){if(id===active)$(id).setAttribute('aria-current','page');else $(id).removeAttribute('aria-current')}
 }
 for(const id of ['addOverlay','summaryOverlay'])new MutationObserver(updateTabs).observe($(id),{attributes:true,attributeFilter:['class']});
+function updateEntryViewport(){
+  const viewport=window.visualViewport;
+  document.documentElement.style.setProperty('--entry-height',(viewport?.height||window.innerHeight)+'px');
+  document.documentElement.style.setProperty('--entry-top',(viewport?.offsetTop||0)+'px');
+}
+window.visualViewport?.addEventListener('resize',updateEntryViewport);window.visualViewport?.addEventListener('scroll',updateEntryViewport);window.addEventListener('resize',updateEntryViewport);updateEntryViewport();
+$('noteReturn').addEventListener('click',()=>{$('desc').blur();$('addOverlay').classList.remove('noteMode');updateEntryViewport()});
+$('saveTx').addEventListener('pointerdown',event=>{if(document.activeElement===$('desc'))event.preventDefault()});
+$('desc').addEventListener('focus',()=>{$('addOverlay').classList.add('noteMode');updateEntryViewport()});
+$('desc').addEventListener('blur',()=>requestAnimationFrame(()=>{if(document.activeElement!==$('desc')){$('addOverlay').classList.remove('noteMode');updateEntryViewport()}}));
+$('amount').addEventListener('focus',()=>$('addOverlay').classList.remove('noteMode'));
+$('payLaterToggle').addEventListener('click',()=>setPaymentMethod(paymentMethod==='pay_later'?'bank':'pay_later'));
+$('cashToggle').addEventListener('click',()=>setPaymentMethod(paymentMethod==='cash'?'bank':'cash'));
+// Best effort: iOS switch feedback requires an actual tap and OS support.
+function tapHaptic(){
+  try{
+    if(typeof navigator.vibrate==='function'){navigator.vibrate(8);return}
+    const probe=$('hapticSwitch');if(probe&&'switch' in probe)probe.click();
+  }catch{}
+}
+document.addEventListener('click',event=>{if(event.isTrusted&&event.target.closest('button:not(:disabled)'))tapHaptic()},true);
 $('keypad').addEventListener('pointerdown',event=>{if(event.target.closest('[data-key]'))event.preventDefault()});
 $('keypad').addEventListener('click',event=>{
   const key=event.target.closest('[data-key]')?.dataset.key;if(!key||savingTransaction)return;
@@ -895,7 +922,7 @@ $('saveTx').addEventListener('click',async()=>{
     else $('entryError').textContent='Chưa lưu được giao dịch. '+(error.message||'Anh kiểm tra kết nối rồi thử lại nhé.');
   }finally{savingTransaction=false;button.disabled=false;button.textContent='Lưu giao dịch'}
 });
-$('summaryBtn').addEventListener('click',async()=>{addPull.close();summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
+$('summaryBtn').addEventListener('click',async()=>{closeCategory();addPull.close();summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
 $('closeSummary').addEventListener('click',()=>summaryPull.close());
 $('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))summaryPull.close()});
 bindStatusLongPress();
