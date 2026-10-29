@@ -125,6 +125,19 @@ html[data-theme="light"] #addOverlay .amountField input{caret-color:transparent!
 #editTxOverlay{align-items:stretch;padding:0;background:var(--bg);height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto}#editTxOverlay .formPanel{display:flex;flex-direction:column;width:100%;height:100%;max-height:none;max-width:460px;margin:0 auto;border:0;border-radius:0;background:var(--bg);padding:calc(16px + env(safe-area-inset-top)) 20px calc(16px + env(safe-area-inset-bottom));overflow:auto;touch-action:auto}.editHeader{display:grid;grid-template-columns:40px 1fr 40px;align-items:center;margin-bottom:16px}.editHeader h2{text-align:center;font-size:20px}.editAmountField{margin:10px 0 20px;text-align:center}.editAmountField label{font-size:13px}.editAmountField input.amount{font-size:49px;font-weight:800;text-align:center;caret-color:transparent;border:0!important;background:transparent!important;box-shadow:none!important;width:1ch;max-width:calc(100% - 52px);padding:7px 0}#editTxOverlay .editCategoryChips{display:flex;overflow-x:auto;gap:9px;flex-shrink:0;touch-action:pan-x;scrollbar-width:none;margin-bottom:10px}#editTxOverlay .editCategoryChips button{flex:0 0 auto;min-height:47px;border:1px solid var(--line);border-radius:999px;padding:10px 14px;font-size:15px;font-weight:650;background:var(--card);color:var(--muted)}#editTxOverlay .editCategoryChips button.selected{border-color:#bb795a;background:#33241e;color:#f5d7ba}.editNote input{width:100%;font-size:17px;line-height:1.5;font-weight:400;text-align:center;color:var(--text);background:transparent;border:0;border-bottom:1px solid var(--line);border-radius:0;padding:12px 5px;margin:3px 0 9px;outline:none}.editNote input::placeholder{color:var(--muted)}#editKeypad{margin-top:auto}#editTxOverlay #saveEditTx{margin-top:14px;font-size:17px;flex-shrink:0}#editTxOverlay #deleteEditTx{font-size:14px;min-height:43px;flex-shrink:0}#editTxOverlay.noteMode #editKeypad{display:none}html[data-theme="light"] #editTxOverlay .formPanel{background:var(--bg)}html[data-theme="light"] #editTxOverlay .editCategoryChips button.selected{background:#eadbc7;color:#623f1b}
 #catalogStatus{position:sticky;top:0;z-index:2;background:var(--bg);padding:5px 0}
 #editKeypad button{font-size:28px;font-weight:750;min-height:50px}#editTxOverlay.noteMode #saveEditTx{margin-top:auto}
+
+/* Edit uses one bottom sheet; the OS chooses the keyboard from the focused field. */
+#editTxOverlay{align-items:flex-end;justify-content:center;background:rgba(0,0,0,.6);padding:0;height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto;touch-action:auto}
+#editTxOverlay .formPanel{display:block;width:100%;height:auto;max-height:calc(100% - max(14px, env(safe-area-inset-top)));max-width:460px;margin:0 auto;border:0;border-radius:26px 26px 0 0;background:#1c1c1e;padding:22px 22px calc(14px + env(safe-area-inset-bottom));overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;touch-action:pan-y;box-shadow:0 -12px 45px rgba(0,0,0,.15)}
+#editTxOverlay .editHeader{display:block;margin:0 0 23px}#editTxOverlay .editHeader h2{font-size:21px;font-weight:750;text-align:center;letter-spacing:-.3px}#editTxOverlay label:not(.datePick){display:block;text-align:left;font-size:11px;font-weight:650;color:#99999e;letter-spacing:.7px;margin:0 0 8px}
+#editTxOverlay .editAmountField{margin:0 0 20px;text-align:left}#editTxOverlay .editAmountRow{display:flex;align-items:stretch;gap:10px}#editTxOverlay .editAmountRow input.amount{flex:1 1 0;width:0!important;min-width:0;max-width:none;height:51px;border:1px solid transparent!important;border-radius:12px;font-size:26px;font-weight:650;letter-spacing:0;background:#2c2c2e!important;padding:9px 12px;color:#fff;text-align:center;caret-color:#5b8bff!important;box-shadow:none!important;user-select:text;-webkit-user-select:text}
+#editTxOverlay #editPaymentField{flex:0 0 78px;display:block;margin:0;min-height:0}#editTxOverlay #editPaymentField.hidden{display:none!important}#editTxOverlay #editPayLaterToggle{width:100%;height:51px;border:1px solid transparent;border-radius:12px;background:#2c2c2e;color:#9d9da4;padding:9px 5px;font-size:13px;font-weight:650}#editTxOverlay #editPayLaterToggle[aria-pressed="true"]{background:#433046;border-color:#906492;color:#f0cbf1}
+#editTxOverlay .editCategoryField{margin:0 0 20px}#editTxOverlay .editCategoryChips{display:flex;margin:0 -2px;padding:3px 2px;gap:9px;overflow-x:auto;touch-action:pan-x;scrollbar-width:none}#editTxOverlay .editCategoryChips button{min-height:40px;border:1px solid transparent;border-radius:999px;background:#2c2c2e;color:#9d9da4;font-size:13px;font-weight:650;padding:9px 13px;flex:0 0 auto;white-space:nowrap}#editTxOverlay .editCategoryChips button.selected{background:#3b2a22;color:#f3c7a8;border-color:#956746}
+#editTxOverlay .editNote{margin:0 0 20px}#editTxOverlay .editNote input{display:block;width:100%;min-width:0;height:48px;border:1px solid transparent;border-radius:12px;background:#2c2c2e;padding:11px 15px;margin:0;color:#f4f4f4;text-align:left;font-size:17px;font-weight:400;caret-color:#5b8bff;outline:none;box-shadow:none}
+#editTxOverlay .editDateField{margin:0 0 20px}#editTxOverlay .entryDateRow{justify-content:flex-start;margin:0;gap:0}#editTxOverlay .datePick{display:inline-block;flex:0 1 auto;min-height:35px;border:0;border-radius:999px;background:#303034;padding:8px 13px;font-size:16px;font-weight:400;color:#f5f5f5;letter-spacing:0;overflow:hidden;max-width:100%}
+#editTxOverlay .editActions{display:grid;grid-template-columns:1fr 1fr;gap:10px}#editTxOverlay .editActions button{height:47px;min-height:47px;border:0;border-radius:12px;margin:0!important;font-size:17px;font-weight:700;padding:11px}#editTxOverlay .editCancel{background:#2c2c2e;color:#a0a0a7}#editTxOverlay #saveEditTx{background:#fff;color:#111;box-shadow:none;flex-shrink:0}#editTxOverlay #deleteEditTx{display:block;min-height:29px;margin:9px 0 0;padding:5px;border:0;background:transparent;color:#cb8980;font-size:12px;font-weight:500}#editTxOverlay.noteMode #saveEditTx{margin-top:0!important}
+html[data-theme="light"] #editTxOverlay{background:rgba(20,25,15,.35)}html[data-theme="light"] #editTxOverlay .formPanel{background:#f1f2ec}html[data-theme="light"] #editTxOverlay .editAmountRow input.amount,html[data-theme="light"] #editTxOverlay .editNote input,html[data-theme="light"] #editTxOverlay .editCategoryChips button,html[data-theme="light"] #editTxOverlay #editPayLaterToggle,html[data-theme="light"] #editTxOverlay .editCancel,html[data-theme="light"] #editTxOverlay .datePick{background:#e0e3d8!important;color:#354127}html[data-theme="light"] #editTxOverlay .editCategoryChips button.selected{border-color:#ad885e;background:#eadbc7!important;color:#624224}html[data-theme="light"] #editTxOverlay #editPayLaterToggle[aria-pressed="true"]{background:#e9d9e9!important;border-color:#b793b6;color:#6b416f}html[data-theme="light"] #editTxOverlay #saveEditTx{background:#303c24;color:#fff}html[data-theme="light"] #editTxOverlay label:not(.datePick){color:#6e7562}
+#editTxOverlay:not([data-input-mode="idle"]) .formPanel{padding-top:18px}#editTxOverlay:not([data-input-mode="idle"]) .editHeader{margin-bottom:14px}#editTxOverlay:not([data-input-mode="idle"]) .editAmountField,#editTxOverlay:not([data-input-mode="idle"]) .editCategoryField,#editTxOverlay:not([data-input-mode="idle"]) .editNote,#editTxOverlay:not([data-input-mode="idle"]) .editDateField{margin-bottom:12px}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -276,15 +289,14 @@ html[data-theme="light"] #addOverlay .amountField input{caret-color:transparent!
   </div>
 </div>
 
-<div id="editTxOverlay" class="overlay" role="region" aria-label="Sửa chi tiêu">
- <div class="panel formPanel"><div class="editHeader"><button id="closeEditTx" class="categoryBack" type="button" aria-label="Quay lại"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2 id="editTitle">Sửa chi tiêu</h2><span></span></div>
- <div class="field editAmountField"><label for="editTxAmount">Số tiền</label><div class="moneyInputLine"><span class="currencyMark" aria-hidden="true">₫</span><input id="editTxAmount" class="amount" type="text" inputmode="none" autocomplete="off" aria-label="Số tiền giao dịch"></div></div>
- <div id="editCategoryChips" class="quick editCategoryChips"></div><select id="editTxCategory" class="hidden" aria-label="Danh mục"></select>
- <div class="entryDateRow"><button id="editTxTodayBtn" type="button">Hôm nay</button><button id="editTxYesterdayBtn" type="button">Hôm qua</button><label id="editDatePick" class="datePick"><span id="editDatePickText">Chọn ngày</span><input id="editTxDate" type="date" aria-label="Ngày giao dịch"></label></div>
- <div class="editNote"><input id="editTxName" type="text" placeholder="Ghi chú" autocomplete="off" aria-label="Nội dung giao dịch"></div>
- <div id="editPaymentField" class="entryPaymentRow"><button id="editPayLaterToggle" type="button" aria-pressed="false">Trả sau</button><select id="editTxPayment" class="hidden" aria-label="Nguồn thanh toán"><option value="bank">Ngân hàng</option><option value="cash">Tiền mặt</option><option value="pay_later">Trả sau</option></select></div>
-<div id="editKeypad" class="keypad" role="group" aria-label="Bàn phím nhập số tiền"><button type="button" data-key="1" aria-label="1">1</button><button type="button" data-key="2" aria-label="2">2</button><button type="button" data-key="3" aria-label="3">3</button><button type="button" data-key="4" aria-label="4">4</button><button type="button" data-key="5" aria-label="5">5</button><button type="button" data-key="6" aria-label="6">6</button><button type="button" data-key="7" aria-label="7">7</button><button type="button" data-key="8" aria-label="8">8</button><button type="button" data-key="9" aria-label="9">9</button><button type="button" data-key="000" aria-label="Thêm ba số không">000</button><button type="button" data-key="0" aria-label="0">0</button><button type="button" data-key="backspace" aria-label="Xóa một chữ số"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 5-7 7 7 7h12V5H9Zm3 4 6 6m0-6-6 6"/></svg></button></div>
- <button id="saveEditTx" class="primary" type="button">Lưu thay đổi</button><button id="deleteEditTx" class="dangerButton" type="button">Xóa giao dịch</button>
+<div id="editTxOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="editTitle" data-input-mode="idle">
+ <div class="panel formPanel" tabindex="-1"><div class="editHeader"><h2 id="editTitle">Sửa chi tiêu</h2></div>
+ <div class="field editAmountField"><label for="editTxAmount">SỐ TIỀN</label><div class="editAmountRow"><input id="editTxAmount" class="amount" type="text" inputmode="numeric" autocomplete="off" enterkeyhint="done" aria-label="Số tiền giao dịch"><div id="editPaymentField"><button id="editPayLaterToggle" type="button" aria-pressed="false">Trả sau</button><select id="editTxPayment" class="hidden" aria-label="Nguồn thanh toán"><option value="bank">Ngân hàng</option><option value="cash">Tiền mặt</option><option value="pay_later">Trả sau</option></select></div></div></div>
+ <div class="editCategoryField"><label>DANH MỤC</label><div id="editCategoryChips" class="quick editCategoryChips"></div><select id="editTxCategory" class="hidden" aria-label="Danh mục"></select></div>
+ <div class="editNote"><label for="editTxName">GHI CHÚ</label><input id="editTxName" type="text" inputmode="text" placeholder="Ghi chú" autocomplete="off" enterkeyhint="done" aria-label="Nội dung giao dịch"></div>
+ <div class="editDateField"><label for="editTxDate">NGÀY</label><div class="entryDateRow"><button id="editTxTodayBtn" class="hidden" type="button">Hôm nay</button><button id="editTxYesterdayBtn" class="hidden" type="button">Hôm qua</button><label id="editDatePick" class="datePick"><span id="editDatePickText">Chọn ngày</span><input id="editTxDate" type="date" aria-label="Ngày giao dịch"></label></div></div>
+ <div class="editActions"><button id="closeEditTx" class="editCancel" type="button">Hủy</button><button id="saveEditTx" class="primary" type="button">Lưu</button></div>
+ <button id="deleteEditTx" class="dangerButton" type="button">Xóa giao dịch</button>
  </div>
 </div>
 
@@ -485,7 +497,7 @@ function bindTransactionLongPress(rows){
   });
 }
 function openTransactionEdit(row){
-  const isIncome=Number(row.income||0)>0;editingTx=row;$('editTxName').value=row.description||'';$('editTxAmount').value=formatMoneyInputValue(Number(row.income||0)||Number(row.expense||0)||'');$('editTxCategory').disabled=false;fillCategorySelect('editTxCategory',categoryFor(row),isIncome?'income':'expense');$('editPaymentField').classList.toggle('hidden',isIncome);$('editTxPayment').value=paymentMethodFor(row);$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();$('editTxOverlay').classList.add('open');$('editTxOverlay').classList.remove('noteMode');$('editTitle').textContent=isIncome?'Sửa khoản thu':'Sửa chi tiêu';$('editTxAmount').style.width=Math.max(1,$('editTxAmount').value.length)+'ch';renderEditChips();updateEditDate();$('editPayLaterToggle').setAttribute('aria-pressed',String(paymentMethodFor(row)==='pay_later'));
+  const isIncome=Number(row.income||0)>0;editingTx=row;$('editTxName').value=row.description||'';$('editTxAmount').value=String(Number(row.income||0)||Number(row.expense||0)||'');$('editTxCategory').disabled=false;fillCategorySelect('editTxCategory',categoryFor(row),isIncome?'income':'expense');$('editPaymentField').classList.toggle('hidden',isIncome);$('editTxPayment').value=paymentMethodFor(row);$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();document.activeElement?.blur();$('editTxOverlay').dataset.inputMode='idle';$('editTxOverlay').classList.add('open');$('editTxOverlay').classList.remove('noteMode');$('editTitle').textContent=isIncome?'Sửa khoản thu':'Sửa chi tiêu';renderEditChips();updateEditDate();$('editPayLaterToggle').setAttribute('aria-pressed',String(paymentMethodFor(row)==='pay_later'));document.querySelector('#editTxOverlay .formPanel').focus({preventScroll:true});
 }
 const statusConfig={
   bank_balance:{title:'Còn lại trong ngân hàng',valueId:'bankHero',dateField:'bank_balance_date'},
@@ -831,7 +843,7 @@ $('privacyBtn').addEventListener('click',async()=>{
   if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
 });
 $('refreshBtn').addEventListener('click',runAppRefresh);
-['amount','statusAmount','editTxAmount'].forEach(bindMoneyInput);
+['amount','statusAmount'].forEach(bindMoneyInput);
 function bindPullToClose(overlayId,panelSelector){
   const overlay=$(overlayId),panel=overlay.querySelector(panelSelector);
   let startY=null,distance=0,closeTimer=null;
@@ -950,7 +962,7 @@ container.addEventListener('click',event=>{
   input.focus({preventScroll:true});setMoneyDigits(input,next,start);if(inputId==='amount')$('entryError').textContent='';
 });
 }
-bindAmountKeypad('keypad','amount');bindAmountKeypad('editKeypad','editTxAmount');
+bindAmountKeypad('keypad','amount');
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso();updateEntryDateButtons()});
 $('yesterdayBtn').addEventListener('click',()=>{$('date').value=yesterdayIso();updateEntryDateButtons()});
 $('date').addEventListener('change',updateEntryDateButtons);
@@ -1012,8 +1024,10 @@ $('saveStatus').addEventListener('click',async()=>{
   if(error&&String(error.message||'').includes(config.dateField)){delete payload[config.dateField];payload.updated_at=date+'T12:00:00.000Z';({error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'}))}
   if(error){alert(error.message);return}$('statusOverlay').classList.remove('open');refresh();
 });
-$('closeEditTx').addEventListener('click',()=>$('editTxOverlay').classList.remove('open'));
-$('editTxOverlay').addEventListener('click',e=>{if(e.target===$('editTxOverlay'))$('editTxOverlay').classList.remove('open')});
+function closeEditSheet(){$('editTxName').blur();$('editTxAmount').blur();$('editTxOverlay').classList.remove('open');$('editTxOverlay').dataset.inputMode='idle'}
+$('closeEditTx').addEventListener('click',closeEditSheet);
+$('editTxOverlay').addEventListener('keydown',event=>{if(event.key==='Escape'){event.preventDefault();closeEditSheet()}});
+$('editTxOverlay').addEventListener('click',e=>{if(e.target===$('editTxOverlay'))closeEditSheet()});
 $('editTxTodayBtn').addEventListener('click',()=>{$('editTxDate').value=todayIso();updateEditDate()});
 $('saveEditTx').addEventListener('click',async()=>{
   if(!editingTx||editSaving)return;
@@ -1027,7 +1041,7 @@ $('saveEditTx').addEventListener('click',async()=>{
    await saveCategoryOverride(transactionId,category);
    currentYear=payload.year;current=payload.month;$('editTxOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
   }catch(error){alert('Chưa cập nhật được giao dịch. '+(error.message||'Anh thử lại nhé.'))}
-  finally{editSaving=false;$('saveEditTx').disabled=false;$('deleteEditTx').disabled=false;$('saveEditTx').textContent='Lưu thay đổi'}
+  finally{editSaving=false;$('saveEditTx').disabled=false;$('deleteEditTx').disabled=false;$('saveEditTx').textContent='Lưu'}
 });
 $('deleteEditTx').addEventListener('click',async()=>{
   if(!editingTx||editSaving)return;
@@ -1150,11 +1164,21 @@ function renderEditChips(){
  const selected=$('editTxCategory').value,names=Number(editingTx?.income||0)>0?INCOME_CATEGORIES:EXPENSE_CATEGORIES;
  $('editCategoryChips').innerHTML=names.map(name=>`<button type="button" data-edit-category="${escapeHtml(name)}" class="${name===selected?'selected':''}">${escapeHtml(CATEGORY_ICONS[name]||'↙')} ${escapeHtml(name)}</button>`).join('');
 }
-$('editCategoryChips').addEventListener('click',event=>{const button=event.target.closest('[data-edit-category]');if(!button)return;$('editTxCategory').value=button.dataset.editCategory;renderEditChips();$('editTxAmount').focus({preventScroll:true})});
-function updateEditDate(){const value=$('editTxDate').value;$('editTxTodayBtn').setAttribute('aria-pressed',String(value===todayIso()));$('editTxYesterdayBtn').setAttribute('aria-pressed',String(value===yesterdayIso()));const custom=value!==todayIso()&&value!==yesterdayIso();$('editDatePick').classList.toggle('selected',custom);$('editDatePickText').textContent=custom?fmtDate(value):'Chọn ngày'}
+$('editCategoryChips').addEventListener('click',event=>{const button=event.target.closest('[data-edit-category]');if(!button)return;$('editTxCategory').value=button.dataset.editCategory;renderEditChips()});
+function updateEditDate(){
+ const value=$('editTxDate').value;$('editTxTodayBtn').setAttribute('aria-pressed',String(value===todayIso()));$('editTxYesterdayBtn').setAttribute('aria-pressed',String(value===yesterdayIso()));
+ $('editDatePickText').textContent=value?new Intl.DateTimeFormat('vi-VN',{day:'numeric',month:'short',year:'numeric'}).format(new Date(value+'T12:00:00')):'Chọn ngày';
+}
 $('editTxYesterdayBtn').addEventListener('click',()=>{$('editTxDate').value=yesterdayIso();updateEditDate()});$('editTxDate').addEventListener('change',updateEditDate);
 $('editPayLaterToggle').addEventListener('click',()=>{const payLater=$('editTxPayment').value!=='pay_later';$('editTxPayment').value=payLater?'pay_later':'bank';$('editPayLaterToggle').setAttribute('aria-pressed',String(payLater))});
-$('editTxName').addEventListener('focus',()=>$('editTxOverlay').classList.add('noteMode'));$('editTxName').addEventListener('blur',()=>requestAnimationFrame(()=>{if(document.activeElement!==$('editTxName'))$('editTxOverlay').classList.remove('noteMode')}));$('editTxAmount').addEventListener('focus',()=>$('editTxOverlay').classList.remove('noteMode'));$('saveEditTx').addEventListener('pointerdown',event=>{if(document.activeElement===$('editTxName'))event.preventDefault()});
+function updateEditFocus(){
+ const active=document.activeElement,mode=active===$('editTxAmount')?'amount':active===$('editTxName')?'note':'idle';
+ $('editTxOverlay').dataset.inputMode=mode;$('editTxOverlay').classList.toggle('noteMode',mode==='note');updateEntryViewport();
+}
+for(const id of ['editTxName','editTxAmount']){$(id).addEventListener('focus',updateEditFocus);$(id).addEventListener('blur',()=>requestAnimationFrame(updateEditFocus));$(id).addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$(id).blur()}})}
+$('editTxAmount').addEventListener('input',()=>{const input=$('editTxAmount'),position=moneyCursor(input,input.selectionStart);input.value=input.value.replace(/\D/g,'').slice(0,15);input.setSelectionRange(Math.min(position,input.value.length),Math.min(position,input.value.length))});
+for(const id of ['saveEditTx','closeEditTx'])$(id).addEventListener('pointerdown',event=>{if([$('editTxName'),$('editTxAmount')].includes(document.activeElement))event.preventDefault()});
+
 
 function applyTheme(theme){
   const light=theme==='light';$('themeName').textContent=light?'Sáng':'Tối';document.documentElement.dataset.theme=light?'light':'dark';

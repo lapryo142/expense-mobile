@@ -111,3 +111,14 @@ Kiểm chứng Chromium với fixture: hồi quy qua; thêm vị trí tổng chi
 Kiểm chứng: Chromium với API giả qua toàn bộ hồi quy và ca mới: thêm Cà phê/☕, đổi 🌈, reorder bằng mũi tên và kéo chuột, giữ catalog sau reload, dùng danh mục tùy chỉnh trong payload edit (số tiền/ngày/nội dung/pay_later), emoji cũ và phân loại cũ vẫn đọc được; swipe từ quản lý danh mục về Settings và Settings về Thống kê. Đã xem ảnh Nhập, Sửa, Quản lý danh mục. Chưa kiểm chứng animation/haptic trên iPhone thật hay ghi metadata vào tài khoản thật trong quá trình thử.
 
 Đề xuất sản phẩm (chưa thêm): lọc ngày/tuần/tháng cho Chi tiêu với mặc định tháng; tuần/tháng/năm cho Thống kê, ưu tiên tháng/năm. Budget là tùy chọn do người dùng đặt: tổng tháng và vài danh mục tùy ý; không suy ra từ số dư ngân hàng/còn lại theo sổ, không tạo hạn mức tự động.
+
+## Giai đoạn 7 — bảng sửa với bàn phím hệ thống theo ba ảnh mới (30/10/2026)
+
+Thay màn sửa full screen/keypad tự vẽ bằng bottom sheet bo góc trên nền trang được làm tối. Giữ một form gồm Số tiền và Trả sau cùng hàng, Danh mục dạng chip cuộn ngang, Ghi chú trong ô, Ngày dạng pill và hai nút Hủy/Lưu ngang nhau; giữ nút Xóa dưới dạng liên kết nhỏ để không mất chức năng cũ. Credit vẫn không được dùng thay Trả sau.
+
+- Mở sheet: focus vào panel không phải input, trạng thái idle, không autofocus bàn phím.
+- Chạm Ghi chú: input text/inputmode text, font 17 px; trình duyệt dùng bàn phím chữ của hệ điều hành.
+- Chạm Số tiền: input text/inputmode numeric, hiển thị số nguyên chưa phân tách, hỗ trợ chọn chữ/caret thật; hệ điều hành dùng bàn phím số. Không còn editKeypad tự vẽ trong DOM.
+- Enter/Done chỉ kết thúc nhập, không tự lưu. Hủy không ghi dữ liệu; Lưu dùng cùng validation/payload/override hiện có. Sheet theo visualViewport và cuộn khi bàn phím mở; chừa safe area phía trên.
+
+Kiểm chứng Chromium: hồi quy qua; bổ sung ba trạng thái focus, no autofocus/no keypad ban đầu, sheet để lộ nền sau, inputmode text/numeric, bố cục 390×430 mô phỏng vùng còn lại khi keyboard mở, Hủy không đổi record và mở lại phục hồi bản gốc, Lưu cập nhật amount/note. Đã xem ảnh idle và note. Chromium không hiển thị bàn phím iOS; kiểm chứng bàn phím thật phải thực hiện trên iPhone.
