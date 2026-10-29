@@ -122,3 +122,11 @@ Thay màn sửa full screen/keypad tự vẽ bằng bottom sheet bo góc trên n
 - Enter/Done chỉ kết thúc nhập, không tự lưu. Hủy không ghi dữ liệu; Lưu dùng cùng validation/payload/override hiện có. Sheet theo visualViewport và cuộn khi bàn phím mở; chừa safe area phía trên.
 
 Kiểm chứng Chromium: hồi quy qua; bổ sung ba trạng thái focus, no autofocus/no keypad ban đầu, sheet để lộ nền sau, inputmode text/numeric, bố cục 390×430 mô phỏng vùng còn lại khi keyboard mở, Hủy không đổi record và mở lại phục hồi bản gốc, Lưu cập nhật amount/note. Đã xem ảnh idle và note. Chromium không hiển thị bàn phím iOS; kiểm chứng bàn phím thật phải thực hiện trên iPhone.
+
+## Phase 8 — Amount-first edit, transaction swipes, inline Settings catalog
+
+Opening an expense edit now synchronously focuses and selects the native numeric amount field, per the corrected reference. Note still uses the native text input. Transaction rows reveal a blue Edit action with a right swipe and a red Delete action with a left swipe; movement suppresses accidental row clicks, vertical scrolling remains available, and deletion shares the existing confirmation/tombstone flow. Personal balance cards retain long-press editing.
+
+The entry Save button is always present and disabled/dimmed until a positive safe-integer amount exists; keypad changes, input edits, resets and save errors update its availability. Catalog listing, emoji editing, adding and ordering now live directly inside Settings, preserving local/account persistence. Exact catalog styling awaits the user's forthcoming phone reference.
+
+Validation: Chromium fixture suite passed, including swipe directions, cancel-delete, amount auto-focus/full selection, Save availability at empty/positive/zero/deleted amounts, catalog persistence/order/emoji, edit save/cancel, existing entry/statistics/navigation/export, and 320–430px layouts. Inspected inline Settings screenshot. WebKit runtime unavailable; actual iPhone keyboard behavior is not hardware-verified.
