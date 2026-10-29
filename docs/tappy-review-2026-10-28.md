@@ -97,3 +97,17 @@ Nguồn bổ sung: [App Store Tappy — Credit](https://apps.apple.com/us/app/ta
 - Bỏ nút Đóng ở Thống kê, bỏ nút refresh nhìn thấy được (giữ kéo xuống làm mới); các theme toggle chỉ còn trong Settings. Tổng chi lịch sử nằm sau toàn bộ giao dịch.
 
 Kiểm chứng Chromium với fixture: hồi quy qua; thêm vị trí tổng chi theo DOM, mở Settings từ hai màn hình, các chức năng cũ trong Settings và light/dark lưu qua reload, note mode giữ bố cục không khung, dự tính nhỏ, không còn bộ chọn danh mục, không có so sánh trong trang danh mục, swipe bắt đầu ở giữa/gesture dọc không đóng, edge swipe hợp lệ đóng, Back/Forward phục hồi trang. Đã xem ảnh nhập ghi chú, thống kê, Settings và danh mục. iPhone thật/Safari vẫn cần xác nhận thao tác hệ thống.
+
+## Giai đoạn 6 — danh mục tùy chỉnh và edit kiểu Tappy (30/10/2026)
+
+- Đổi nhãn Chi tiêu, chuyển ký hiệu tiền thành tiền tố ₫. Giao dịch chi không còn dấu trừ; số dư âm thực tế vẫn giữ ý nghĩa âm. Ô nhập/sửa có ký hiệu ₫ riêng, giá trị input vẫn chỉ là số để không ảnh hưởng payload.
+- Ghi chú dùng placeholder Ghi chú, chữ 16 px nhẹ hơn để tránh auto zoom iOS; bỏ lựa chọn thanh toán Tiền mặt khỏi màn nhập, giữ Trả sau. Các giao dịch tiền mặt lịch sử vẫn giữ dữ liệu.
+- Thống kê: ô đầu là Tổng chi, ô thứ hai Chi trung bình/ngày. Mua trả sau là tile nửa hàng; giữ các chỉ số và so sánh cùng kỳ khác.
+- Edge back: hủy native edge action tại đầu cử chỉ để không chạy song song với animation app; chỉ đóng sau khi trượt hoàn tất 160 ms, không reset về gốc trước khi đóng. Ẩn màn Chi tiêu bên dưới khi Thống kê mở để không lộ thêm một lớp. Dùng chung cho danh mục thống kê, Settings và quản lý danh mục; vẫn giữ browser Back/Forward.
+- Settings có màn quản lý danh mục chi: thêm tên + emoji, preset emoji hoặc nhập một emoji tùy chọn, kéo handle để đổi thứ tự và có mũi tên lên/xuống cho trợ năng. Danh mục mới/emoji/thứ tự cập nhật các chip nhập và sửa ngay lập tức.
+- Catalog có ID ổn định, tên hiện tại không đổi và không có chức năng xóa/đổi tên trong đợt này, nên mapping tên của giao dịch cũ không bị mất. Danh mục mặc định luôn được phục hồi nếu thiếu; không trộn danh mục Thu vào catalog Chi. Dữ liệu tùy chỉnh lưu local theo user và sync trong user_metadata.happy_money_category_catalog, gồm version/timestamp/items; không dùng metadata này để phân quyền. Queue lưu tuần tự; khi lỗi hiện trạng thái lưu cục bộ và thử sync ở lần mở tiếp theo. Không đổi schema hoặc Apps Script.
+- Màn sửa full screen dùng cùng bố cục số tiền lớn, chip danh mục, ngày, ghi chú, Trả sau, keypad, Lưu và Xóa. Giữ phân biệt Thu/Chi và các phương thức cũ khi chưa thay đổi. Chặn bấm lưu trùng trong lúc cập nhật.
+
+Kiểm chứng: Chromium với API giả qua toàn bộ hồi quy và ca mới: thêm Cà phê/☕, đổi 🌈, reorder bằng mũi tên và kéo chuột, giữ catalog sau reload, dùng danh mục tùy chỉnh trong payload edit (số tiền/ngày/nội dung/pay_later), emoji cũ và phân loại cũ vẫn đọc được; swipe từ quản lý danh mục về Settings và Settings về Thống kê. Đã xem ảnh Nhập, Sửa, Quản lý danh mục. Chưa kiểm chứng animation/haptic trên iPhone thật hay ghi metadata vào tài khoản thật trong quá trình thử.
+
+Đề xuất sản phẩm (chưa thêm): lọc ngày/tuần/tháng cho Chi tiêu với mặc định tháng; tuần/tháng/năm cho Thống kê, ưu tiên tháng/năm. Budget là tùy chọn do người dùng đặt: tổng tháng và vài danh mục tùy ý; không suy ra từ số dư ngân hàng/còn lại theo sổ, không tạo hạn mức tự động.

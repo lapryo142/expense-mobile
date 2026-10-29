@@ -19,13 +19,14 @@ window.supabase={createClient:()=>({auth:{
 },from(table){
  const state={table,filters:[],start:0,end:Infinity,op:'select',one:false};
  const query={select(){return query},eq(k,v){state.filters.push(r=>r[k]===v);return query},gte(k,v){state.filters.push(r=>r[k]>=v);return query},lt(k,v){state.filters.push(r=>r[k]<v);return query},order(){return query},range(a,b){state.start=a;state.end=b;return query},maybeSingle(){state.one=true;return query},single(){state.one=true;return query},
- insert(payload){state.op='insert';state.payload=payload;return query},
+ insert(payload){state.op='insert';state.payload=payload;return query},update(payload){state.op='update';state.payload=payload;return query},
  then(resolve,reject){return (async()=>{
  if(state.op==='insert'){
   fixture.inserts.push(state.payload);await new Promise(r=>setTimeout(r,fixture.delay));
   if(fixture.fail)return {data:null,error:{message:'Fixture network error'}};
   const row={...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
  }
+ if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=fixture.rows.filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
  fixture.reads.push({table,start:state.start,end:state.end});
  let rows=table==='transactions'?fixture.rows:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
  return {data:state.one?(rows[0]||null):rows,error:null};
@@ -51,7 +52,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   const {page,errors}=await boot(browser);
   await page.locator('#addBtn').click();assert.equal(await page.locator('#amount').evaluate(e=>e===document.activeElement),true);
   await page.locator('#saveTx').click();assert.match(await page.locator('#entryError').innerText(),/số tiền/);
-  for(const key of ['5','0','0','0','0'])await page.locator(`[data-key="${key}"]`).click();await page.locator('[data-key="backspace"]').click();await page.locator('[data-key="0"]').click();assert.equal(await page.locator('#amount').inputValue(),'50.000');
+  for(const key of ['5','0','0','0','0'])await page.locator(`#keypad [data-key="${key}"]`).click();await page.locator('#keypad [data-key="backspace"]').click();await page.locator('#keypad [data-key="0"]').click();assert.equal(await page.locator('#amount').inputValue(),'50.000');
   await page.locator('#quickExpense [data-category="Ăn uống"]').click();await page.locator('#yesterdayBtn').click();
   assert.equal(await page.locator('#date').inputValue(),'2026-10-27');assert.equal(await page.locator('#yesterdayBtn').getAttribute('aria-pressed'),'true');
   await page.evaluate(()=>fixture.delay=200);
@@ -83,10 +84,10 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   // Keypad respects the caret/selection instead of always modifying the last digit.
   {
    const {page:p}=await boot(browser);await p.locator('#addBtn').click();await p.locator('#amount').fill('12345');
-   await p.locator('#amount').evaluate(e=>{e.focus();e.setSelectionRange(2,2)});await p.locator('[data-key="9"]').click();assert.equal(await p.locator('#amount').inputValue(),'129.345');
-   await p.locator('#amount').evaluate(e=>e.setSelectionRange(0,3));await p.locator('[data-key="7"]').click();assert.equal(await p.locator('#amount').inputValue(),'7.345');
-   await p.locator('#amount').evaluate(e=>e.setSelectionRange(2,2));await p.locator('[data-key="backspace"]').click();assert.equal(await p.locator('#amount').inputValue(),'345');
-   await p.locator('#amount').evaluate(e=>e.setSelectionRange(0,0));await p.locator('[data-key="backspace"]').click();assert.equal(await p.locator('#amount').inputValue(),'345');
+   await p.locator('#amount').evaluate(e=>{e.focus();e.setSelectionRange(2,2)});await p.locator('#keypad [data-key="9"]').click();assert.equal(await p.locator('#amount').inputValue(),'129.345');
+   await p.locator('#amount').evaluate(e=>e.setSelectionRange(0,3));await p.locator('#keypad [data-key="7"]').click();assert.equal(await p.locator('#amount').inputValue(),'7.345');
+   await p.locator('#amount').evaluate(e=>e.setSelectionRange(2,2));await p.locator('#keypad [data-key="backspace"]').click();assert.equal(await p.locator('#amount').inputValue(),'345');
+   await p.locator('#amount').evaluate(e=>e.setSelectionRange(0,0));await p.locator('#keypad [data-key="backspace"]').click();assert.equal(await p.locator('#amount').inputValue(),'345');
    await p.locator('#amount').evaluate(e=>{e.value='12345';e.setSelectionRange(2,2);e.dispatchEvent(new Event('input'))});assert.equal(await p.locator('#amount').inputValue(),'12.345');assert.equal(await p.locator('#amount').evaluate(e=>e.selectionStart),2);
    // Native horizontal swipes must not trigger the panel's pull-to-close gesture.
    await p.locator('#quickExpense').evaluate(e=>{e.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target:e,clientX:280,clientY:250})]}));e.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target:e,clientX:50,clientY:275})]}));e.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))});
@@ -103,11 +104,11 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    assert.match(await p.locator('#historyTotal').innerText(),/300\.000/);
    await p.locator('#addBtn').click();assert.equal(await p.locator('#closeAdd').isVisible(),false);assert.equal(await p.getByText('Ghi giao dịch',{exact:true}).isVisible(),false);
    assert.equal(await p.locator('#todayBtn').isVisible(),true);assert.equal(await p.locator('#yesterdayBtn').isVisible(),true);assert.equal(await p.locator('#datePickText').innerText(),'Chọn ngày');assert.equal(await p.locator('#amount').evaluate(e=>getComputedStyle(e).caretColor),'rgba(0, 0, 0, 0)');
-   assert.ok(await p.locator('[data-key="1"]').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=28);
+   assert.ok(await p.locator('#keypad [data-key="1"]').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=28);
    await p.evaluate(()=>{window.vibrationCalls=[];Object.defineProperty(navigator,'vibrate',{configurable:true,value:n=>{vibrationCalls.push(n);return true}})});
-   await p.locator('[data-key="5"]').click();await p.locator('[data-key="000"]').click();assert.equal(await p.evaluate(()=>vibrationCalls.length),2);
+   await p.locator('#keypad [data-key="5"]').click();await p.locator('#keypad [data-key="000"]').click();assert.equal(await p.evaluate(()=>vibrationCalls.length),2);
    await p.evaluate(()=>{Object.defineProperty(navigator,'vibrate',{configurable:true,value:undefined});Object.defineProperty(document.getElementById('hapticSwitch'),'switch',{configurable:true,value:true})});
-   const before=await p.locator('#hapticSwitch').isChecked();await p.locator('[data-key="0"]').click();assert.equal(await p.locator('#hapticSwitch').isChecked(),!before);
+   const before=await p.locator('#hapticSwitch').isChecked();await p.locator('#keypad [data-key="0"]').click();assert.equal(await p.locator('#hapticSwitch').isChecked(),!before);
    await p.locator('#quickExpense [data-category="Ăn uống"]').click();await p.locator('#payLaterToggle').click();assert.equal(await p.locator('#payLaterToggle').getAttribute('aria-pressed'),'true');
    await p.locator('#desc').focus();await p.locator('#desc').fill('Cà phê ghi chú dài kiểm tra bố cục');assert.equal(await p.locator('#keypad').isVisible(),false);assert.ok(await p.locator('#desc').evaluate(e=>parseFloat(getComputedStyle(e).fontSize))>=16);
    await p.setViewportSize({width:390,height:430});await p.locator('#saveTx').scrollIntoViewIfNeeded();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);assert.equal(await p.locator('#addOverlay .formPanel').evaluate(e=>e.scrollWidth<=e.clientWidth),true);await p.screenshot({path:'/tmp/happy-note-keyboard.png'});
@@ -128,6 +129,24 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const gesture=async(startX,dx,dy)=>p.locator('.categoryPanel').evaluate((target,{startX,dx,dy})=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,touches:[new Touch({identifier:1,target,clientX:startX,clientY:300})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:startX+dx,clientY:300+dy})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))},{startX,dx,dy});
    await gesture(100,140,2);assert.equal(await p.locator('#categoryOverlay').isVisible(),true);await gesture(6,15,110);assert.equal(await p.locator('#categoryOverlay').isVisible(),true);await gesture(6,140,8);await p.locator('#categoryOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>!history.state?.hmCategory);assert.equal(await p.locator('#summaryOverlay').isVisible(),true);
    await p.locator('[data-chart-category="Tennis"]').click();await p.goBack();await p.locator('#categoryOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);await p.goForward();await p.locator('#categoryOverlay').waitFor({state:'visible'});assert.equal(await p.locator('#categoryPageTitle').innerText(),'Tennis');assert.deepEqual(e,[]);await p.close();
+  }
+  // Category preferences: add, emoji, ordering, persistence, and use in real edit payloads.
+  {
+   const {page:p,errors:e}=await boot(browser);
+   assert.equal(await p.locator('#historyTab span').innerText(),'Chi tiêu');assert.match(await p.locator('.tx[data-tx-id="2"] .txAmt').innerText(),/^₫ /);assert.equal((await p.locator('.tx[data-tx-id="2"] .txAmt').innerText()).startsWith('-'),false);
+   await p.locator('#app .settingsOpen').click();await p.locator('#openCategoryManager').click();await p.locator('.catalogRow').first().waitFor({state:'visible'});const initial=await p.locator('.catalogName').allTextContents();assert.equal(initial.length,11);
+   await p.locator('#newCategoryName').fill('Cà phê');await p.locator('#newCategoryEmoji').fill('☕');await p.locator('#addCategoryBtn').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');
+   let record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));const custom=record.items.find(x=>x.name==='Cà phê');assert.ok(custom?.id);assert.equal(record.items.length,12);
+   await p.locator(`[data-emoji-id="${custom.id}"]`).click();await p.locator('#customCategoryEmoji').fill('🌈');await p.locator('#saveCategoryEmoji').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');
+   await p.locator(`[data-move-id="${custom.id}"][data-direction="-1"]`).click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));assert.equal(record.items.at(-2).name,'Cà phê');assert.equal(record.items.at(-2).emoji,'🌈');
+   await p.locator('.categoryManagerPanel').evaluate(el=>el.scrollTop=0);const firstName=record.items[0].name;const handle=await p.locator('[data-drag-id="default-0"]').boundingBox(),third=await p.locator('.catalogRow').nth(2).boundingBox();await p.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await p.mouse.down();await p.mouse.move(handle.x+handle.width/2,third.y+third.height-3,{steps:6});await p.mouse.up();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));assert.equal(record.items[2].name,firstName);
+   const order=record.items.map(x=>x.name);await p.screenshot({path:'/tmp/happy-category-manager.png'});await p.locator('#categoryManagerBack').click();await p.locator('#settingsBack').click();await p.reload();await p.locator('#app').waitFor({state:'visible'});
+   await p.locator('#addBtn').click();assert.deepEqual(await p.locator('#quickExpense .categoryText').allTextContents(),order);assert.match(await p.locator('#quickExpense [data-category="Cà phê"]').innerText(),/🌈/);assert.equal(await p.locator('#cashToggle').count(),0);assert.equal(await p.locator('#desc').getAttribute('placeholder'),'Ghi chú');assert.equal(await p.locator('#addOverlay .currencyMark').innerText(),'₫');await p.locator('#historyTab').click();
+   await p.locator('.tx[data-tx-id="2"]').click();await p.locator('#editTxOverlay').waitFor({state:'visible'});assert.equal(await p.locator('#editTxOverlay .currencyMark').innerText(),'₫');await p.locator('#editTxAmount').fill('');for(const key of ['3','000','0','0'])await p.locator(`#editKeypad [data-key="${key}"]`).click();assert.equal(await p.locator('#editTxAmount').inputValue(),'300.000');await p.locator('#editCategoryChips [data-edit-category="Cà phê"]').click();await p.locator('#editTxYesterdayBtn').click();await p.locator('#editPayLaterToggle').click();await p.screenshot({path:'/tmp/happy-edit-tappy.png'});
+   await p.locator('#editTxName').fill('Cà phê sửa thử');assert.equal(await p.locator('#editKeypad').isVisible(),false);await p.locator('#saveEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});const changed=await p.evaluate(()=>fixture.rows.find(x=>x.id==='2'));assert.equal(changed.expense,300000);assert.equal(changed.income,0);assert.equal(changed.description,'Cà phê sửa thử');assert.equal(changed.payment_method,'pay_later');assert.equal(changed.txn_date,'2026-10-27');assert.match(await p.locator('.tx[data-tx-id="2"]').innerText(),/Cà phê/);
+   await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.match(await p.locator('#overviewStats').innerText(),/CHI TRUNG BÌNH/);assert.equal((await p.locator('#overviewStats').innerText()).includes('CÒN LẠI THEO SỔ'),false);assert.equal(await p.locator('.payLaterOverview').evaluate(el=>el.classList.contains('wide')),false);
+   const swipe=async(selector)=>{await p.locator(selector).evaluate(target=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:5,clientY:280})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:145,clientY:285})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))})};
+   await p.locator('#summaryOverlay .settingsOpen').click();await p.locator('#openCategoryManager').click();await swipe('.categoryManagerPanel');await p.locator('#categoryManagerOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#settingsOverlay').isVisible(),true);await swipe('.settingsPanel');await p.locator('#settingsOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);assert.equal(await p.locator('#app').evaluate(el=>getComputedStyle(el).visibility),'hidden');assert.deepEqual(e,[]);await p.close();
   }
   for(const [width,height] of [[320,568],[390,667],[390,844],[430,932]]){
    const {page:p}=await boot(browser,{width,height});await p.screenshot({path:'/tmp/happy-history-'+width+'-'+height+'.png'});await p.locator('#addBtn').click();await p.locator('#amount').evaluate(e=>e.blur());
