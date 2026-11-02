@@ -140,6 +140,12 @@ html[data-theme="light"] #editTxOverlay{background:rgba(20,25,15,.35)}html[data-
 #editTxOverlay:not([data-input-mode="idle"]) .formPanel{padding-top:18px}#editTxOverlay:not([data-input-mode="idle"]) .editHeader{margin-bottom:14px}#editTxOverlay:not([data-input-mode="idle"]) .editAmountField,#editTxOverlay:not([data-input-mode="idle"]) .editCategoryField,#editTxOverlay:not([data-input-mode="idle"]) .editNote,#editTxOverlay:not([data-input-mode="idle"]) .editDateField{margin-bottom:12px}
 /* Transaction action rails and catalog directly in Settings. */
 .txSwipe{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}.txSwipe .tx{position:relative;background:var(--bg);border-bottom:0;z-index:1;touch-action:pan-y}.txSwipe>button{position:absolute;top:0;bottom:0;width:88px;border:0;color:white;font-size:16px;font-weight:700;visibility:hidden}.txSwipeEdit{left:0;background:#1677d2}.txSwipeDelete{right:0;background:#e54143}.txSwipe[data-action="edit"] .txSwipeEdit,.txSwipe[data-action="delete"] .txSwipeDelete{visibility:visible}#saveTx:disabled{opacity:.3;cursor:default}.settingsCatalog{margin-bottom:28px}.settingsCatalog h3{font-size:20px;margin:0 0 12px}.settingsCatalog .catalogHint{font-size:12px}.settingsCatalog #catalogStatus:empty{display:none}.settingsCatalog .newCategoryForm{margin-top:18px}.settingsCatalog .catalogHandle{touch-action:none}
+/* Tappy-style category card and add/edit sheet. */
+#settingsOverlay .settingsHeader{position:sticky;top:calc(-18px - env(safe-area-inset-top));padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:16px;background:var(--bg);z-index:2;margin-top:calc(-18px - env(safe-area-inset-top));margin-bottom:25px;border-bottom:1px solid var(--line)}
+.settingsCatalog h3{font-size:12px;letter-spacing:1.4px;color:var(--muted);font-weight:750;margin:0 0 8px}.settingsCatalog .catalogHint{font-size:13px;margin:0 0 12px;line-height:1.5}#catalogStatus{min-height:0;font-size:12px;margin:0 0 10px}#catalogStatus:empty{display:none}.catalogCard{border-radius:19px;background:#111;overflow:hidden}.catalogRow{grid-template-columns:minmax(0,1fr) 38px 42px;gap:0;min-height:61px;padding:0 10px 0 12px;background:transparent;border-bottom:1px solid #292929}.catalogEdit{display:flex;align-items:center;gap:11px;text-align:left;min-width:0;padding:11px 0;border:0;background:transparent;color:var(--text);min-height:61px}.catalogEmoji{display:grid;place-items:center;flex:0 0 28px;width:28px;height:34px;border:0;background:transparent;font-size:23px}.catalogName{font-size:16px;font-weight:650;line-height:1.4}.catalogDelete{border:0;background:transparent;color:#ff453a;font-size:27px;min-height:44px;padding:0}.catalogHandle{font-size:25px;line-height:1;min-height:44px;padding:0;user-select:none;-webkit-user-select:none}.catalogAdd{width:100%;min-height:58px;border:0;background:transparent;color:var(--text);font-size:17px;font-weight:700;padding:15px}.catalogRow.dragging{background:#262626;opacity:.85}.catalogEdit:focus-visible,.catalogHandle:focus-visible,.catalogDelete:focus-visible{outline:2px solid var(--text);outline-offset:-3px;border-radius:9px}
+#catalogEditorOverlay{z-index:180;background:rgba(0,0,0,.6);height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto;align-items:flex-end;padding:0}.catalogEditorPanel{position:relative;width:100%;max-width:460px;max-height:calc(100% - max(14px,env(safe-area-inset-top)));margin:0 auto;background:#1c1c1e;border-radius:25px 25px 0 0;padding:33px 20px calc(27px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;color:var(--text);box-sizing:border-box}.catalogSheetHandle{position:absolute;top:0;left:calc(50% - 35px);width:70px;height:26px;touch-action:none}.catalogSheetHandle:after{content:'';position:absolute;left:15px;top:10px;width:40px;height:5px;border-radius:9px;background:#606064}.catalogSheetClose{position:absolute;top:24px;right:12px;width:40px;height:40px;border:0;background:transparent;color:var(--muted);font-size:25px}.catalogEditorPanel h2{font-size:24px;font-weight:800;margin:0 35px 22px 0;line-height:1.3}.catalogEditorFields{display:grid;grid-template-columns:56px minmax(0,1fr);gap:13px;margin-bottom:19px}.catalogEditorPanel label,.catalogColors legend{display:block;font-size:12px;font-weight:750;letter-spacing:1.1px;color:var(--muted);margin-bottom:9px}.catalogEditorPanel input{min-width:0;max-width:100%;box-sizing:border-box}#categoryEmojiButton{width:56px;height:51px;font-size:29px;background:#111;border:2px solid var(--text);border-radius:15px;padding:0}#newCategoryName{width:100%;height:51px;background:#111;border:0;border-radius:15px;color:var(--text);font-size:17px;font-weight:400;padding:0 15px}#newCategoryName::placeholder{color:var(--muted)}.catalogColors{border:0;padding:0;margin:0 0 21px;min-width:0}.categoryColorChoices{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px 10px;padding-top:2px}.categoryColorChoices button{background:var(--swatch);border:0;padding:0;border-radius:50%;width:100%;aspect-ratio:1;max-width:34px;justify-self:center;box-shadow:0 0 0 0 var(--text)}.categoryColorChoices button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--text)}#saveCatalogCategory{width:100%;min-height:54px;border-radius:17px;background:#fff;color:#000;font-size:18px;font-weight:800;border:0}#saveCatalogCategory:disabled{opacity:.4}.catalogEditorPanel #catalogEditorError{font-size:13px;color:#ff8e87;margin:0 0 12px}.catalogEditorPanel #emojiPicker{margin:0 0 19px}.catalogEditorPanel .emojiPresets{grid-template-columns:repeat(6,minmax(0,1fr))}.catalogEditorPanel .customEmojiLine{grid-template-columns:minmax(0,1fr) auto}.catalogEditorPanel .customEmojiLine input{width:100%;font-size:22px;background:#111}.catalogEditorPanel .customEmojiLine button{font-size:14px}.catalogEditorPanel .emojiPresets button{min-height:39px;padding:3px}
+#quickExpense button.selected{border-color:var(--cat-color,#ff626b);color:var(--cat-color,#ff626b);background:color-mix(in srgb,var(--cat-color,#ff626b) 13%,var(--bg))}
+html[data-theme="light"] .catalogCard{background:#f2f2f4}html[data-theme="light"] .catalogRow{border-color:#dedee2}html[data-theme="light"] .catalogRow.dragging{background:#e3e3e8}html[data-theme="light"] .catalogEditorPanel{background:#f2f2f4}html[data-theme="light"] #categoryEmojiButton,html[data-theme="light"] #newCategoryName,html[data-theme="light"] .catalogEditorPanel .customEmojiLine input{background:#fff}html[data-theme="light"] #saveCatalogCategory{background:#171717;color:white}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -257,11 +263,7 @@ html[data-theme="light"] #editTxOverlay{background:rgba(20,25,15,.35)}html[data-
 
 <div id="settingsOverlay" class="overlay" role="region" aria-label="Cài đặt">
  <div class="panel settingsPanel"><div class="settingsHeader"><button id="settingsBack" type="button" class="categoryBack" aria-label="Quay lại"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Cài đặt</h2><span></span></div>
- <section class="settingsCatalog"><h3>Danh mục</h3> <p class="catalogHint">Chạm emoji để đổi. Kéo biểu tượng ba gạch hoặc dùng mũi tên để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div>
- <div id="catalogList"></div>
- <form id="addCategoryForm" class="newCategoryForm"><label for="newCategoryName">Thêm danh mục</label><div class="newCategoryLine"><input id="newCategoryEmoji" type="text" value="🏷️" maxlength="16" aria-label="Emoji danh mục mới"><input id="newCategoryName" type="text" maxlength="64" placeholder="Tên danh mục" required autocomplete="off"></div><button id="addCategoryBtn" class="primary" type="submit">Thêm danh mục</button></form>
- <div id="emojiEditor" class="emojiEditor hidden"><h3 id="emojiEditorTitle">Chọn emoji</h3><div id="emojiPresets" class="emojiPresets"></div><label for="customCategoryEmoji">Hoặc nhập emoji từ bàn phím</label><div class="customEmojiLine"><input id="customCategoryEmoji" type="text" maxlength="16" aria-label="Emoji tùy chọn"><button id="saveCategoryEmoji" class="closeBtn" type="button">Lưu</button><button id="closeEmojiEditor" class="closeBtn" type="button">Hủy</button></div></div>
-</section>
+ <section class="settingsCatalog"><h3>DANH MỤC</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section>
  <div class="settingsRow"><div><strong>Giao diện</strong><div id="themeName" class="statNote">Tối</div></div><button type="button" class="themeToggle" aria-label="Đổi giao diện"></button></div>
  <div class="settingsRow"><div><strong>Ẩn số nhạy cảm</strong><div class="statNote">Số dư và thu nhập trên thiết bị này</div></div><button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button></div>
     <div class="overviewSection"><div class="sectionTitle">XUẤT DỮ LIỆU</div><div class="exportOptions"><select id="exportRange" aria-label="Khoảng thời gian xuất CSV"><option value="selected">Tháng đang xem</option><option value="year">Năm đang xem</option><option value="all">Toàn bộ dữ liệu</option></select></div><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải giao dịch và danh mục trong khoảng đã chọn dưới dạng CSV.</div></div>
@@ -270,6 +272,17 @@ html[data-theme="light"] #editTxOverlay{background:rgba(20,25,15,.35)}html[data-
     <details class="shortcutHelp"><summary>Mở nhanh bằng Back Tap / Siri</summary><p>Tạo một phím tắt iPhone để mở thẳng màn hình Thêm giao dịch:</p><code id="quickEntryUrl"></code><ol><li>Mở ứng dụng Phím tắt → tạo phím tắt mới → thêm tác vụ “Mở URL” với đường dẫn trên.</li><li>Đặt tên “Ghi chi tiêu”. Anh có thể gọi Siri theo tên này hoặc thêm phím tắt ra màn hình chính.</li><li>Để gõ mặt lưng: Cài đặt → Trợ năng → Cảm ứng → Chạm vào mặt sau → Chạm hai lần → chọn phím tắt vừa tạo.</li></ol><p>Phím tắt sẽ mở Happy Money để anh nhập và lưu. iPhone có thể yêu cầu mở khóa; nếu hết phiên, đăng nhập rồi màn hình nhập sẽ tự mở.</p></details>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
  </div>
+</div>
+
+<div id="catalogEditorOverlay" class="overlay" role="dialog" aria-modal="true" aria-labelledby="catalogEditorTitle">
+ <form id="addCategoryForm" class="catalogEditorPanel" tabindex="-1">
+  <div class="catalogSheetHandle" aria-hidden="true"></div><button id="closeCatalogEditor" type="button" class="catalogSheetClose" aria-label="Hủy chỉnh sửa danh mục">×</button>
+  <h2 id="catalogEditorTitle">Thêm danh mục</h2>
+  <div class="catalogEditorFields"><div><label for="categoryEmojiButton">EMOJI</label><button id="categoryEmojiButton" type="button" aria-label="Chọn emoji" aria-expanded="false">🍔</button><input id="newCategoryEmoji" type="hidden" value="🍔"></div><div><label for="newCategoryName">TÊN</label><input id="newCategoryName" type="text" maxlength="64" placeholder="Tên danh mục" autocomplete="off" required></div></div>
+  <div id="emojiPicker" class="hidden"><div id="emojiPresets" class="emojiPresets"></div><label for="customCategoryEmoji">Emoji khác</label><div class="customEmojiLine"><input id="customCategoryEmoji" type="text" maxlength="16" aria-label="Emoji tùy chọn" autocomplete="off"><button id="saveCategoryEmoji" class="closeBtn" type="button">Chọn</button></div></div>
+  <fieldset class="catalogColors"><legend>MÀU</legend><div id="categoryColorChoices" class="categoryColorChoices"></div></fieldset>
+  <p id="catalogEditorError" class="formError" role="alert"></p><button id="saveCatalogCategory" class="primary" type="submit" disabled>Lưu danh mục</button>
+ </form>
 </div>
 
 <div id="categoryOverlay" class="overlay" role="region" aria-label="Chi tiết danh mục">
@@ -371,7 +384,21 @@ function getCategoryOverrides(){try{return JSON.parse(localStorage.getItem(categ
 async function hydrateCategoryOverrides(){await hydrateCatalog();const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
 async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
 async function deleteCategoryOverride(rowId){const values=getCategoryOverrides();delete values[String(rowId)];localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
-function categoryFor(row){const guessed=guessCategory(row?.description),override=getCategoryOverrides()[String(row?.id)];if(override==='Công cụ & dịch vụ số')return 'Dịch vụ số';if(override==='Chuyển tiền nội bộ'||(override==='Chưa phân loại'&&guessed!=='Chưa phân loại'))return guessed;if(override&&CATEGORY_NAMES.includes(override))return override;if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';return guessed}
+const fallbackCategoryName=()=>catalogRecord.items.find(item=>item.id==='default-10')?.name||'Chưa phân loại';
+function resolveCategoryName(name,{activeOnly=false}={}){
+ if(INCOME_CATEGORIES.includes(name))return name;
+ const item=catalogRecord.items.find(item=>item.name===name||item.aliases?.includes(name));
+ return item&&(!activeOnly||!item.archived)?item.name:activeOnly?fallbackCategoryName():name;
+}
+function categoryFor(row){
+ const guessed=guessCategory(row?.description);let override=getCategoryOverrides()[String(row?.id)];
+ if(override==='Công cụ & dịch vụ số')override='Dịch vụ số';
+ if(override==='Chuyển tiền nội bộ'||(resolveCategoryName(override)===fallbackCategoryName()&&resolveCategoryName(guessed,{activeOnly:true})!==fallbackCategoryName()))override=null;
+ const resolved=resolveCategoryName(override);
+ if(resolved&&CATEGORY_NAMES.includes(resolved))return resolved;
+ if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';
+ return resolveCategoryName(guessed);
+}
 const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
 const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
 const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻'};
@@ -392,7 +419,7 @@ function updateEntryDateButtons(){
 }
 function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>button.classList.toggle('selected',entryType==='expense'&&button.dataset.category===$('category').value))}
 
-function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;const names=mode==='income'?INCOME_CATEGORIES:EXPENSE_CATEGORIES;select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
+function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;selected=resolveCategoryName(selected,{activeOnly:id!=='editTxCategory'});const names=mode==='income'?INCOME_CATEGORIES:[...EXPENSE_CATEGORIES,...(selected&&!EXPENSE_CATEGORIES.includes(selected)&&(id==='editTxCategory'||selected===fallbackCategoryName())?[selected]:[])];select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
 const privateFmt=value=>privacyHidden?'••••••':fmt(value);
 function updatePrivacyButton(){
   const button=$('privacyBtn');if(!button)return;
@@ -720,7 +747,7 @@ async function renderMonthlyOverview(){
   categoryNavigation=openCategory;
   $('categoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.onclick=()=>openCategory(button.dataset.chartCategory));
   if(activeCategoryName&&$('categoryOverlay').classList.contains('open'))openCategory(activeCategoryName);
-  const uncategorized=expenses.filter(row=>categoryFor(row)==='Chưa phân loại');
+  const uncategorized=expenses.filter(row=>categoryFor(row)===fallbackCategoryName());
   $('uncategorizedSection').classList.toggle('hidden',uncategorized.length===0);
   $('uncategorizedList').innerHTML=uncategorized.map(row=>`<button class="reviewItem" data-review-id="${row.id}"><div><div class="reviewName">${escapeHtml(row.description||'Không có nội dung')}</div><div class="reviewDate">${fmtDate(row.txn_date,row.month)} · Chạm để phân loại</div></div><div class="reviewAmount">${fmt(row.expense)}</div></button>`).join('');
   const rowsById=new Map(rows.map(row=>[String(row.id),row]));
@@ -889,7 +916,7 @@ function closeCategory({fromHistory=false}={}){
 }
 window.addEventListener('popstate',event=>{if(event.state?.hmCategory&&user&&categoryNavigation)categoryNavigation(event.state.hmCategory,{push:false});else closeCategory({fromHistory:true})});
 $('categoryBack').addEventListener('click',()=>{closeCategory();const first=$('categoryChart').querySelector('[data-chart-category]');first?.focus({preventScroll:true})});
-function closeSettings(){$('settingsOverlay').classList.remove('open');$('emojiEditor').classList.add('hidden');if(catalogDirty&&user){catalogDirty=false;refresh();if($('summaryOverlay').classList.contains('open'))renderMonthlyOverview()}}
+function closeSettings(){$('settingsOverlay').classList.remove('open');closeCatalogEditor();if(catalogDirty&&user){catalogDirty=false;refresh();if($('summaryOverlay').classList.contains('open'))renderMonthlyOverview()}}
 document.querySelectorAll('.settingsOpen').forEach(button=>button.addEventListener('click',()=>{renderCatalogList();$('settingsOverlay').classList.add('open')}));
 $('settingsBack').addEventListener('click',closeSettings);
 function showHistory(){closeSettings();closeCategory();addPull.close();summaryPull.close()}
@@ -905,7 +932,7 @@ function bindEdgeBack(overlayId,panelSelector,onBack){
  const overlay=$(overlayId),panel=overlay.querySelector(panelSelector);let edge=null,settleTimer=null;
  panel.addEventListener('touchstart',event=>{
   if(settleTimer){clearTimeout(settleTimer);settleTimer=null;panel.style.transition='';panel.style.transform=''}
-  const point=event.touches[0];edge=event.touches.length===1&&point.clientX<=28&&!$('editTxOverlay').classList.contains('open')?{x:point.clientX,y:point.clientY,dx:0,drag:false}:null;
+  const point=event.touches[0];edge=!$('catalogEditorOverlay').classList.contains('open')&&event.touches.length===1&&point.clientX<=28&&!$('editTxOverlay').classList.contains('open')?{x:point.clientX,y:point.clientY,dx:0,drag:false}:null;
   // Cancel Safari's native edge action; the app owns this one gesture.
   if(edge)event.preventDefault();
  },{passive:false});
@@ -933,6 +960,9 @@ function updateEntryViewport(){
   document.documentElement.style.setProperty('--entry-top',(viewport?.offsetTop||0)+'px');
 }
 window.visualViewport?.addEventListener('resize',updateEntryViewport);window.visualViewport?.addEventListener('scroll',updateEntryViewport);window.addEventListener('resize',updateEntryViewport);updateEntryViewport();
+let catalogSheetY=null;const catalogSheetHandle=document.querySelector('.catalogSheetHandle');
+catalogSheetHandle.addEventListener('touchstart',event=>{catalogSheetY=event.touches[0].clientY},{passive:true});
+catalogSheetHandle.addEventListener('touchend',event=>{if(catalogSheetY!==null&&event.changedTouches[0].clientY-catalogSheetY>70)closeCatalogEditor();catalogSheetY=null},{passive:true});
 $('noteReturn').addEventListener('click',()=>{$('desc').blur();$('addOverlay').classList.remove('noteMode');updateEntryViewport()});
 $('saveTx').addEventListener('pointerdown',event=>{if(document.activeElement===$('desc'))event.preventDefault()});
 $('desc').addEventListener('focus',()=>{$('addOverlay').classList.add('noteMode');updateEntryViewport()});
@@ -985,13 +1015,13 @@ $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))addPu
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
 $('category').addEventListener('change',()=>{categoryManuallySelected=true;syncQuickCategory();$('amount').focus()});
-$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):guessed;syncQuickCategory()});
+$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):resolveCategoryName(guessed,{activeOnly:true});syncQuickCategory()});
 $('quickExpense').addEventListener('click',event=>{const button=event.target.closest('button[data-category]');if(!button)return;document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;$('amount').focus()});
 document.querySelectorAll('#quickIncome button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');$('desc').value=button.dataset.name||'';categoryManuallySelected=true;$('category').value=button.dataset.name==='Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập';(button.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
   if(savingTransaction)return;
   const amount=cleanMoney('amount'),category=$('category').value,date=$('date').value;
-  const desc=$('desc').value.trim()||(categoryManuallySelected&&category!=='Chưa phân loại'?category:'');
+  const desc=$('desc').value.trim()||(categoryManuallySelected&&category!==fallbackCategoryName()?category:'');
   if(!Number.isSafeInteger(amount)||amount<=0){$('entryError').textContent='Anh nhập số tiền hợp lệ trước nhé.';$('amount').focus();return}
   if(!desc){$('entryError').textContent='Anh chọn danh mục hoặc nhập nội dung giao dịch nhé.';return}
   if(!date){$('entryError').textContent='Anh chọn ngày giao dịch nhé.';return}
@@ -1083,8 +1113,8 @@ $('exportBtn').addEventListener('click',async()=>{
 });
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;passwordFormOpen=false;updatePasskeyUI();showAuth()});
 
-const DEFAULT_CATALOG=DEFAULT_EXPENSE_CATEGORIES.map((name,index)=>({id:'default-'+index,name,emoji:CATEGORY_ICONS[name]||'🏷️'}));
-let catalogRecord={version:1,updated_at:0,items:DEFAULT_CATALOG.map(item=>({...item}))},catalogQueue=Promise.resolve(),editingEmojiId=null,catalogDirty=false;
+const DEFAULT_CATALOG=DEFAULT_EXPENSE_CATEGORIES.map((name,index)=>({id:'default-'+index,name,emoji:CATEGORY_ICONS[name]||'🏷️',color:CATEGORY_COLORS[name]||'#9aa2af',aliases:[],archived:false}));
+let catalogRecord={version:1,updated_at:0,items:DEFAULT_CATALOG.map(item=>({...item}))},catalogQueue=Promise.resolve(),editingCatalogId=null,catalogDraftColor='#ff626b',catalogDirty=false,catalogReturnFocus=null;
 const catalogKey=()=>`happy_money_category_catalog_${user?.id||'guest'}`;
 function validEmoji(value){
  const text=String(value||'').trim();if(!text||text.length>16||!/[\p{Extended_Pictographic}\p{Regional_Indicator}\u20e3]/u.test(text))return false;
@@ -1092,13 +1122,25 @@ function validEmoji(value){
 }
 function normalizeCatalog(value){
  const source=Array.isArray(value?.items)?value.items:[],items=[],names=new Set(),ids=new Set();
- source.slice(0,100).forEach(item=>{const name=String(item?.name||'').trim().slice(0,64),id=String(item?.id||'').slice(0,100);if(!name||!id||names.has(normalizeText(name))||ids.has(id)||INCOME_CATEGORIES.includes(name))return;names.add(normalizeText(name));ids.add(id);items.push({id,name,emoji:validEmoji(item.emoji)?item.emoji:'🏷️'})});
- DEFAULT_CATALOG.forEach(item=>{if(!names.has(normalizeText(item.name)))items.push({...item})});
- return {version:1,updated_at:Number(value?.updated_at)||0,items};
+ source.slice(0,100).forEach(item=>{
+  const name=String(item?.name||'').trim().slice(0,64),id=String(item?.id||'').slice(0,100);
+  if(!name||!id||names.has(normalizeText(name))||ids.has(id)||INCOME_CATEGORIES.includes(name))return;
+  const original=DEFAULT_CATALOG.find(defaultItem=>defaultItem.id===id);
+  names.add(normalizeText(name));ids.add(id);
+  const aliases=[...new Set([...(Array.isArray(item.aliases)?item.aliases:[]),...(original&&original.name!==name?[original.name]:[])])].filter(alias=>typeof alias==='string'&&alias!==name&&alias.length<=64).slice(0,100);
+  items.push({id,name,emoji:validEmoji(item.emoji)?item.emoji:'🏷️',color:/^#[0-9a-f]{6}$/i.test(item.color)?item.color.toLowerCase():original?.color||'#9aa2af',aliases,archived:!!item.archived});
+ });
+ // Version 1 had no removal/renaming. Migrate once, without resurrecting removed categories.
+ if(Number(value?.version||1)<2)DEFAULT_CATALOG.forEach(item=>{if(!ids.has(item.id)&&!names.has(normalizeText(item.name)))items.push({...item})});
+ const fallback=DEFAULT_CATALOG.find(item=>item.name==='Chưa phân loại');
+ const existing=items.find(item=>item.id===fallback.id||item.name===fallback.name);
+ if(!existing)items.push({...fallback});
+ return {version:2,updated_at:Number(value?.updated_at)||0,items};
 }
+const activeCatalog=()=>catalogRecord.items.filter(item=>!item.archived);
 function applyCatalog(record){
- catalogRecord=normalizeCatalog(record);EXPENSE_CATEGORIES.splice(0,EXPENSE_CATEGORIES.length,...catalogRecord.items.map(item=>item.name));CATEGORY_NAMES.splice(0,CATEGORY_NAMES.length,...INCOME_CATEGORIES,...EXPENSE_CATEGORIES);
- catalogRecord.items.forEach(item=>CATEGORY_ICONS[item.name]=item.emoji);renderExpenseChips();
+ catalogRecord=normalizeCatalog(record);EXPENSE_CATEGORIES.splice(0,EXPENSE_CATEGORIES.length,...activeCatalog().map(item=>item.name));CATEGORY_NAMES.splice(0,CATEGORY_NAMES.length,...INCOME_CATEGORIES,...catalogRecord.items.map(item=>item.name));
+ catalogRecord.items.forEach(item=>{CATEGORY_ICONS[item.name]=item.emoji;CATEGORY_COLORS[item.name]=item.color});renderExpenseChips();
 }
 async function hydrateCatalog(){
  let local=null;try{local=JSON.parse(localStorage.getItem(catalogKey())||'null')}catch{}
@@ -1109,11 +1151,11 @@ async function hydrateCatalog(){
 }
 function renderExpenseChips(){
  const selected=$('category').value;
- $('quickExpense').innerHTML=catalogRecord.items.map(item=>`<button type="button" data-category="${escapeHtml(item.name)}"><span class="categoryEmoji" aria-hidden="true">${escapeHtml(item.emoji)}</span><span class="categoryText">${escapeHtml(item.name)}</span></button>`).join('');
+ $('quickExpense').innerHTML=activeCatalog().map(item=>`<button type="button" data-category="${escapeHtml(item.name)}" style="--cat-color:${item.color}"><span class="categoryEmoji" aria-hidden="true">${escapeHtml(item.emoji)}</span><span class="categoryText">${escapeHtml(item.name)}</span></button>`).join('');
  fillCategorySelect('category',selected||'Chưa phân loại',entryType);syncQuickCategory();
 }
 function persistCatalog(items){
- const record=normalizeCatalog({version:1,updated_at:Math.max(Date.now(),catalogRecord.updated_at+1),items});applyCatalog(record);catalogDirty=true;
+ const record=normalizeCatalog({version:2,updated_at:Math.max(Date.now(),catalogRecord.updated_at+1),items});applyCatalog(record);catalogDirty=true;
  let stored=false;try{localStorage.setItem(catalogKey(),JSON.stringify(record));stored=true}catch{}
  renderCatalogList();$('catalogStatus').textContent='Đang lưu…';
  const owner=user?.id;
@@ -1126,39 +1168,91 @@ function persistCatalog(items){
  });return catalogQueue;
 }
 function renderCatalogList(){
- $('catalogList').innerHTML=catalogRecord.items.map((item,index)=>`<div class="catalogRow" data-category-id="${escapeHtml(item.id)}"><button type="button" class="catalogEmoji" data-emoji-id="${escapeHtml(item.id)}" aria-label="Đổi emoji ${escapeHtml(item.name)}">${escapeHtml(item.emoji)}</button><span class="catalogName">${escapeHtml(item.name)}</span><button type="button" class="catalogArrow" data-move-id="${escapeHtml(item.id)}" data-direction="-1" aria-label="Đưa ${escapeHtml(item.name)} lên" ${index===0?'disabled':''}>↑</button><button type="button" class="catalogArrow" data-move-id="${escapeHtml(item.id)}" data-direction="1" aria-label="Đưa ${escapeHtml(item.name)} xuống" ${index===catalogRecord.items.length-1?'disabled':''}>↓</button><button type="button" class="catalogHandle" data-drag-id="${escapeHtml(item.id)}" aria-label="Kéo để sắp xếp ${escapeHtml(item.name)}">☰</button></div>`).join('');
+ $('catalogList').innerHTML=activeCatalog().map(item=>`<div class="catalogRow" data-category-id="${escapeHtml(item.id)}"><button type="button" class="catalogEdit" data-edit-id="${escapeHtml(item.id)}" aria-label="Sửa danh mục ${escapeHtml(item.name)}"><span class="catalogEmoji" aria-hidden="true">${escapeHtml(item.emoji)}</span><span class="catalogName">${escapeHtml(item.name)}</span></button><button type="button" class="catalogDelete" data-delete-category="${escapeHtml(item.id)}" aria-label="Xóa danh mục ${escapeHtml(item.name)}">×</button><button type="button" class="catalogHandle" data-drag-id="${escapeHtml(item.id)}" aria-label="Kéo để sắp xếp ${escapeHtml(item.name)}" aria-keyshortcuts="ArrowUp ArrowDown">≡</button></div>`).join('');
 }
-$('catalogList').addEventListener('click',event=>{
- const move=event.target.closest('[data-move-id]');if(move){const items=[...catalogRecord.items],index=items.findIndex(item=>item.id===move.dataset.moveId),target=index+Number(move.dataset.direction);if(index>=0&&target>=0&&target<items.length){[items[index],items[target]]=[items[target],items[index]];persistCatalog(items)}return}
- const emoji=event.target.closest('[data-emoji-id]');if(!emoji)return;
- editingEmojiId=emoji.dataset.emojiId;const item=catalogRecord.items.find(item=>item.id===editingEmojiId);if(!item)return;
- $('emojiEditorTitle').textContent='Emoji · '+item.name;$('customCategoryEmoji').value=item.emoji;$('emojiEditor').classList.remove('hidden');$('emojiEditor').scrollIntoView({block:'nearest',behavior:'smooth'});
-});
+const CATEGORY_PALETTE=['#ff626b','#48c6bc','#ffe665','#a58af5','#ff7910','#40d879','#5a9fea','#94a3b8','#ee6fbd','#ce40e8','#a5e52c','#00a878','#e71546','#b85c00','#6961ee','#ffa726'];
 const EMOJI_PRESETS=['🍜','☕','🍔','🚗','🚕','🏠','💻','🎾','🛍️','🎁','☀️','💊','🎬','📚','💵','👤','✈️','🐾','🎮','🏷️','🏋️','💡','🎵','❤️'];
 $('emojiPresets').innerHTML=EMOJI_PRESETS.map(emoji=>`<button type="button" data-emoji="${emoji}" aria-label="Chọn ${emoji}">${emoji}</button>`).join('');
-function saveEmoji(emoji){if(!validEmoji(emoji)){$('catalogStatus').textContent='Anh chọn một emoji nhé.';return}const items=catalogRecord.items.map(item=>item.id===editingEmojiId?{...item,emoji:emoji.trim()}:item);$('emojiEditor').classList.add('hidden');persistCatalog(items)}
-$('emojiPresets').addEventListener('click',event=>{const button=event.target.closest('[data-emoji]');if(button)saveEmoji(button.dataset.emoji)});
-$('saveCategoryEmoji').addEventListener('click',()=>saveEmoji($('customCategoryEmoji').value));$('closeEmojiEditor').addEventListener('click',()=>$('emojiEditor').classList.add('hidden'));
+function renderCatalogColors(){
+ const colors=CATEGORY_PALETTE.includes(catalogDraftColor)?CATEGORY_PALETTE:[...CATEGORY_PALETTE,catalogDraftColor];
+ $('categoryColorChoices').innerHTML=colors.map((color,index)=>`<button type="button" data-color="${color}" style="--swatch:${color}" aria-label="Màu ${index+1}" aria-pressed="${color===catalogDraftColor}"></button>`).join('');
+}
+function setDraftEmoji(emoji){
+ $('catalogEditorError').textContent='';$('newCategoryEmoji').value=emoji;$('categoryEmojiButton').textContent=emoji;$('customCategoryEmoji').value=emoji;updateCatalogSave();
+}
+function toggleEmojiPicker(open){$('emojiPicker').classList.toggle('hidden',!open);$('categoryEmojiButton').setAttribute('aria-expanded',String(open))}
+function updateCatalogSave(){
+ const name=$('newCategoryName').value.trim();$('saveCatalogCategory').disabled=!name||name.length>64||!validEmoji($('newCategoryEmoji').value);
+}
+function openCatalogEditor(id=null){
+ const item=catalogRecord.items.find(item=>item.id===id&&!item.archived);editingCatalogId=item?.id||null;catalogReturnFocus=document.activeElement;
+ $('catalogEditorTitle').textContent=item?'Sửa danh mục':'Thêm danh mục';$('saveCatalogCategory').textContent=item?'Lưu thay đổi':'Lưu danh mục';
+ $('newCategoryName').value=item?.name||'';$('newCategoryName').readOnly=false;catalogDraftColor=item?.color||CATEGORY_PALETTE[0];setDraftEmoji(item?.emoji||'🍔');renderCatalogColors();toggleEmojiPicker(false);$('catalogEditorError').textContent='';$('catalogEditorOverlay').classList.add('open');document.querySelector('.settingsPanel').inert=true;document.querySelector('.catalogEditorPanel').scrollTop=0;document.querySelector('.catalogEditorPanel').focus({preventScroll:true});
+}
+function closeCatalogEditor(){
+ if(!$('catalogEditorOverlay').classList.contains('open'))return;
+ document.activeElement?.blur();$('catalogEditorOverlay').classList.remove('open');toggleEmojiPicker(false);document.querySelector('.settingsPanel').inert=false;const target=catalogReturnFocus?.isConnected?catalogReturnFocus:[...document.querySelectorAll('[data-edit-id]')].find(el=>el.dataset.editId===editingCatalogId)||$('addCategoryBtn');if($('settingsOverlay').classList.contains('open'))target.focus({preventScroll:true});
+}
+$('addCategoryBtn').addEventListener('click',()=>openCatalogEditor());
+$('closeCatalogEditor').addEventListener('click',closeCatalogEditor);
+$('catalogEditorOverlay').addEventListener('click',event=>{if(event.target===$('catalogEditorOverlay'))closeCatalogEditor()});
+$('catalogEditorOverlay').addEventListener('keydown',event=>{
+ if(event.key==='Escape'){event.preventDefault();closeCatalogEditor();return}
+ if(event.key==='Tab'){const controls=[...document.querySelectorAll('.catalogEditorPanel button:not(:disabled),.catalogEditorPanel input:not([type="hidden"])')].filter(el=>el.getClientRects().length);const first=controls[0],last=controls.at(-1);if(event.shiftKey&&(document.activeElement===first||document.activeElement===event.currentTarget.querySelector('form'))){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}
+});
+$('categoryEmojiButton').addEventListener('click',()=>toggleEmojiPicker($('emojiPicker').classList.contains('hidden')));
+$('emojiPresets').addEventListener('click',event=>{const button=event.target.closest('[data-emoji]');if(button){setDraftEmoji(button.dataset.emoji);toggleEmojiPicker(false)}});
+$('saveCategoryEmoji').addEventListener('click',()=>{const emoji=$('customCategoryEmoji').value.trim();if(!validEmoji(emoji)){$('catalogEditorError').textContent='Anh chọn một emoji nhé.';return}setDraftEmoji(emoji);$('catalogEditorError').textContent='';toggleEmojiPicker(false)});
+$('categoryColorChoices').addEventListener('click',event=>{const button=event.target.closest('[data-color]');if(button){catalogDraftColor=button.dataset.color;renderCatalogColors()}});
+$('newCategoryName').addEventListener('input',()=>{$('catalogEditorError').textContent='';updateCatalogSave()});
 $('addCategoryForm').addEventListener('submit',event=>{
- event.preventDefault();const name=$('newCategoryName').value.trim(),emoji=$('newCategoryEmoji').value.trim();
- if(!name||name.length>64){$('catalogStatus').textContent='Anh nhập tên danh mục từ 1 đến 64 ký tự.';return}
- if(CATEGORY_NAMES.some(value=>normalizeText(value)===normalizeText(name))){$('catalogStatus').textContent='Danh mục này đã có rồi.';return}
- if(!validEmoji(emoji)){$('catalogStatus').textContent='Anh chọn một emoji cho danh mục nhé.';return}
- if(catalogRecord.items.length>=100){$('catalogStatus').textContent='Đã đạt tối đa 100 danh mục.';return}
- persistCatalog([...catalogRecord.items,{id:'custom-'+crypto.randomUUID(),name,emoji}]);$('newCategoryName').value='';
+ event.preventDefault();const name=$('newCategoryName').value.trim(),emoji=$('newCategoryEmoji').value.trim(),existing=catalogRecord.items.find(item=>item.id===editingCatalogId)||(!editingCatalogId?catalogRecord.items.find(item=>item.archived&&[item.name,...item.aliases].some(value=>normalizeText(value)===normalizeText(name))):null);
+ if(!name||name.length>64||!validEmoji(emoji))return;
+ // Historical aliases stay reserved so old transaction assignments cannot be stolen.
+ const key=normalizeText(name),duplicate=INCOME_CATEGORIES.some(value=>normalizeText(value)===key)||catalogRecord.items.some(item=>item.id!==existing?.id&&[item.name,...item.aliases].some(value=>normalizeText(value)===key));
+ if(duplicate){$('catalogEditorError').textContent='Danh mục này đã có rồi.';return}
+ if(!existing&&catalogRecord.items.length>=100){$('catalogEditorError').textContent='Đã đạt tối đa 100 danh mục.';return}
+ const item={...(existing||{}),id:existing?.id||'custom-'+crypto.randomUUID(),name,emoji,color:catalogDraftColor,archived:false,aliases:[...new Set([...(existing?.aliases||[]),...(existing&&existing.name!==name?[existing.name]:[])])].filter(alias=>alias!==name)};
+ const items=existing?catalogRecord.items.map(value=>value.id===item.id?item:value):[...catalogRecord.items,item];
+ persistCatalog(items);closeCatalogEditor();
 });
-let catalogDrag=null;
-$('catalogList').addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-drag-id]');if(!handle)return;event.preventDefault();handle.setPointerCapture(event.pointerId);catalogDrag={id:handle.dataset.dragId,y:event.clientY,moved:false};handle.closest('.catalogRow').classList.add('dragging')});
-$('catalogList').addEventListener('pointermove',event=>{
- if(!catalogDrag)return;if(Math.abs(event.clientY-catalogDrag.y)<6&&!catalogDrag.moved)return;catalogDrag.moved=true;event.preventDefault();
- const dragging=[...$('catalogList').children].find(row=>row.dataset.categoryId===catalogDrag.id),target=document.elementFromPoint(event.clientX,event.clientY)?.closest('.catalogRow');
+$('catalogList').addEventListener('click',event=>{
+ if(Date.now()<catalogSuppressClickUntil)return;
+ const remove=event.target.closest('[data-delete-category]');if(remove){const item=catalogRecord.items.find(item=>item.id===remove.dataset.deleteCategory);if(item&&confirm(`Xóa danh mục “${item.name}”?\nCác giao dịch đã ghi vẫn được giữ nguyên.`))persistCatalog(catalogRecord.items.map(value=>value.id===item.id?{...value,archived:true}:value));return}
+ const edit=event.target.closest('[data-edit-id]');if(edit)openCatalogEditor(edit.dataset.editId);
+});
+$('catalogList').addEventListener('keydown',event=>{
+ const handle=event.target.closest('[data-drag-id]');if(!handle||!['ArrowUp','ArrowDown'].includes(event.key))return;event.preventDefault();const items=activeCatalog(),index=items.findIndex(item=>item.id===handle.dataset.dragId),target=index+(event.key==='ArrowUp'?-1:1);if(target<0||target>=items.length)return;[items[index],items[target]]=[items[target],items[index]];persistCatalog([...items,...catalogRecord.items.filter(item=>item.archived)]);document.querySelector(`[data-drag-id="${handle.dataset.dragId}"]`)?.focus({preventScroll:true});
+});
+let catalogSuppressClickUntil=0;
+let catalogDrag=null,catalogDragFrame=null;
+function reorderCatalogAt(x,y){
+ const dragging=[...$('catalogList').children].find(row=>row.dataset.categoryId===catalogDrag?.id),target=document.elementFromPoint(x,y)?.closest('.catalogRow');
  if(!dragging||!target||target===dragging||!$('catalogList').contains(target))return;
- const rect=target.getBoundingClientRect();target.parentElement.insertBefore(dragging,event.clientY<rect.y+rect.height/2?target:target.nextSibling);
+ const rect=target.getBoundingClientRect();target.parentElement.insertBefore(dragging,y<rect.y+rect.height/2?target:target.nextSibling);
+}
+function scrollCatalogDrag(){
+ if(!catalogDrag?.moved){catalogDragFrame=null;return}
+ const panel=document.querySelector('.settingsPanel'),rect=panel.getBoundingClientRect(),header=document.querySelector('#settingsOverlay .settingsHeader').getBoundingClientRect(),list=$('catalogList').getBoundingClientRect();
+ const bottom=rect.bottom-55,top=Math.max(rect.top+60,header.bottom+35);let delta=0;
+ if(catalogDrag.pointerY>bottom&&list.bottom>bottom)delta=Math.min(12,(catalogDrag.pointerY-bottom)/3);
+ else if(catalogDrag.pointerY<top&&list.top<top)delta=-Math.min(12,(top-catalogDrag.pointerY)/3);
+ if(delta){panel.scrollTop+=delta;reorderCatalogAt(catalogDrag.pointerX,catalogDrag.pointerY)}
+ catalogDragFrame=requestAnimationFrame(scrollCatalogDrag);
+}
+$('catalogList').addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-drag-id]');if(!handle)return;event.preventDefault();handle.setPointerCapture(event.pointerId);catalogDrag={id:handle.dataset.dragId,y:event.clientY,pointerX:event.clientX,pointerY:event.clientY,moved:false};handle.closest('.catalogRow').classList.add('dragging')});
+$('catalogList').addEventListener('pointermove',event=>{
+ if(!catalogDrag)return;if(Math.abs(event.clientY-catalogDrag.y)<6&&!catalogDrag.moved)return;catalogDrag.moved=true;catalogDrag.pointerX=event.clientX;catalogDrag.pointerY=event.clientY;event.preventDefault();reorderCatalogAt(event.clientX,event.clientY);if(catalogDragFrame===null)catalogDragFrame=requestAnimationFrame(scrollCatalogDrag);
 });
-const finishCatalogDrag=cancel=>{if(!catalogDrag)return;const moved=catalogDrag.moved;catalogDrag=null;document.querySelectorAll('.catalogRow.dragging').forEach(row=>row.classList.remove('dragging'));if(moved&&!cancel){const byId=new Map(catalogRecord.items.map(item=>[item.id,item]));persistCatalog([...$('catalogList').children].map(row=>byId.get(row.dataset.categoryId)).filter(Boolean))}else if(cancel)renderCatalogList()};
+const finishCatalogDrag=cancel=>{
+ if(catalogDragFrame!==null){cancelAnimationFrame(catalogDragFrame);catalogDragFrame=null}if(!catalogDrag)return;
+ const moved=catalogDrag.moved;catalogDrag=null;document.querySelectorAll('.catalogRow.dragging').forEach(row=>row.classList.remove('dragging'));
+ if(moved)catalogSuppressClickUntil=Date.now()+400;
+ if(moved&&!cancel){const byId=new Map(catalogRecord.items.map(item=>[item.id,item]));persistCatalog([...$('catalogList').children].map(row=>byId.get(row.dataset.categoryId)).filter(Boolean).concat(catalogRecord.items.filter(item=>item.archived)))}else if(cancel)renderCatalogList();
+};
 $('catalogList').addEventListener('pointerup',()=>finishCatalogDrag(false));$('catalogList').addEventListener('pointercancel',()=>finishCatalogDrag(true));
 function renderEditChips(){
- const selected=$('editTxCategory').value,names=Number(editingTx?.income||0)>0?INCOME_CATEGORIES:EXPENSE_CATEGORIES;
+ const selected=$('editTxCategory').value,names=Number(editingTx?.income||0)>0?INCOME_CATEGORIES:[...EXPENSE_CATEGORIES,...(!EXPENSE_CATEGORIES.includes(selected)?[selected]:[])];
  $('editCategoryChips').innerHTML=names.map(name=>`<button type="button" data-edit-category="${escapeHtml(name)}" class="${name===selected?'selected':''}">${escapeHtml(CATEGORY_ICONS[name]||'↙')} ${escapeHtml(name)}</button>`).join('');
 }
 $('editCategoryChips').addEventListener('click',event=>{const button=event.target.closest('[data-edit-category]');if(!button)return;$('editTxCategory').value=button.dataset.editCategory;renderEditChips()});
