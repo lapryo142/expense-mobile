@@ -142,3 +142,13 @@ Catalog version 2 retains stable IDs, aliases for previous names, color, and an 
 Validation: Chromium fixture regression suite; add/edit/emoji/color/order/reload persistence; rename history and chart color with unchanged amount; duplicate validation and cancel; remove a default, reload without resurrection, retain archived assignment while editing an old expense; positive/empty Save; 320×430 keyboard-sized layout and light/dark screenshots. Native iPhone keyboard rendering and hardware haptics remain outside this runtime's verification.
 
 Additional regression coverage passed: long-distance drag auto-scroll in a 390×667 viewport, no accidental edit after drag, renaming/hiding the fallback while entry remains usable, and restoring the hidden category with the same stable ID. All tests use fixtures and never mutate real financial data.
+
+## Phase 10 — Fixed total and entry fitted to the viewport (2026-11-03)
+
+Moved the existing month expense total into the fixed bottom container immediately above the three navigation buttons. It remains stationary while history scrolls and is hidden when an overlay is open. Increased history bottom spacing so the last balance cards remain reachable above the fixed footer. Existing totals/privacy calculations are unchanged.
+
+Swipe actions now match the reference colors (blue Edit #305580, red Delete #ff453a), square edges, centered bold labels and full 72px transaction-row height. Existing reveal, edit and confirmed-delete logic remains intact.
+
+Entry now uses a viewport-sized grid: Chi/Thu and Trả sau share a compact top row; removed the empty title/header space; tightened amount/category/date/note/save spacing; keypad fills remaining space with a capped height. Navigation height is measured separately from the history total, including safe-area padding. The note input and placeholder are left aligned, so an empty field's caret appears before “Ghi chú”. Native note keyboard behavior is preserved.
+
+Validation: Chromium fixture regression suite; no vertical overflow or scrolling at 320×568, 390×667, 390×844 and 430×932; Save remains above navigation; fixed-total bounding box unchanged during long-list scrolling; footer hidden in entry/statistics; empty-note caret at position 0 and left alignment; full-height action colors and native Chromium touch reveal. Inspected 320×568 and 390×844 entry screenshots. No financial data or database schema changed. iPhone hardware remains outside the available test runtime.
