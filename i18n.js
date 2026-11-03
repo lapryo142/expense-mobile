@@ -3,6 +3,7 @@
  const categoryNames={'Lương':'Salary','Ăn uống':'Food','Di chuyển & xe':'Transport & car','Nhà cửa & hóa đơn':'Home & bills','Dịch vụ số':'Digital services','Tennis':'Tennis','Mua sắm':'Shopping','Gia đình & quà tặng':'Family & gifts','Sunny & sức khỏe':'Sunny & health','Giải trí & sách':'Entertainment & books','Tiền mặt & lặt vặt':'Cash & miscellaneous','Chưa phân loại':'Uncategorized','Thu nhập':'Income','Rút tiết kiệm':'Savings withdrawal','Số dư đầu tháng':'Opening balance'};
  const categoryLabel=(name,lang=language)=>lang==='en'?(categoryNames[name]||name):name;
  const dictionary={
+ 'Chi không đổi':'Spending unchanged',
 "Tìm kiếm giao dịch":"Search transactions","Tìm kiếm":"Search","Nhập ghi chú hoặc danh mục":"Search notes or categories","Xóa tìm kiếm":"Clear search","Thời gian tìm kiếm":"Search period","Tất cả thời gian":"All time","Khoảng ngày":"Date range","Từ ngày":"From date","Đến ngày":"To date","Số khoản":"Transactions","Đang tìm giao dịch…":"Loading transactions\u2026","Không tải được giao dịch. Thử lại nhé.":"Could not load transactions. Please retry.","Thử lại":"Retry","Nhập từ khóa để tìm qua tất cả các năm.":"Search notes or categories across all years.","Chọn đủ ngày bắt đầu và kết thúc.":"Choose both a start and an end date.","Ngày bắt đầu phải trước hoặc trùng ngày kết thúc.":"The start date must be on or before the end date.","Không có giao dịch phù hợp":"No matching transactions",
 
 'Còn lại trong ngân hàng':'Bank balance','Còn lại theo sổ':'Book balance','Chênh lệch ăn uống':'Balance difference','Tiết kiệm':'Savings','Gửi vợ':'Sent to wife','Số dư đầu tháng':'Opening balance','Chi trung bình / ngày':'Daily average','Mua trả sau tháng này':'Pay later this month','Danh mục':'Categories','Tên':'Name','Màu':'Color','Xuất dữ liệu':'Export data','Thu nhập thực':'Earned income','Tổng chi':'Total spending','Khoản chi lớn nhất':'Largest expense','Mua trả sau':'Pay later','Chưa phân loại':'Uncategorized','Top nội dung chi nhiều nhất':'Top expenses','Chỉ số':'Metric','Số tiền':'Amount','Ngày ghi nhận':'Reconciliation date','Ghi chú':'Note','Ngày':'Date','Nội dung':'Note','Chi trung bình/ngày':'Daily average',
@@ -90,4 +91,5 @@
  }
  return {translate,categoryLabel,setLanguage,getLanguage:()=>language,locale,apply};
 })(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.HappyI18n=api;})(globalThis);
+
 
