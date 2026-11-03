@@ -230,18 +230,19 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    for(const width of [320,390]){await p.setViewportSize({width,height:844});assert.ok(await p.locator('.card.gold .k').evaluate(el=>el.scrollWidth<=el.clientWidth),'Food difference title must fit in full on one line');}await p.setViewportSize({width:390,height:844});
    assert.equal(await p.locator('.historyDayHeading,.historyDayTotal,.txTime').count(),0);
    assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<70);
-   assert.match(await p.locator('.tx[data-tx-id="2"] .txDate').textContent(),/21\/10/);
+   assert.equal(await p.locator('.tx[data-tx-id="2"] .txDate').textContent(),'21/10');
+   for(const width of [320,390]){await p.setViewportSize({width,height:844});const meta=p.locator('.tx[data-tx-id="2"] .txMeta');assert.equal(await meta.locator('.txCategory').innerText(),'Tennis');const category=await meta.locator('.txCategory').boundingBox(),date=await meta.locator('.txDate').boundingBox();assert.ok(Math.abs(category.y+category.height/2-date.y-date.height/2)<2,'Category and date must share one line');assert.ok(date.x>=category.x+category.width);assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<60);}await p.setViewportSize({width:390,height:844});
    await p.locator('#addBtn').click();
    for(const theme of ['dark','light']){
     await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
     for(const [name,color] of [['Ăn uống','rgb(255, 98, 107)'],['Di chuyển & xe','rgb(72, 198, 188)']]){
-     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopWidth),'3px');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
+     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.ok(await chip.evaluate(el=>parseFloat(getComputedStyle(el).borderTopWidth))<=1,'Category borders must stay thin in both themes');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
     }
    }
    await p.locator('#historyTab').click();
    await p.evaluate(async()=>{fixture.rows.push({id:'year-old',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-02',description:'Old expense',expense:123000,income:0,source:'app'});fixture.rows.push({id:'year-future',user_id:'fixture',year:2026,month:12,txn_date:'2026-12-02',description:'December expense',expense:80000,income:0,source:'app'});fixture.rows.push({id:'year-deleted',user_id:'fixture',year:2026,month:1,txn_date:null,description:'',expense:0,income:0,source:'app_edited'});await refresh()});
    await p.locator('#statsTab').click();await p.locator('[data-overview-mode="year"]').click();await p.locator('.annualBar').first().waitFor({state:'visible'});
-   assert.equal(await p.locator('.annualBar').count(),12);assert.equal(await p.locator('.annualMonthList [data-month-detail]').count(),12);assert.match(await p.locator('.annualTotal strong').innerText(),/450.000/);
+   assert.equal(await p.locator('.annualBar').count(),12);assert.equal(await p.locator('.annualMonthList [data-month-detail]').count(),12);assert.deepEqual(await p.locator('.annualMonthList [data-month-detail]').evaluateAll(els=>els.map(el=>Number(el.dataset.monthDetail))),[12,11,10,9,8,7,6,5,4,3,2,1]);assert.deepEqual(await p.locator('.annualBar').evaluateAll(els=>els.map(el=>Number(el.dataset.annualMonth))),[1,2,3,4,5,6,7,8,9,10,11,12]);assert.match(await p.locator('.annualTotal strong').innerText(),/450.000/);
    assert.equal(await p.locator('#overviewStats').isVisible(),false);assert.match(await p.locator('.annualMonthList [data-month-detail="10"]').innerText(),/300.000/);await p.screenshot({path:'/tmp/happy-year-overview.png'});
    assert.equal(await p.locator('.annualBar').first().evaluate(el=>getComputedStyle(el).webkitTapHighlightColor),'rgba(0, 0, 0, 0)');assert.ok(await p.locator('.annualBarFill').evaluateAll(els=>els.every(el=>el.getBoundingClientRect().height<=165)));await p.locator('#annualPreviousYear').click();assert.equal(await p.locator('#annualYearSelect').inputValue(),'2025');assert.match(await p.locator('.annualTotal strong').innerText(),/123.000/);await p.locator('#annualNextYear').click();
    const before=await p.evaluate(()=>({year:currentYear,month:current,inserts:fixture.inserts.length}));
@@ -322,4 +323,3 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
-
