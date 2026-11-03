@@ -42,6 +42,7 @@
    for(const [prefix,en] of Object.entries(prefixes))if(text.startsWith(prefix)){result=en+text.slice(prefix.length);break}
   }
   if(!result&&/^Xóa “/.test(text))result=text.replace(/^Xóa “/,'Delete “').replace('Thao tác này không thể hoàn tác.','This action cannot be undone.').replace('Các giao dịch đã ghi vẫn được giữ nguyên.','Recorded transactions will be kept.');
+  if(result)result=result.replace(/Các giao dịch đã ghi vẫn được giữ nguyên\.$/,'Recorded transactions will be kept.').replace(/Anh kiểm tra kết nối rồi thử lại nhé\.$/,'Please check your connection and try again.');
   return result?raw.replace(text,result):raw;
  }
  const doc=root.document;
