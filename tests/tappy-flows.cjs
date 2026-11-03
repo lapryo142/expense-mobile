@@ -40,6 +40,7 @@ window.supabase={createClient:()=>({auth:{
   const row={created_at:new Date().toISOString(),...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
  }
  if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=fixture.rows.filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
+ if(fixture.failRead&&table==='transactions')return {data:null,error:{message:'Fixture read error'}};
  fixture.reads.push({table,start:state.start,end:state.end});
  let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
  return {data:state.one?(rows[0]||null):rows,error:null};
@@ -309,6 +310,34 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await swipe(-100);assert.equal(await wrapper.getAttribute('data-action'),'delete');assert.equal(await wrapper.locator('.txSwipeDelete').evaluate(el=>getComputedStyle(el).backgroundColor),'rgb(255, 69, 58)');await p.waitForFunction(()=>Math.abs(new DOMMatrixReadOnly(getComputedStyle(document.querySelector('.tx[data-tx-id="2"]')).transform).m41+100)<1);await p.screenshot({path:'/tmp/happy-swipe-delete.png'});await wrapper.locator('.txSwipeDelete').click();assert.equal(await row.count(),1);
    await p.locator('#addBtn').click();assert.equal(await p.locator('#saveTx').isEnabled(),false);await p.locator('#keypad [data-key="1"]').click();assert.equal(await p.locator('#saveTx').isEnabled(),true);await p.locator('#keypad [data-key="backspace"]').click();assert.equal(await p.locator('#saveTx').isEnabled(),false);await p.locator('#amount').fill('0');assert.equal(await p.locator('#saveTx').isEnabled(),false);assert.deepEqual(e,[]);await p.close();
   }
+
+  // Search spans years, accents, localized categories and every owner-filtered page.
+  {
+   const {page:p,errors:e}=await boot(browser);
+   await p.evaluate(()=>fixture.rows.push(
+    {id:'shoe-old',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-10',description:'Giày dép Onitsuka',expense:1200000,income:0,source:'sheet'},
+    {id:'shoe-now',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-10',description:'Giày dép Nike',expense:800000,income:0,source:'app'},
+    {id:'shoe-undated',user_id:'fixture',year:2025,month:4,txn_date:null,description:'Giày dép <img src=x onerror=alert(1)>',expense:300000,income:0,source:'sheet'},
+    {id:'shoe-foreign',user_id:'other',year:2025,month:3,txn_date:'2025-03-10',description:'Giày dép other',expense:9999999,income:0,source:'sheet'},
+    {id:'opening-search',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-01',description:'Đầu tháng',income:9000000,expense:0,source:'sheet'}
+   ));
+   const initial=await p.evaluate(()=>({year:currentYear,month:current,inserts:fixture.inserts.length}));
+   await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('  GIAY  ');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='3');assert.match(await p.locator('#searchTotal').innerText(),/2.300.000/);assert.equal(await p.locator('#searchPeriod').inputValue(),'all');assert.equal(await p.locator('#searchResults img').count(),0);assert.match(await p.locator('#searchResults').innerText(),/Chưa rõ ngày/);assert.equal(await p.locator('[data-search-id="shoe-foreign"]').count(),0);assert.deepEqual(await p.evaluate(()=>({year:currentYear,month:current,inserts:fixture.inserts.length})),initial);
+   for(const width of [320,390]){await p.setViewportSize({width,height:844});assert.equal(await p.locator('.searchPanel').evaluate(el=>el.scrollWidth<=el.clientWidth),true);}await p.setViewportSize({width:390,height:844});await p.screenshot({path:'/tmp/happy-search-all.png'});
+   await p.locator('#searchPeriod').selectOption('year:2025');assert.equal(await p.locator('#searchCount').innerText(),'2');assert.match(await p.locator('#searchTotal').innerText(),/1.500.000/);
+   await p.locator('#searchPeriod').selectOption('month');assert.equal(await p.locator('#searchCount').innerText(),'1');assert.match(await p.locator('#searchTotal').innerText(),/800.000/);
+   await p.locator('#searchPeriod').selectOption('custom');await p.locator('#searchFrom').fill('2025-01-01');await p.locator('#searchTo').fill('2025-12-31');assert.equal(await p.locator('#searchCount').innerText(),'1');assert.match(await p.locator('#searchTotal').innerText(),/1.200.000/);await p.locator('#searchFrom').fill('2026-01-01');assert.match(await p.locator('#searchResults').innerText(),/Ngày bắt đầu/);assert.equal(await p.locator('#searchSummary').isVisible(),false);
+   await p.locator('#searchPeriod').selectOption('all');await p.locator('#transactionSearch').fill('onitsuka giay');assert.equal(await p.locator('#searchCount').innerText(),'1');await p.locator('#transactionSearch').fill('mua sam');assert.equal(await p.locator('#searchCount').innerText(),'3');await p.locator('#transactionSearch').fill('shopping');assert.equal(await p.locator('#searchCount').innerText(),'3');await p.locator('#transactionSearch').fill('so du dau thang');assert.equal(await p.locator('#searchCount').innerText(),'0');await p.locator('#transactionSearch').fill('zz_no_match');assert.match(await p.locator('#searchResults').innerText(),/Không có giao dịch phù hợp/);
+   await p.locator('#transactionSearch').fill('giay');await p.locator('[data-search-id="shoe-undated"]').click();assert.equal(await p.locator('#editTxDate').inputValue(),'');await p.locator('#editTxAmount').fill('350000');await p.locator('#saveEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('searchTotal').textContent.includes('2.350.000'));assert.deepEqual(await p.evaluate(()=>{const row=fixture.rows.find(row=>row.id==='shoe-undated');return {year:row.year,month:row.month,date:row.txn_date}}),{year:2025,month:4,date:null});
+   p.removeAllListeners('dialog');p.on('dialog',d=>d.accept());await p.locator('[data-search-id="shoe-now"]').click();await p.locator('#deleteEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='2');assert.match(await p.locator('#searchTotal').innerText(),/1.550.000/);
+   await p.locator('#searchClear').click();assert.equal(await p.locator('#transactionSearch').inputValue(),'');assert.equal(await p.locator('#searchSummary').isVisible(),false);await p.locator('#searchBack').click();await p.locator('#app .settingsOpen').click();await p.locator('#languageSelect').selectOption('en');await p.locator('#settingsBack').click();await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('shopping');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='2');assert.equal(await p.locator('#searchTitle').innerText(),'Search');assert.match(await p.locator('#searchResults').innerText(),/Shopping/);assert.match(await p.locator('#searchResults').innerText(),/Giày dép Onitsuka/);await p.screenshot({path:'/tmp/happy-search-english.png'});
+   await p.locator('#searchBack').click();await p.locator('#app .settingsOpen').click();await p.locator('#privacyBtn').click();await p.locator('#settingsBack').click();await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('giay');await p.waitForFunction(()=>document.getElementById('searchTotal').textContent==='••••••');assert.ok((await p.locator('.searchResultAmount').allTextContents()).every(x=>x==='••••••'));assert.deepEqual(e,[]);await p.close();
+  }
+  {
+   const {page:p,errors:e}=await boot(browser);await p.evaluate(()=>{fixture.rows=Array.from({length:650},(_,i)=>({id:'search-page-'+i,user_id:'fixture',year:2025,month:3,txn_date:'2025-03-10',description:i===649?'Giày cuối danh sách':'Other entry '+i,expense:1000,income:0,source:'sheet'}))});await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('giay');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='1');assert.equal(await p.locator('[data-search-id="search-page-649"]').count(),1);assert.ok(await p.evaluate(()=>fixture.reads.some(r=>r.table==='transactions'&&r.start===500)));await p.locator('#searchBack').click();
+   await p.evaluate(()=>fixture.failRead=true);await p.locator('#searchOpen').click();await p.locator('#searchRetry').waitFor({state:'visible'});assert.equal(await p.locator('#searchSummary').isVisible(),false);await p.evaluate(()=>fixture.failRead=false);await p.locator('#searchRetry').click();await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='1');assert.deepEqual(e,[]);await p.close();
+  }
+
   // Editing selects the amount immediately, and delegates native keyboards to OS inputs.
   {
    const {page:p,errors:e}=await boot(browser);await p.locator('.tx[data-tx-id="2"]').click();
@@ -332,5 +361,6 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
+
 
 

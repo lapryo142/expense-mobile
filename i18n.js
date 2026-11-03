@@ -3,6 +3,8 @@
  const categoryNames={'Lương':'Salary','Ăn uống':'Food','Di chuyển & xe':'Transport & car','Nhà cửa & hóa đơn':'Home & bills','Dịch vụ số':'Digital services','Tennis':'Tennis','Mua sắm':'Shopping','Gia đình & quà tặng':'Family & gifts','Sunny & sức khỏe':'Sunny & health','Giải trí & sách':'Entertainment & books','Tiền mặt & lặt vặt':'Cash & miscellaneous','Chưa phân loại':'Uncategorized','Thu nhập':'Income','Rút tiết kiệm':'Savings withdrawal','Số dư đầu tháng':'Opening balance'};
  const categoryLabel=(name,lang=language)=>lang==='en'?(categoryNames[name]||name):name;
  const dictionary={
+"Tìm kiếm giao dịch":"Search transactions","Tìm kiếm":"Search","Nhập ghi chú hoặc danh mục":"Search notes or categories","Xóa tìm kiếm":"Clear search","Thời gian tìm kiếm":"Search period","Tất cả thời gian":"All time","Khoảng ngày":"Date range","Từ ngày":"From date","Đến ngày":"To date","Số khoản":"Transactions","Đang tìm giao dịch…":"Loading transactions\u2026","Không tải được giao dịch. Thử lại nhé.":"Could not load transactions. Please retry.","Thử lại":"Retry","Nhập từ khóa để tìm qua tất cả các năm.":"Search notes or categories across all years.","Chọn đủ ngày bắt đầu và kết thúc.":"Choose both a start and an end date.","Ngày bắt đầu phải trước hoặc trùng ngày kết thúc.":"The start date must be on or before the end date.","Không có giao dịch phù hợp":"No matching transactions",
+
 'Còn lại trong ngân hàng':'Bank balance','Còn lại theo sổ':'Book balance','Chênh lệch ăn uống':'Balance difference','Tiết kiệm':'Savings','Gửi vợ':'Sent to wife','Số dư đầu tháng':'Opening balance','Chi trung bình / ngày':'Daily average','Mua trả sau tháng này':'Pay later this month','Danh mục':'Categories','Tên':'Name','Màu':'Color','Xuất dữ liệu':'Export data','Thu nhập thực':'Earned income','Tổng chi':'Total spending','Khoản chi lớn nhất':'Largest expense','Mua trả sau':'Pay later','Chưa phân loại':'Uncategorized','Top nội dung chi nhiều nhất':'Top expenses','Chỉ số':'Metric','Số tiền':'Amount','Ngày ghi nhận':'Reconciliation date','Ghi chú':'Note','Ngày':'Date','Nội dung':'Note','Chi trung bình/ngày':'Daily average',
 
  'Chạm một tháng để xem chi tiết':'Tap a month to see its breakdown','Chạm lại tháng đang chọn để xem cả năm':'Tap it again to see the whole year',
@@ -33,7 +35,7 @@
  function translate(value,lang=language){
   const raw=String(value??'');if(lang!=='en'||!raw.trim())return raw;const text=raw.trim();let result=dictionary[text];
   if(!result){
-   const patterns=[
+   const patterns=[[/^Năm (\d{4})$/,'Year $1'],
     [/^Tháng (\d+) · (\d{4})$/,'Month $1 · $2'],[/^Tháng (\d+)$/,'Month $1'],[/^Đến (.+)$/,'As of $1'],[/^Ngày (.+)$/,'Date $1'],
     [/^Chi giảm (\d+)%$/,'Spending down $1%'],[/^Chi tăng (\d+)%$/,'Spending up $1%'],[/^So với tháng trước · cùng kỳ ngày (\d+)$/,'Vs last month · through day $1'],
     [/^Cùng kỳ đến ngày (.+)$/,'Same period through $1'],[/^(\d+) giao dịch · Tháng (\d+)\/(\d+)$/,'$1 entries · Month $2/$3'],
@@ -88,3 +90,4 @@
  }
  return {translate,categoryLabel,setLanguage,getLanguage:()=>language,locale,apply};
 })(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.HappyI18n=api;})(globalThis);
+
