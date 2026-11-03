@@ -189,3 +189,14 @@ Analytics now offers Month / Year. The annual view summarizes actual owner-filte
 Settings adds Vietnamese / English, saved on the device. Interface labels, accessibility labels and localized date/month headings update without changing user notes, category names, stored amounts or transaction data. Language switching works after reload and does not write to the ledger. Translation logic is isolated in i18n.js.
 
 Validation: GitHub Actions runs pure balance tests, annual/i18n unit checks and the full Chromium fixture suite. Coverage includes concrete date headings without time/group totals, original bold note, compact rows, selected category colors in both themes, 12 annual columns, prior-year data, monthly drill-through, 320px chart fit, language persistence and unchanged user content. Existing balance, save/edit/delete, category, export and layout regressions pass. Screenshot artifacts are retained by CI. Direct execution and iPhone/WebKit visual inspection were unavailable in this session.
+
+
+## Phase 14 — Readable compact expenses and inline annual breakdown (2026-11-04)
+
+Expense rows now use 6px vertical padding and 32px icons; note titles remain bold, with 14px category subtitles. Supporting labels and notes share 13px sizing across expense cards, analytics and Settings. Happy Money branding is 14–15px on its own header line. Entry category borders increase from 2px to 3px while retaining individual category colors.
+
+Default expense/income categories have Vietnamese and English display names in entry chips, edit chips, category selectors, Settings, history subtitles and analytics. Canonical category values, metadata and transaction descriptions remain unchanged. Custom names are preserved. Dedicated category label attributes avoid translating user notes or writing English names into financial records.
+
+Annual analytics retains the chart and year mode when a month is tapped. The selected month shows its total, daily average and category breakdown directly below the chart; tapping it again restores the whole-year breakdown. Instruction text updates in both languages. Chart/list selections share the same state, year changes clear the selection, and zero-spend months have an empty state. Selecting months does not change the main Expenses month or write transactions. Category breakdown rows can reveal their matching transactions inline.
+
+Validation: GitHub Actions run 41682137066 passed balance tests, annual/language unit tests and the full Chromium fixture suite. Added assertions for row compactness, category/brand/card typography, 3px borders in both themes, translated category labels with unchanged canonical values, inline month selection/reselection, empty month, year change, unchanged main period, and English chart instructions. Reviewed fixture screenshots of compact expenses and yearly layouts. Actual iPhone/WebKit rendering remains unverified.
