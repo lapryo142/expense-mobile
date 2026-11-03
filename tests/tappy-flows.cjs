@@ -113,6 +113,14 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    if(engine===chromium){const cdp=await p.context().newCDPSession(p);const box=await p.locator('#quickExpense').boundingBox();const y=box.y+box.height/2;await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:300,y}]});for(const x of [260,210,160,110,60])await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await p.waitForFunction(()=>document.getElementById('quickExpense').scrollLeft>30);assert.equal(await p.locator('#addOverlay').isVisible(),true)}
    await p.locator('#historyTab').click();await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay .themeToggle').click();await p.locator('#settingsBack').click();await p.locator('#addBtn').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');
    await p.screenshot({path:'/tmp/happy-light-entry.png'});await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.equal(await p.locator('.comparisonTable').isVisible(),true);assert.match(await p.locator('#overviewDetails').innerText(),/cùng kỳ/);await p.screenshot({path:'/tmp/happy-light-stats.png'});
+   // Capture the requested detail area in both themes and phone widths for visual review.
+   for(const theme of ['dark','light'])for(const width of [320,390]){
+    await p.setViewportSize({width,height:844});await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    await p.locator('#overviewDetails').evaluate(el=>{const panel=el.closest('.summaryPanel');panel.scrollTop+=el.getBoundingClientRect().top-panel.getBoundingClientRect().top-16});await p.screenshot({path:`/tmp/happy-stats-details-${theme}-${width}.png`});
+    await p.locator('#topSpending').evaluate(el=>{const panel=el.closest('.summaryPanel');panel.scrollTop+=el.getBoundingClientRect().top-panel.getBoundingClientRect().top-16});await p.screenshot({path:`/tmp/happy-stats-top-${theme}-${width}.png`});
+   }
+   await p.setViewportSize({width:390,height:844});await p.evaluate(()=>document.documentElement.dataset.theme='light');
+
    await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');assert.equal(await p.locator('meta[name="theme-color"]').getAttribute('content'),'#f7f7f3');await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay .themeToggle').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'dark');await p.close();
   }
   // Revised capture: dedicated dates, pay-later toggle, note keyboard mode, haptics and category pages.
@@ -378,6 +386,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
+
 
 
 

@@ -215,6 +215,19 @@ html:has(#searchOverlay.open){overflow:hidden;overscroll-behavior:none}
 body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left:0;width:100%;overflow:hidden;overscroll-behavior:none}
 #searchOverlay{overflow:hidden;overscroll-behavior:none}.searchPanel{overscroll-behavior:none}.searchResultList{overscroll-behavior:none;touch-action:pan-y}
 #searchOpen{-webkit-tap-highlight-color:transparent}#searchOpen:focus:not(:focus-visible){outline:none;box-shadow:none}#searchOpen:focus-visible{outline:2px solid var(--muted);outline-offset:2px;box-shadow:none}
+
+/* Detail metrics use the same type and neutral amount color as the summary. */
+#overviewDetails .statBox .statValue{font-size:18px;font-weight:650;letter-spacing:-.5px;color:var(--text);font-variant-numeric:tabular-nums}
+#overviewDetails .statBox .comparisonTrend{font-size:16px;letter-spacing:-.2px}
+#overviewDetails .comparisonName{font-size:13px;font-weight:500;line-height:1.4}
+#overviewDetails .comparisonAmount{font-size:13px;font-weight:650;color:var(--text);font-variant-numeric:tabular-nums}
+#overviewDetails .comparisonHead{font-size:12px;font-weight:600;letter-spacing:0}
+#overviewDetails .comparisonArrow{display:inline-block;margin-right:2px;font-size:12px}
+.topSpendingSection .sectionTitle{font-size:13px;line-height:1.4;font-weight:600;letter-spacing:0;text-transform:none;color:var(--muted)}
+#topSpending .topSpendRow{grid-template-columns:24px minmax(0,1fr) auto}
+#topSpending .topName,#topSpending .topAmount{font-size:15px;font-weight:750;color:var(--text);font-variant-numeric:tabular-nums}
+#topSpending .topName{min-width:0;overflow-wrap:anywhere}#topSpending .topRank{font-size:13px;font-weight:650;background:var(--bg);color:var(--muted)}
+@media(max-width:360px){#overviewDetails .comparisonAmount{font-size:11px}#overviewDetails .comparisonName{font-size:12px}#overviewDetails .comparisonHead{font-size:11px}#overviewDetails .comparisonArrow{font-size:11px;margin-right:0}#topSpending .topAmount{font-size:14px}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -334,8 +347,8 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
       <div id="uncategorizedList" class="reviewList"></div>
     </div>
 
-    <div class="overviewSection">
-      <div class="sectionTitle">TOP NỘI DUNG CHI NHIỀU NHẤT</div>
+    <div class="overviewSection topSpendingSection">
+      <div class="sectionTitle">Top nội dung chi nhiều nhất</div>
       <div id="topSpending" class="topSpend"><div class="overviewLoading">Đang tải…</div></div>
     </div>
 
@@ -924,9 +937,9 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
   const comparisonArrow=(currentValue,previousValue)=>currentValue<previousValue?'↓':currentValue>previousValue?'↑':'=';
   const comparisonRow=(label,previousValue,currentValue,isPrivate=false,higherIsBetter=false)=>{
     const display=value=>isPrivate?privateFmt(value):fmt(value);
-    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount ${comparisonTone(currentValue,previousValue,higherIsBetter)}">${comparisonArrow(currentValue,previousValue)} ${display(currentValue)}</span><span class="comparisonAmount">${display(previousValue)}</span></div>`;
+    return `<div class="comparisonRow"><span class="comparisonName">${label}</span><span class="comparisonAmount"><span class="comparisonArrow ${comparisonTone(currentValue,previousValue,higherIsBetter)}">${comparisonArrow(currentValue,previousValue)}</span> ${display(currentValue)}</span><span class="comparisonAmount">${display(previousValue)}</span></div>`;
   };
-  const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>CHỈ SỐ</span><span>T${current}</span><span>T${previous.month}</span></div>
+  const comparisonTable=hasPreviousData?`<div class="comparisonTable"><div class="comparisonRow comparisonHead"><span>Chỉ số</span><span>T${current}</span><span>T${previous.month}</span></div>
     ${comparisonRow('Đã chi',previousComparableExpense,currentComparableExpense)}
     ${comparisonRow('Chi trung bình/ngày',previousComparableDailyAverage,currentComparableDailyAverage)}
     ${comparisonRow('Còn lại theo sổ',previousComparableRemaining,currentComparableRemaining,true,true)}
@@ -939,7 +952,7 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
     <div class="statBox"><div class="statLabel">Chi trung bình/ngày</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
     <div class="statBox sideStat"><div class="statLabel">Khoản chi lớn nhất</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
     <div class="statBox payLaterOverview"><div class="statLabel">Mua trả sau</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
-    <div class="statBox wide"><div class="statLabel">So với tháng trước · cùng kỳ ngày ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
+    <div class="statBox wide"><div class="statLabel">So với tháng trước · cùng kỳ ngày ${comparisonDay}</div><div class="statValue comparisonTrend">${trendText}</div>${comparisonTable}</div>
   </div>`;
   const grid=$('overviewStats').querySelector('.statGrid'),cards=[...grid.children];
   const details=document.createElement('div');details.className='statGrid';
@@ -1531,6 +1544,7 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
 
