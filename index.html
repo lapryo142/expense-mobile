@@ -157,6 +157,10 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 #addOverlay{overflow:hidden}#addOverlay .formPanel{display:flex;flex-direction:column;gap:clamp(3px,calc(var(--entry-height,100dvh)*.007),6px);overflow:hidden;scrollbar-width:none}#addOverlay .formPanel::-webkit-scrollbar{display:none}#addOverlay .toggle{align-self:center;justify-self:auto;margin:0;width:150px;flex:0 0 auto}#addOverlay .amountField{margin:auto 0;flex:0 0 auto}#addOverlay .quick,#addOverlay .entryDateRow,#addOverlay .noteField,#addOverlay #entryError{flex-shrink:0}#addOverlay .entryDateRow{justify-content:center}#addOverlay .entryPaymentRow{align-self:flex-end;justify-content:flex-end;flex:0 0 auto;margin:0;min-height:30px}#addOverlay .keypad{flex:0 1 260px;height:260px;max-height:260px;min-height:120px;align-self:stretch;margin:0}#addOverlay #saveTx{flex:0 0 auto;margin:0}#addOverlay .noteField{position:relative;display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);min-height:38px}#addOverlay .noteField>label{display:none}#addOverlay input#desc,#addOverlay.noteMode input#desc{display:block;flex:0 0 auto;min-width:0;max-width:calc(100% - 10px);width:7ch;height:36px;border:0;margin:0;padding:7px 0;background:transparent;box-shadow:none!important;border-radius:0;text-align:left;line-height:21px;font-size:16px!important;font-weight:400;letter-spacing:normal;caret-color:#3478f6}#entryNoteSizer{position:absolute;visibility:hidden;pointer-events:none;white-space:pre;font-family:inherit;font-size:16px;font-weight:400;letter-spacing:normal;line-height:21px}#addOverlay.noteMode .amountField{margin:0}#addOverlay.noteMode #saveTx{margin-top:auto}#addOverlay.noteMode .noteField{margin:0}#addOverlay.noteMode .keypad{display:none!important}
 @media(max-height:680px){#addOverlay .formPanel{gap:3px}#addOverlay .noteField{min-height:34px}#addOverlay input#desc,#addOverlay.noteMode input#desc{height:32px;padding:5px 0}}
 .txSwipe{background:var(--bg);isolation:isolate}.txSwipe .tx{backface-visibility:hidden}.txSwipeEdit,.txSwipeDelete{width:88px}.txSwipe>button{z-index:0}
+/* Compact, icon-only selection styling and grouped history dates. */
+.bottom{padding:5px 14px calc(4px + env(safe-area-inset-bottom))}.tabbar button,.tabbar .addBtn{-webkit-tap-highlight-color:transparent;min-height:44px;padding:4px;gap:3px;border:0!important;border-radius:0;box-shadow:none!important;background:transparent!important;color:var(--muted)}.tabbar button[aria-current="page"]{color:var(--text);background:transparent!important}.tabbar button[aria-current="page"] svg{stroke:currentColor}.tabbar svg{width:21px;height:21px}.tabbar .addBtn svg{width:24px;height:24px}.bottom .historySummary{margin:-5px -14px 5px;min-height:52px;padding:11px 20px}.bottom .historySummary span{font-size:14px}.bottom .historySummary strong{font-size:23px}.app{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
+.historyDay{margin-bottom:22px}.historyDayHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:19px 0 7px;color:var(--muted)}.historyDayHeading h2{font-size:12px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin:0}.historyDayTotal{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}.historyDay .tx{grid-template-columns:44px minmax(0,1fr) auto;gap:12px;min-height:78px;padding:13px 0}.historyDay .txIcon{height:44px;width:44px;font-size:24px;background:color-mix(in srgb,var(--tx-color) 18%,var(--bg))}.historyDay .txContent{min-width:0}.historyDay .txName.txCategory{font-size:16px;font-weight:750;line-height:1.35;color:var(--text);padding:0;margin:0;background:transparent;display:block}.historyDay .txMeta{display:block;margin-top:4px;min-width:0}.txNote{font-size:14px;color:var(--muted);font-weight:400;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txMoney{text-align:right;min-width:0}.historyDay .txAmt{font-size:var(--amount-font,17px);font-weight:750}.txTime{font-size:12px;color:var(--muted);margin-top:5px}.txBadge{font-size:10px;color:#dca9cd}.historyDay .txSwipe{border-bottom-color:var(--line)}html[data-theme="light"] .historyDay .txIcon{background:color-mix(in srgb,var(--tx-color) 13%,white)}
+#addOverlay .formPanel{gap:6px}#addOverlay .entryFields{display:flex;flex-direction:column;flex:1 0 auto;justify-content:space-between;gap:8px;min-height:0}#addOverlay .entryFields .amountField{margin:0}#addOverlay .entryFields .toggle{align-self:center}#addOverlay #saveTx{min-height:54px}#addOverlay.noteMode .entryFields{flex:0 1 auto;justify-content:flex-start;gap:6px}#addOverlay.noteMode .entryFields .amountField{margin:0}@media(max-height:680px){#addOverlay .formPanel{gap:3px}#addOverlay .entryFields{gap:4px}#addOverlay #saveTx{min-height:48px}}@media(max-height:620px){#addOverlay #saveTx{min-height:46px}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -208,7 +212,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
     <div class="card gold"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div><div id="foodDate" class="asOf">—</div></div>
     <div class="card editableStat" data-status-key="savings_balance" role="button" tabindex="0"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div><div id="savingsDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
     <div class="card editableStat" data-status-key="send_wife" role="button" tabindex="0"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div><div id="wifeDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
-    <div class="card"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div><div id="startDate" class="asOf">—</div></div>
+    <div class="card editableStat" data-status-key="start_balance" role="button" tabindex="0"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div><div id="startDate" class="asOf">—</div></div>
     <div class="card"><div class="k">CHI TRUNG BÌNH / NGÀY</div><div id="dailyExpense" class="v">—</div><div id="dailyDate" class="asOf">—</div></div>
     <div class="card payLaterCard"><div class="k">MUA TRẢ SAU THÁNG NÀY</div><div id="payLaterTotal" class="v">—</div><div class="asOf">Tính vào chi tiêu, chưa trừ số ngân hàng</div></div>
   </div>
@@ -223,7 +227,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 <div id="addOverlay" class="overlay">
   <div class="panel formPanel">
     <div class="panelHead"><button id="noteReturn" class="noteReturn" type="button" aria-label="Quay lại bàn phím số"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Ghi giao dịch</h2><div class="panelTools"><button id="closeAdd" class="closeBtn">Đóng</button></div></div>
-    <div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
+    <div class="entryFields"><div class="toggle"><button id="expenseType" class="active">Chi</button><button id="incomeType">Thu</button></div>
     <div class="field amountField"><label for="amount">Anh đã chi bao nhiêu? </label><div class="moneyInputLine"><span class="currencyMark" aria-hidden="true">₫</span><input id="amount" class="amount" inputmode="none" aria-label="Số tiền bằng đồng Việt Nam" placeholder="0" autocomplete="off" enterkeyhint="done" size="1"></div></div>
     <div class="entryNote">Nhập số tiền, chọn danh mục rồi lưu. Vuốt các danh mục để xem thêm.</div>
     <div id="quickExpense" class="quick quickExpense">
@@ -237,7 +241,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
       <button data-name="Lương">Lương</button><button data-name="Rút tiết kiệm">Rút tiết kiệm</button><button data-name="">Khác</button>
     </div>
     <div class="entryDateRow"><button id="todayBtn" type="button">Hôm nay</button><button id="yesterdayBtn" type="button">Hôm qua</button><label id="datePick" class="datePick"><span id="datePickText">Chọn ngày</span><input id="date" type="date" aria-label="Chọn ngày"></label></div>
-    <div class="field noteField"><label for="desc">NỘI DUNG</label><input id="desc" type="text" placeholder="Ghi chú" enterkeyhint="done" autocomplete="off"><span id="entryNoteSizer" aria-hidden="true"></span></div>
+    <div class="field noteField"><label for="desc">NỘI DUNG</label><input id="desc" type="text" placeholder="Ghi chú" enterkeyhint="done" autocomplete="off"><span id="entryNoteSizer" aria-hidden="true"></span></div></div>
     <div id="paymentField" class="entryPaymentRow"><button id="payLaterToggle" type="button" aria-pressed="false">Trả sau</button></div>
     <select id="category" class="hidden" aria-label="Danh mục"></select>
     <div id="entryError" class="formError" role="status" aria-live="polite"></div>
@@ -321,6 +325,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
  </div>
 </div>
 
+<script src="balance-engine.js"></script>
 <script>
 const SUPABASE_URL="https://cmejwdeklvmgqrollnqn.supabase.co";
 const SUPABASE_KEY="sb_publishable_WSljrAJUQREtqfi-tQokxQ_9V0aUgkt";
@@ -337,7 +342,7 @@ const formatMoneyInputValue=value=>{
 const moneyCursor=(input,position)=>input.value.slice(0,position??input.value.length).replace(/\D/g,'').length;
 function setMoneyDigits(input,rawDigits,digitPosition){
   const leadingZeros=(rawDigits.match(/^0+/)||[''])[0].length;
-  const digits=rawDigits.replace(/^0+/,'');input.value=formatMoneyInputValue(digits);
+  const digits=rawDigits.replace(/^0+/,'');if(input.id==='statusAmount'&&rawDigits&&!digits){input.value='0';input.setSelectionRange(1,1);return}input.value=formatMoneyInputValue(digits);
   const target=Math.max(0,digitPosition-leadingZeros);let seen=0,position=0;
   while(position<input.value.length&&seen<target){if(/\d/.test(input.value[position]))seen++;position++}
   input.setSelectionRange(position,position);if(input.id==='amount')updateSaveAvailability();if(['amount','editTxAmount'].includes(input.id))input.style.width=Math.max(1,input.value.length)+'ch';
@@ -456,12 +461,30 @@ function renderMonths(){
   $('periodMenu').innerHTML=options.map(item=>`<button type="button" class="periodOption ${item.year===currentYear&&item.month===current?'active':''}" data-year="${item.year}" data-month="${item.month}">Tháng ${item.month} · ${item.year}</button>`).join('');
   $('periodMenu').querySelectorAll('.periodOption').forEach(button=>button.onclick=()=>{currentYear=Number(button.dataset.year);current=Number(button.dataset.month);$('periodMenu').classList.remove('open');renderMonths();refresh()});
 }
+const balanceOptions=()=>({categoryFor,isPayLater,normalizeDate:normalizedIsoDate});
+let activeBalanceLedger=null,refreshSequence=0,statusPeriod=null,savingStatus=false;
+const periodAsOf=(year,month)=>{const now=new Date();return year===now.getFullYear()&&month===now.getMonth()+1?now.getDate():HappyBalances.lastDay(year,month)};
+async function readBalanceRows(table){
+ const rows=[];for(let offset=0;;offset+=500){const {data,error}=await sb.from(table).select('*').eq('user_id',user.id).order('id',{ascending:true}).range(offset,offset+499);if(error)throw error;if(!data?.length)break;rows.push(...data);if(data.length<500)break}return [...new Map(rows.map(row=>[row.id||`${row.year}-${row.month}`,row])).values()];
+}
+async function loadBalanceLedger(year=currentYear,month=current,retry=true){
+ const [rows,statuses]=await Promise.all([readBalanceRows('transactions'),readBalanceRows('monthly_status')]);
+ for(const status of statuses){
+  if(HappyBalances.key(status.year,status.month)>HappyBalances.key(year,month))continue;
+  const monthly=rows.filter(row=>row.year===status.year&&row.month===status.month),checkpoint=HappyBalances.checkpointFor(status,monthly,balanceOptions());
+  if(!(checkpoint.bank||checkpoint.savings)||JSON.stringify(checkpoint)===JSON.stringify(status.balance_checkpoint))continue;
+  const expected={bank_balance:Number(status.bank_balance||0),savings_balance:Number(status.savings_balance||0),bank_balance_date:status.bank_balance_date||null,savings_balance_date:status.savings_balance_date||null,balance_checkpoint:status.balance_checkpoint||null};
+  const {data,error}=await sb.rpc('initialize_balance_checkpoint',{p_year:status.year,p_month:status.month,p_expected:expected,p_checkpoint:checkpoint});if(error)throw error;
+  if(!data){if(retry)return loadBalanceLedger(year,month,false);throw new Error('Số dư vừa được cập nhật ở nơi khác. Anh thử lại nhé.')}
+  status.balance_checkpoint=checkpoint;
+ }
+ const balances=HappyBalances.build(rows,statuses,{...balanceOptions(),year,month});activeBalanceLedger=balances;return {rows,statuses,balances};
+}
 async function refresh(){
-  const [{data:tx,error:txErr},{data:st,error:stErr}]=await Promise.all([
-    sb.from('transactions').select('*').eq('year',currentYear).eq('month',current).order('txn_date',{ascending:false,nullsFirst:false}).order('row_order',{ascending:false}),
-    sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle()
-  ]);
-  if(txErr){$('list').innerHTML='<div class="empty">Lỗi tải giao dịch</div>';return}
+  const sequence=++refreshSequence,year=currentYear,month=current;let loaded;
+  try{loaded=await loadBalanceLedger(year,month)}catch(error){if(sequence===refreshSequence){$('list').innerHTML='<div class="empty">Chưa tải được dữ liệu. Anh kéo xuống để thử lại.</div>';for(const id of ['bankHero','savingsBalance','startBalance','remain'])$(id).textContent='—'}return}
+  if(sequence!==refreshSequence||year!==currentYear||month!==current)return;
+  const tx=loaded.rows.filter(row=>row.year===year&&row.month===month),st=loaded.statuses.find(row=>row.year===year&&row.month===month);
   const activeTx=(tx||[]).filter(row=>!isDeletedTransaction(row));
   const sortedTx=[...activeTx].sort((a,b)=>{
     const byDate=normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month));
@@ -470,53 +493,42 @@ async function refresh(){
     if(byCreated)return byCreated;
     return Number(b.row_order||0)-Number(a.row_order||0);
   });
-  $('list').innerHTML=sortedTx.filter(x=>!isOpeningBalance(x)).map(x=>{
-    const income=Number(x.income||0),expense=Number(x.expense||0),isIncome=income>0,amt=isIncome?income:expense;
-    const d=fmtDate(x.txn_date,x.month);
-    const category=categoryFor(x),transfer=INCOME_CATEGORIES.includes(category)&&category!=='Thu nhập',payLater=isPayLater(x);
-    const amountText=privacyHidden?'••••••':fmt(amt);
-    return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(x.description)}" data-tx-id="${x.id}"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(isIncome?'↙':'•')}</div><div><div class="txName">${escapeHtml(x.description)}</div><div class="txMeta"><div class="txDate">${d}</div><span class="txCategory ${transfer?'transfer':''}">${escapeHtml(category)}</span>${payLater?'<span class="txCategory payLater">Trả sau</span>':''}</div></div><div class="txAmt ${transfer?'':isIncome?'inc':'exp'}">${amountText}</div></div>`;
-  }).join('')||'<div class="empty">Chưa có giao dịch</div>';
-  // monthly_status already contains the historical seed imported from Sheet.
-  // Add every later transaction (from the App or newly entered in Sheet)
-  // without counting the historical seed twice.
-  const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
-  const dayCount=current===now.getMonth()+1&&now.getFullYear()===currentYear?now.getDate():daysInMonth;
-  const asOfIso=`${currentYear}-${String(current).padStart(2,'0')}-${String(dayCount).padStart(2,'0')}`;
-  const appRows=activeTx.filter(x=>{
-    if(x.source==='sheet')return false;
-    const normalized=normalizedIsoDate(x.txn_date,x.month);
-    return normalized&&Number(normalized.slice(8,10))<=dayCount;
-  });
-  const recordedRemaining=Number(st?.remaining||0),wifeAmount=Number(st?.send_wife||0);
-  // Historical Sheet summaries may already include "Gửi vợ" in remaining.
-  const wifeAlreadyIncluded=wifeAmount>0&&Math.abs(recordedRemaining-(Number(st?.total_income||0)-Number(st?.total_expense||0)-wifeAmount))<1;
-  let inc=Number(st?.total_income||0),exp=Number(st?.total_expense||0),rem=recordedRemaining-(wifeAlreadyIncluded?0:wifeAmount);
-  const sheetFundingIncome=activeTx.filter(x=>x.source==='sheet'&&isFundingCategory(x)).reduce((sum,x)=>sum+Number(x.income||0),0);
-  inc-=sheetFundingIncome;
-  appRows.forEach(x=>{if(isOpeningBalance(x)){if(!Number(st?.start_balance||0))rem+=Number(x.income||0)-Number(x.expense||0);return}if(isFundingCategory(x)){rem+=Number(x.income||0)-Number(x.expense||0);return}inc+=Number(x.income||0);exp+=Number(x.expense||0);rem+=Number(x.income||0)-Number(x.expense||0)});
-  $('bankHero').textContent=privateFmt(st?.bank_balance||0);
-  $('remain').textContent=privateFmt(rem);
-  $('foodDifference').textContent=privateFmt(rem-Number(st?.bank_balance||0));
-  $('savingsBalance').textContent=privateFmt(st?.savings_balance||0);
-  $('sendWife').textContent=privateFmt(st?.send_wife||0);
-  $('startBalance').textContent=privateFmt(st?.start_balance||0);
+  renderHistoryDays(sortedTx.filter(row=>!isOpeningBalance(row)));
+  const dayCount=periodAsOf(currentYear,current),calculated=loaded.balances.get(currentYear,current).at(dayCount),asOfIso=calculated.date;
+  const rem=calculated.remaining,exp=monthTotals(activeTx,st,dayCount).expense;
+  $('bankHero').textContent=privateFmt(calculated.bank);$('remain').textContent=privateFmt(rem);
+  $('foodDifference').textContent=privateFmt(rem-calculated.bank);$('savingsBalance').textContent=privateFmt(calculated.savings);
+  $('sendWife').textContent=privateFmt(st?.send_wife||0);$('startBalance').textContent=privateFmt(calculated.opening);
   const payLaterTotal=activeTx.filter(isPayLater).reduce((sum,x)=>sum+Number(x.expense||0),0);
   $('payLaterTotal').textContent=privateFmt(payLaterTotal);
   const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`${currentYear}-${String(current).padStart(2,'0')}-01`;
   const statusFallback=String(st?.updated_at||'').slice(0,10)||latestDate;
-  $('bankDate').textContent='Ngày '+fmtDate(st?.bank_balance_date||statusFallback,current);
-  $('savingsDate').textContent='Ngày '+fmtDate(st?.savings_balance_date||statusFallback,current);
+  $('bankDate').textContent='Đến '+fmtDate(asOfIso,current);
+  $('savingsDate').textContent='Đến '+fmtDate(asOfIso,current);
   $('wifeDate').textContent='Ngày '+fmtDate(st?.send_wife_date||statusFallback,current);
   $('remainDate').textContent='Đến '+fmtDate(asOfIso,current);
   $('foodDate').textContent='Đến '+fmtDate(asOfIso,current);
-  $('startDate').textContent='Ngày 01/'+String(current).padStart(2,'0');
+  $('startDate').textContent=calculated.inherited?'Từ ngân hàng tháng trước':'Ngày 01/'+String(current).padStart(2,'0');
   $('historyTotal').textContent=privateFmt(monthTotals(activeTx,st).expense);
   $('dailyExpense').textContent=fmt(Math.round(exp/Math.max(1,dayCount)));
   $('dailyDate').textContent='Đến '+fmtDate(asOfIso,current);
   bindTransactionLongPress(sortedTx);
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function renderHistoryDays(rows){
+ const groups=new Map();for(const row of rows){const date=normalizedIsoDate(row.txn_date,row.month)||'unknown';if(!groups.has(date))groups.set(date,[]);groups.get(date).push(row)}
+ $('list').innerHTML=[...groups].map(([date,items])=>{
+  const parsed=new Date(date+'T12:00:00'),valid=date!=='unknown'&&!Number.isNaN(parsed.getTime());
+  const label=date===todayIso()?'Hôm nay':date===yesterdayIso()?'Hôm qua':valid?new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed):'Chưa rõ ngày';
+  const total=items.reduce((sum,row)=>sum+Number(row.expense||0),0);
+  return `<section class="historyDay" data-date="${escapeHtml(date)}"><div class="historyDayHeading"><h2>${escapeHtml(label)}</h2><span class="historyDayTotal" aria-label="Tổng chi trong ngày">${privateFmt(total)}</span></div>${items.map(row=>{
+   const category=categoryFor(row),income=Number(row.income||0)>0,amount=privacyHidden?'••••••':fmt(Number(income?row.income:row.expense)||0),font=Math.max(12,17-Math.max(0,amount.length-13)*.65),color=CATEGORY_COLORS[category]||'#9aa2af';
+   const timestamp=(String(row.source_key||'').startsWith('app-')||['app','app_cash','app_pay_later'].includes(row.source))&&row.created_at?new Date(row.created_at):null;
+   const time=timestamp&&!Number.isNaN(timestamp.getTime())?new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit'}).format(timestamp):'';
+   return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(row.description)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName txCategory">${escapeHtml(category)}</div><div class="txMeta"><div class="txNote">${escapeHtml(row.description)}</div>${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div></div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div>${time?`<div class="txTime">${time}</div>`:''}</div></div>`;
+  }).join('')}</section>`;
+ }).join('')||'<div class="empty">Chưa có giao dịch</div>';
+}
 function bindTransactionLongPress(rows){
  const byId=new Map((rows||[]).map(row=>[String(row.id),row]));let opened=null;
  $('list').querySelectorAll('.tx[data-tx-id]').forEach(item=>{
@@ -563,6 +575,7 @@ function openTransactionEdit(row){
   const isIncome=Number(row.income||0)>0;editingTx=row;$('editTxName').value=row.description||'';$('editTxAmount').value=String(Number(row.income||0)||Number(row.expense||0)||'');$('editTxCategory').disabled=false;fillCategorySelect('editTxCategory',categoryFor(row),isIncome?'income':'expense');$('editPaymentField').classList.toggle('hidden',isIncome);$('editTxPayment').value=paymentMethodFor(row);$('editTxDate').value=normalizedIsoDate(row.txn_date,row.month)||todayIso();document.activeElement?.blur();$('editTxOverlay').dataset.inputMode='idle';$('editTxOverlay').classList.add('open');$('editTxOverlay').classList.remove('noteMode');$('editTitle').textContent=isIncome?'Sửa khoản thu':'Sửa chi tiêu';renderEditChips();updateEditDate();$('editPayLaterToggle').setAttribute('aria-pressed',String(paymentMethodFor(row)==='pay_later'));$('editTxAmount').focus({preventScroll:true});$('editTxAmount').select();
 }
 const statusConfig={
+  start_balance:{title:'Số dư đầu tháng',valueId:'startBalance'},
   bank_balance:{title:'Còn lại trong ngân hàng',valueId:'bankHero',dateField:'bank_balance_date'},
   savings_balance:{title:'Tiết kiệm',valueId:'savingsBalance',dateField:'savings_balance_date'},
   send_wife:{title:'Gửi vợ',valueId:'sendWife',dateField:'send_wife_date'}
@@ -601,9 +614,12 @@ function bindStatusLongPress(){
   });
 }
 async function openStatusEdit(key){
-  currentStatus=key;const config=statusConfig[key];if(!config)return;
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle();
-  $('statusTitle').textContent=config.title;$('statusAmount').value=formatMoneyInputValue(Number(st?.[key]||0)||'');$('statusDate').value=st?.[config.dateField]||String(st?.updated_at||'').slice(0,10)||todayIso();$('statusOverlay').classList.add('open');
+  const config=statusConfig[key];if(!config)return;const year=currentYear,month=current;
+  try{const {statuses,balances}=await loadBalanceLedger(year,month),model=balances.get(year,month),value=model.at(periodAsOf(year,month)),status=statuses.find(row=>row.year===year&&row.month===month);
+   currentStatus=key;statusPeriod={year,month};$('statusTitle').textContent=config.title;
+   const amount=key==='bank_balance'?value.bank:key==='savings_balance'?value.savings:key==='start_balance'?value.opening:Number(status?.send_wife||0);
+   $('statusAmount').value=formatMoneyInputValue(amount);$('statusDate').value=key==='start_balance'?`${year}-${String(month).padStart(2,'0')}-01`:key==='send_wife'&&status?.send_wife_date?status.send_wife_date:value.date;$('statusOverlay').classList.add('open');
+  }catch(error){alert('Chưa tải được số dư. '+error.message)}
 }
 function openAdd(){
   $('addOverlay').classList.add('open');$('amount').value='';$('amount').style.width='1ch';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('addOverlay').classList.remove('noteMode');updateEntryDateButtons();updateSaveAvailability();updateNoteWidth();$('amount').focus()
@@ -621,16 +637,11 @@ function setType(type){
 function updateSaveAvailability(){const amount=cleanMoney('amount');$('saveTx').disabled=savingTransaction||!Number.isSafeInteger(amount)||amount<=0}
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
 function monthTotals(rows,status,cutoffDay=null){
-  let income=Number(status?.total_income||0),expense=Number(status?.total_expense||0);
-  const sheetFunding=(rows||[]).filter(row=>row.source==='sheet'&&isFundingCategory(row));
-  income-=sheetFunding.reduce((sum,row)=>sum+Number(row.income||0),0);
-  (rows||[]).filter(row=>{
-    if(row.source==='sheet')return false;
-    if(cutoffDay===null)return true;
-    const normalized=normalizedIsoDate(row.txn_date,row.month);
-    return normalized&&Number(normalized.slice(8,10))<=cutoffDay;
-  }).forEach(row=>{if(!isFundingCategory(row))income+=Number(row.income||0);expense+=Number(row.expense||0)});
-  return {income,expense};
+ let income=0,expense=0;for(const row of rows||[]){
+  if(isDeletedTransaction(row)||isOpeningBalance(row))continue;
+  if(cutoffDay!==null){const day=Number(normalizedIsoDate(row.txn_date,row.month).slice(8,10));if(!day||day>cutoffDay)continue}
+  if(!isFundingCategory(row))income+=Number(row.income||0);expense+=Number(row.expense||0);
+ }return {income,expense};
 }
 function expenseThroughDay(rows,cutoffDay){
   return (rows||[]).reduce((sum,row)=>{
@@ -639,43 +650,11 @@ function expenseThroughDay(rows,cutoffDay){
     return day&&day<=cutoffDay?sum+Number(row.expense||0):sum;
   },0);
 }
-function remainingThroughDay(rows,status,cutoffDay){
-  const openingRows=(rows||[]).filter(isOpeningBalance);
-  let remaining=Number(status?.start_balance||0);
-  if(!remaining)remaining=openingRows.reduce((sum,row)=>sum+Number(row.income||0)-Number(row.expense||0),0);
-  (rows||[]).forEach(row=>{
-    const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));
-    if(!day||day>cutoffDay||isOpeningBalance(row))return;
-    remaining+=Number(row.income||0)-Number(row.expense||0);
-  });
-  const wifeAmount=Number(status?.send_wife||0);
-  const wifeDate=status?.send_wife_date?normalizedIsoDate(status.send_wife_date,status.month):'';
-  const wifeDay=Number(wifeDate.slice(8,10));
-  if(wifeAmount&&(!wifeDay||wifeDay<=cutoffDay))remaining-=wifeAmount;
-  return remaining;
-}
-function bankBalanceThroughDay(rows,status,cutoffDay){
-  const snapshot=Number(status?.bank_balance||0);
-  const snapshotDate=normalizedIsoDate(status?.bank_balance_date||'',status?.month);
-  const snapshotDay=Number(snapshotDate.slice(8,10));
-  if(!snapshotDay||snapshotDay===cutoffDay)return snapshot;
-  const fromDay=Math.min(snapshotDay,cutoffDay),toDay=Math.max(snapshotDay,cutoffDay);
-  let netChange=(rows||[]).reduce((sum,row)=>{
-    const normalized=normalizedIsoDate(row.txn_date,row.month),day=Number(normalized.slice(8,10));
-    if(!day||day<=fromDay||day>toDay||isOpeningBalance(row))return sum;
-    const income=Number(row.income||0),expense=Number(row.expense||0);
-    const bankExpense=expense&&!isPayLater(row)&&row.payment_method!=='cash'?expense:0;
-    return sum+income-bankExpense;
-  },0);
-  const wifeAmount=Number(status?.send_wife||0);
-  const wifeDate=status?.send_wife_date?normalizedIsoDate(status.send_wife_date,status.month):'';
-  const wifeDay=Number(wifeDate.slice(8,10));
-  if(wifeAmount&&wifeDay>fromDay&&wifeDay<=toDay)netChange-=wifeAmount;
-  return cutoffDay<snapshotDay?snapshot-netChange:snapshot+netChange;
-}
+function remainingThroughDay(rows,status,day,year=currentYear,month=current){return activeBalanceLedger?.get(year,month)?.at(day).remaining||0}
+function bankBalanceThroughDay(rows,status,day,year=currentYear,month=current){return activeBalanceLedger?.get(year,month)?.at(day).bank||0}
 function renderCategoryChart(expenses){
   const container=$('categoryChart');if(!container)return;
-  const grouped=EXPENSE_CATEGORIES.map(name=>({
+  const grouped=[...new Set([...EXPENSE_CATEGORIES,...(expenses||[]).map(categoryFor)])].map(name=>({
     name,
     total:(expenses||[]).filter(row=>categoryFor(row)===name).reduce((sum,row)=>sum+Number(row.expense||0),0)
   })).filter(item=>item.total>0).sort((a,b)=>b.total-a.total);
@@ -687,19 +666,16 @@ function renderCategoryChart(expenses){
   }).join('')+'</div>';
 }
 async function renderMonthlyOverview(){
+  const requestedYear=currentYear,requestedMonth=current;
   $('overviewMonth').textContent=current+' · '+currentYear;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
   $('topSpending').innerHTML='<div class="overviewLoading">Đang tải…</div>';
   $('categoryChart').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
   const previous=shiftPeriod(currentYear,current,-1),previousMonth=previous.month;
-  const results=await Promise.all([
-    sb.from('transactions').select('*').eq('year',currentYear).eq('month',current),
-    sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle(),
-    sb.from('transactions').select('*').eq('year',previous.year).eq('month',previous.month),
-    sb.from('monthly_status').select('*').eq('year',previous.year).eq('month',previous.month).maybeSingle()
-  ]);
-  const rows=(results[0].data||[]).filter(row=>!isDeletedTransaction(row)),status=results[1].data,currentTotals=monthTotals(rows,status);
-  const previousRows=(results[2].data||[]).filter(row=>!isDeletedTransaction(row)),previousStatus=results[3].data,previousTotals=monthTotals(previousRows,previousStatus);
+  let loaded;try{loaded=await loadBalanceLedger(requestedYear,requestedMonth)}catch(error){$('overviewStats').textContent='Chưa tải được số dư. Anh kéo xuống để thử lại.';return}
+  if(currentYear!==requestedYear||current!==requestedMonth)return;
+  const rows=loaded.rows.filter(row=>row.year===currentYear&&row.month===current&&!isDeletedTransaction(row)),status=loaded.statuses.find(row=>row.year===currentYear&&row.month===current),currentTotals=monthTotals(rows,status);
+  const previousRows=loaded.rows.filter(row=>row.year===previous.year&&row.month===previous.month&&!isDeletedTransaction(row)),previousStatus=loaded.statuses.find(row=>row.year===previous.year&&row.month===previous.month),previousTotals=monthTotals(previousRows,previousStatus);
   const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
   const dayCount=current===now.getMonth()+1&&now.getFullYear()===currentYear?now.getDate():daysInMonth;
   const currentAsOfTotals=monthTotals(rows,status,dayCount);
@@ -709,10 +685,10 @@ async function renderMonthlyOverview(){
   const previousComparableExpense=expenseThroughDay(previousRows,comparisonDay);
   const currentComparableDailyAverage=Math.round(currentComparableExpense/Math.max(1,comparisonDay));
   const previousComparableDailyAverage=Math.round(previousComparableExpense/Math.max(1,comparisonDay));
-  const currentComparableRemaining=remainingThroughDay(rows,status,comparisonDay);
-  const previousComparableRemaining=remainingThroughDay(previousRows,previousStatus,comparisonDay);
-  const currentComparableBank=bankBalanceThroughDay(rows,status,comparisonDay);
-  const previousComparableBank=bankBalanceThroughDay(previousRows,previousStatus,comparisonDay);
+  const currentComparableRemaining=loaded.balances.get(currentYear,current)?.at(comparisonDay).remaining||0;
+  const previousComparableRemaining=loaded.balances.get(previous.year,previous.month)?.at(comparisonDay).remaining||0;
+  const currentComparableBank=loaded.balances.get(currentYear,current)?.at(comparisonDay).bank||0;
+  const previousComparableBank=loaded.balances.get(previous.year,previous.month)?.at(comparisonDay).bank||0;
   const currentFoodDifference=currentComparableRemaining-currentComparableBank;
   const previousFoodDifference=previousComparableRemaining-previousComparableBank;
   const hasPreviousData=previousRows.length>0||!!previousStatus;
@@ -1073,6 +1049,7 @@ $('saveTx').addEventListener('click',async()=>{
   savingTransaction=true;const button=$('saveTx');button.disabled=true;button.textContent='Đang lưu…';$('entryError').textContent='';
   let saved=false;
   try{
+    await loadBalanceLedger(Number(date.slice(0,4)),Number(date.slice(5,7)));
     const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
     const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
     const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
@@ -1093,12 +1070,14 @@ $('closeStatus').addEventListener('click',()=>$('statusOverlay').classList.remov
 $('statusOverlay').addEventListener('click',e=>{if(e.target===$('statusOverlay'))$('statusOverlay').classList.remove('open')});
 $('statusTodayBtn').addEventListener('click',()=>{$('statusDate').value=todayIso()});
 $('saveStatus').addEventListener('click',async()=>{
-  const config=statusConfig[currentStatus],amount=cleanMoney('statusAmount'),date=$('statusDate').value;if(!config||!date)return;
-  const {data:st}=await sb.from('monthly_status').select('*').eq('year',currentYear).eq('month',current).maybeSingle();
-  const payload={...(st||{}),user_id:user.id,year:currentYear,month:current,[currentStatus]:amount,[config.dateField]:date,updated_at:new Date().toISOString()};delete payload.id;
-  let {error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'});
-  if(error&&String(error.message||'').includes(config.dateField)){delete payload[config.dateField];payload.updated_at=date+'T12:00:00.000Z';({error}=await sb.from('monthly_status').upsert(payload,{onConflict:'user_id,year,month'}))}
-  if(error){alert(error.message);return}$('statusOverlay').classList.remove('open');refresh();
+ if(savingStatus||!statusPeriod)return;const kind=currentStatus,{year,month}=statusPeriod,amount=cleanMoney('statusAmount'),date=$('statusDate').value;
+ if(!$('statusAmount').value.trim()){alert('Anh nhập số tiền, hoặc nhập 0 nếu muốn đặt số dư bằng 0.');return}
+ if(!Number.isSafeInteger(amount)||!date||Number(date.slice(0,4))!==year||Number(date.slice(5,7))!==month){alert('Anh chọn ngày trong tháng đang chỉnh nhé.');return}
+ savingStatus=true;$('saveStatus').disabled=true;
+ try{const loaded=await loadBalanceLedger(year,month),model=loaded.balances.get(year,month),effects=model.effects(date),basis=kind==='bank_balance'?effects.bank:kind==='savings_balance'?effects.savings:0;
+  const {error}=await sb.rpc('reconcile_month_balance',{p_year:year,p_month:month,p_kind:kind,p_amount:amount,p_date:date,p_basis:basis});if(error)throw error;
+  $('statusOverlay').classList.remove('open');currentYear=year;current=month;await refresh();
+ }catch(error){alert('Chưa cập nhật được số dư. '+error.message)}finally{savingStatus=false;$('saveStatus').disabled=false}
 });
 function closeEditSheet(){$('editTxName').blur();$('editTxAmount').blur();$('editTxOverlay').classList.remove('open');$('editTxOverlay').dataset.inputMode='idle'}
 $('closeEditTx').addEventListener('click',closeEditSheet);
@@ -1113,6 +1092,7 @@ $('saveEditTx').addEventListener('click',async()=>{
   const payload={description:name,txn_date:date,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:'app_edited',payment_method:method,updated_at:new Date().toISOString()};
   editSaving=true;$('saveEditTx').disabled=true;$('deleteEditTx').disabled=true;$('saveEditTx').textContent='Đang lưu…';
   try{
+   await loadBalanceLedger(Math.max(currentYear,Number(date.slice(0,4))),12);
    const {error}=await sb.from('transactions').update(payload).eq('id',transactionId).eq('user_id',user.id);if(error)throw error;
    await saveCategoryOverride(transactionId,category);
    currentYear=payload.year;current=payload.month;$('editTxOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
@@ -1124,11 +1104,12 @@ async function deleteTransaction(transaction){
   const name=String(transaction.description||'giao dịch này').trim()||'giao dịch này';
   if(!confirm(`Xóa “${name}”?\n\nThao tác này không thể hoàn tác.`))return;
   const button=$('deleteEditTx');editSaving=true;$('saveEditTx').disabled=true;button.disabled=true;button.textContent='Đang xóa…';
-  const payload={description:'',txn_date:null,income:0,expense:0,source:'app_edited',payment_method:null,updated_at:new Date().toISOString()};
-  const {error}=await sb.from('transactions').update(payload).eq('id',transaction.id).eq('user_id',user.id);
-  if(error){alert(error.message);editSaving=false;$('saveEditTx').disabled=false;button.disabled=false;button.textContent='Xóa giao dịch';return}
-  await deleteCategoryOverride(transaction.id);
-  editingTx=null;editSaving=false;$('saveEditTx').disabled=false;$('editTxOverlay').classList.remove('open');button.disabled=false;button.textContent='Xóa giao dịch';await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+  try{
+   await loadBalanceLedger(transaction.year,transaction.month);
+   const payload={description:'',txn_date:null,income:0,expense:0,source:'app_edited',payment_method:null,updated_at:new Date().toISOString()};
+   const {error}=await sb.from('transactions').update(payload).eq('id',transaction.id).eq('user_id',user.id);if(error)throw error;
+   await deleteCategoryOverride(transaction.id);editingTx=null;$('editTxOverlay').classList.remove('open');await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
+  }catch(error){alert('Chưa xóa được giao dịch. '+error.message)}finally{editSaving=false;$('saveEditTx').disabled=false;button.disabled=false;button.textContent='Xóa giao dịch'}
 }
 $('deleteEditTx').addEventListener('click',()=>deleteTransaction(editingTx));
 $('periodButton').addEventListener('click',()=>{$('periodMenu').classList.toggle('open')});

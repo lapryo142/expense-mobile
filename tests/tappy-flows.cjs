@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const assert=require('node:assert/strict');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 const mock=String.raw`
-window.fixture={inserts:[],reads:[],fail:false,delay:0,session:true,rows:[
+window.fixture={inserts:[],reads:[],statuses:[],fail:false,delay:0,session:true,rows:[
 {id:'1',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'Cà phê',expense:50000,income:0,source:'app'},
 {id:'2',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-21',description:'Tennis',expense:250000,income:0,source:'app'},
 {id:'3',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-21',description:'Lương',expense:0,income:24000000,source:'app'},
@@ -16,6 +16,19 @@ window.supabase={createClient:()=>({auth:{
  updateUser:async({data})=>{Object.assign(fixtureUser.user_metadata,data);return {data:{user:fixtureUser}}},
  signInWithPassword:async()=>({data:{user:fixtureUser,session:{user:fixtureUser}}}),
  signOut:async()=>({error:null})
+},async rpc(name,p){
+ if(fixture.failBalance)return {data:null,error:{message:'Fixture balance failure'}};
+ let row=fixture.statuses.find(s=>s.year===p.p_year&&s.month===p.p_month);
+ if(name==='initialize_balance_checkpoint'){
+  const expected=row?{bank_balance:Number(row.bank_balance||0),savings_balance:Number(row.savings_balance||0),bank_balance_date:row.bank_balance_date||null,savings_balance_date:row.savings_balance_date||null,balance_checkpoint:row.balance_checkpoint||null}:null;
+  const match=JSON.stringify(expected)===JSON.stringify(p.p_expected);if(match)row.balance_checkpoint=structuredClone(p.p_checkpoint);return {data:match,error:null};
+ }
+ if(name==='reconcile_month_balance'){
+  if(!row){row={id:'status-'+p.p_year+'-'+p.p_month,user_id:'fixture',year:p.p_year,month:p.p_month,bank_balance:0,savings_balance:0,start_balance:0};fixture.statuses.push(row)}
+  row[p.p_kind]=p.p_amount;if(p.p_kind!=='start_balance')row[p.p_kind+'_date']=p.p_date;
+  const key={bank_balance:'bank',savings_balance:'savings',start_balance:'start'}[p.p_kind];if(key)row.balance_checkpoint={...(row.balance_checkpoint||{}),[key]:{date:p.p_date,amount:p.p_amount,basis:p.p_basis}};return {data:null,error:null};
+ }
+ return {data:null,error:{message:'Unknown fixture RPC'}};
 },from(table){
  const state={table,filters:[],start:0,end:Infinity,op:'select',one:false};
  const query={select(){return query},eq(k,v){state.filters.push(r=>r[k]===v);return query},gte(k,v){state.filters.push(r=>r[k]>=v);return query},lt(k,v){state.filters.push(r=>r[k]<v);return query},order(){return query},range(a,b){state.start=a;state.end=b;return query},maybeSingle(){state.one=true;return query},single(){state.one=true;return query},
@@ -24,11 +37,11 @@ window.supabase={createClient:()=>({auth:{
  if(state.op==='insert'){
   fixture.inserts.push(state.payload);await new Promise(r=>setTimeout(r,fixture.delay));
   if(fixture.fail)return {data:null,error:{message:'Fixture network error'}};
-  const row={...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
+  const row={created_at:new Date().toISOString(),...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
  }
  if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=fixture.rows.filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
  fixture.reads.push({table,start:state.start,end:state.end});
- let rows=table==='transactions'?fixture.rows:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
+ let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
  return {data:state.one?(rows[0]||null):rows,error:null};
  })().then(resolve,reject)}
  };return query;
@@ -40,6 +53,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
  await page.route('**/*',async route=>{
   if(route.request().url().includes('cdn.jsdelivr.net'))return route.fulfill({contentType:'text/javascript',body:mock.replace('session:true','session:'+session)});
+  if(route.request().url()==='https://happy.test/balance-engine.js')return route.fulfill({contentType:'text/javascript',body:fs.readFileSync(require('node:path').join(__dirname,'../balance-engine.js'),'utf8')});
   if(route.request().url().startsWith('https://happy.test/'))return route.fulfill({contentType:'text/html',body:html});
   await route.abort();
  });
@@ -178,6 +192,35 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.locator('[data-edit-id="default-10"]').click();await p.locator('#newCategoryName').fill('Khác');await p.locator('#saveCatalogCategory').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');p.removeAllListeners('dialog');p.on('dialog',d=>d.accept());await p.locator('[data-delete-category="default-10"]').click();await p.locator('#settingsBack').click();await p.locator('#addBtn').click();assert.equal(await p.locator('#category').inputValue(),'Khác');assert.equal(await p.locator('#quickExpense [data-category="Khác"]').count(),0);await p.locator('#historyTab').click();
    await p.locator('#app .settingsOpen').click();await p.locator('#addCategoryBtn').click();await p.locator('#newCategoryName').fill('Khác');await p.locator('#saveCatalogCategory').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');assert.equal(await p.locator('[data-edit-id="default-10"]').count(),1);const record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));assert.equal(record.items.length,11);assert.equal(record.items.find(x=>x.id==='default-10').archived,false);assert.deepEqual(e,[]);await p.close();
   }
+  // Sheet edits/deletions use actual rows, never seed + edited row twice.
+  {
+   const {page:p,errors:e}=await boot(browser);const totals=await p.evaluate(()=>{
+    const old={id:'seed',year:2026,month:10,txn_date:'2026-10-20',description:'Ăn uống',income:0,expense:100000,source:'sheet'},app={...old,id:'app',source:'app',expense:50000},status={total_expense:100000};
+    return [monthTotals([old,app],status).expense,monthTotals([{...old,source:'app_edited',expense:80000},app],status).expense,monthTotals([{...old,source:'app_edited',description:'',expense:0},app],status).expense];
+   });assert.deepEqual(totals,[150000,130000,50000]);assert.deepEqual(e,[]);await p.close();
+  }
+  // Automatic balances, reconciliation and historical edit/delete through the real UI.
+  {
+   const {page:p,errors:e}=await boot(browser,{date:'2026-11-03T10:00:00+07:00'});
+   await p.evaluate(async()=>{fixture.rows=[];fixture.statuses=[{id:'oct',user_id:'fixture',year:2026,month:10,bank_balance:5000000,bank_balance_date:'2026-10-31',savings_balance:20000000,savings_balance_date:'2026-10-31'}];await refresh()});
+   const money=async(id)=>Number((await p.locator('#'+id).innerText()).replace(/[^0-9-]/g,''));
+   const add=async(amount,category,{income=false,date='2026-11-03'}={})=>{await p.locator('#addBtn').click();if(income)await p.locator('#incomeType').click();await p.locator('#amount').fill(String(amount));if(income)await p.locator(`#quickIncome [data-name="${category}"]`).click();else await p.locator(`#quickExpense [data-category="${category}"]`).click();await p.locator('#date').fill(date);await p.locator('#saveTx').click();await p.locator('#addOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.querySelectorAll('.tx').length===fixture.rows.filter(x=>x.month===current&&x.year===currentYear&&!isDeletedTransaction(x)&&!isOpeningBalance(x)).length)};
+   const reconcile=async(kind,amount)=>{await p.locator(`[data-status-key="${kind}"]`).press('Enter');await p.locator('#statusOverlay').waitFor({state:'visible'});await p.locator('#statusAmount').fill(String(amount));await p.locator('#saveStatus').click();await p.locator('#statusOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>!savingStatus)};
+   assert.equal(await money('startBalance'),5000000);assert.equal(await money('bankHero'),5000000);assert.equal(await money('savingsBalance'),20000000);
+   await add(100000,'Ăn uống');assert.equal(await money('bankHero'),4900000);await add(1000000,'Rút tiết kiệm',{income:true});assert.equal(await money('bankHero'),5900000);assert.equal(await money('savingsBalance'),19000000);await add(200000,'Lương',{income:true});assert.equal(await money('bankHero'),6100000);
+   await reconcile('bank_balance',6000000);assert.equal(await money('bankHero'),6000000);await add(50000,'Ăn uống',{date:'2026-11-02'});assert.equal(await money('bankHero'),5950000);
+   assert.equal(await p.locator('.historyDay[data-date="2026-11-03"] .tx').count(),3);assert.equal(await p.locator('.historyDay[data-date="2026-11-03"] h2').textContent(),'Hôm nay');assert.match(await p.locator('.historyDay[data-date="2026-11-02"] h2').textContent(),/Hôm qua/);assert.equal(await p.locator('.txTime').first().innerText(),'10:00');
+   await p.locator('.tx[data-tx-id="101"]').click();await p.locator('#editTxAmount').fill('150000');await p.locator('#saveEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('5.900.000'));assert.equal(await money('bankHero'),5900000);
+   p.removeAllListeners('dialog');p.on('dialog',d=>d.accept());await p.locator('.tx[data-tx-id="104"]').click();await p.locator('#deleteEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('5.950.000'));assert.equal(await money('bankHero'),5950000);
+   await p.locator('.tx[data-tx-id="102"]').click();await p.locator('#deleteEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('4.950.000'));assert.equal(await money('savingsBalance'),20000000);
+   await reconcile('savings_balance',18000000);await add(500000,'Rút tiết kiệm',{income:true});assert.equal(await money('savingsBalance'),17500000);assert.equal(await money('bankHero'),5450000);await p.screenshot({path:'/tmp/happy-automatic-balances.png'});
+   await p.evaluate(async()=>{currentYear=2026;current=12;renderMonths();await refresh()});assert.equal(await money('startBalance'),5450000);assert.equal(await money('savingsBalance'),17500000);await reconcile('start_balance',0);assert.equal(await money('startBalance'),0);assert.equal(await money('bankHero'),0);await p.evaluate(async()=>{currentYear=2027;current=1;renderMonths();await refresh()});assert.equal(await money('startBalance'),0);assert.equal(await money('savingsBalance'),17500000);assert.deepEqual(e,[]);await p.close();
+  }
+  // A failed checkpoint write must not save an expense with an unfrozen baseline.
+  {
+   const {page:p,errors:e}=await boot(browser,{date:'2026-11-03T10:00:00+07:00'});await p.evaluate(async()=>{fixture.statuses=[{id:'oct',user_id:'fixture',year:2026,month:10,bank_balance:5000000,bank_balance_date:'2026-10-31'}];await refresh();fixture.statuses[0].balance_checkpoint=null;fixture.failBalance=true});
+   await p.locator('#addBtn').click();await p.locator('#amount').fill('100000');await p.locator('#quickExpense [data-category="Ăn uống"]').click();await p.locator('#saveTx').click();await p.waitForFunction(()=>document.getElementById('entryError').textContent.includes('Fixture balance failure'));assert.equal(await p.evaluate(()=>fixture.inserts.length),0);assert.equal(await p.locator('#saveTx').isEnabled(),true);assert.equal(await p.locator('#amount').inputValue(),'100.000');assert.deepEqual(e,[]);await p.close();
+  }
   // Centered note/caret, compact keyboard controls, safe-area space and settings order.
   {
    const {page:p,errors:e}=await boot(browser);await p.locator('#app .settingsOpen').click();
@@ -200,7 +243,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   // The month total stays fixed directly above navigation as history scrolls.
   {
    const {page:p,errors:e}=await boot(browser);await p.evaluate(async()=>{for(let i=0;i<40;i++)fixture.rows.push({...fixture.rows[0],id:'scroll-'+i});await refresh()});
-   const total=p.locator('.historySummary'),tabs=p.locator('.tabbar'),before=await total.boundingBox(),nav=await tabs.boundingBox();assert.ok(Math.abs(nav.y-(before.y+before.height))<=9);await p.evaluate(()=>scrollTo(0,600));await p.waitForFunction(()=>scrollY>200);const after=await total.boundingBox();assert.ok(Math.abs(after.y-before.y)<1);await p.screenshot({path:'/tmp/happy-history-fixed-total.png'});
+   assert.equal(await p.locator('#historyTab').evaluate(el=>getComputedStyle(el).backgroundColor),'rgba(0, 0, 0, 0)');const total=p.locator('.historySummary'),tabs=p.locator('.tabbar'),before=await total.boundingBox(),nav=await tabs.boundingBox();assert.ok(Math.abs(nav.y-(before.y+before.height))<=9);await p.evaluate(()=>scrollTo(0,600));await p.waitForFunction(()=>scrollY>200);const after=await total.boundingBox();assert.ok(Math.abs(after.y-before.y)<1);await p.screenshot({path:'/tmp/happy-history-fixed-total.png'});
    await p.locator('#addBtn').click();assert.equal(await total.isVisible(),false);await p.locator('#desc').focus();assert.equal(await p.locator('#desc').inputValue(),'');assert.equal(await p.locator('#desc').evaluate(el=>el.selectionStart),0);assert.equal(await p.locator('#desc').evaluate(el=>getComputedStyle(el).textAlign),'left');assert.equal(await p.locator('#desc').getAttribute('placeholder'),'Ghi chú');await p.locator('#desc').blur();await p.locator('#statsTab').click();assert.equal(await total.isVisible(),false);await p.locator('#historyTab').click();assert.equal(await total.isVisible(),true);assert.deepEqual(e,[]);await p.close();
   }
   // Swipe directions reveal independent actions; deleting still requires confirmation.
