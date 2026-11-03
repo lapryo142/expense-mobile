@@ -234,7 +234,8 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 @media(max-width:360px){#overviewDetails .comparisonAmount{font-size:11px}#overviewDetails .comparisonName{font-size:12px}#overviewDetails .comparisonHead{font-size:11px}#overviewDetails .comparisonArrow{font-size:11px;margin-right:0}#topSpending .topAmount{font-size:14px}}
 
 /* Reserve the projection accent for forecasts and favorable comparisons. */
-#summaryOverlay{--stats-accent:#4bc8bd}html[data-theme="light"] #summaryOverlay{--stats-accent:#19746b}
+:root{--stats-accent:#4bc8bd}html[data-theme="light"]{--stats-accent:#19746b}
+#bankHero,#historyTotal{color:var(--stats-accent)}
 #summaryOverlay .paceSummary strong{color:var(--stats-accent)}
 #overviewDetails .comparisonAmount.trendGood,#overviewDetails .comparisonTrend.trendGood{color:var(--stats-accent)}
 #overviewDetails .comparisonAmount.trendBad,#overviewDetails .comparisonTrend.trendBad{color:var(--red)}
