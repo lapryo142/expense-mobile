@@ -190,6 +190,13 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 .annualBreakdown .categorySection{margin-top:14px}.annualBreakdown .statBox{min-width:0}.annualBreakdown .statValue{font-size:22px;overflow-wrap:anywhere}
 .annualCategoryTransactions{border-top:1px solid var(--line);margin-top:12px}.annualTx{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.annualTx strong{font-size:15px;overflow-wrap:anywhere}.annualTx small{display:block;font-size:var(--font-support);color:var(--muted);margin-top:3px}.annualTx>span{font-size:14px;font-weight:700;white-space:nowrap}
 @media(max-width:360px){.appBrand{font-size:14px;top:0}.annualMonthLabel{font-size:10px}}
+
+/* Compact ledger dates and aligned sentence-case metric labels. */
+.historyFlat{margin-bottom:0}.historyFlat .tx{min-height:0;padding:7px 0}.txDate{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
+.card,.statBox{min-width:0}.card .k,.balance small,.statLabel{white-space:nowrap;text-transform:none;letter-spacing:0;font-weight:600;overflow:hidden;text-overflow:ellipsis}
+.annualBar{-webkit-tap-highlight-color:transparent;appearance:none;box-shadow:none;outline:none;touch-action:manipulation;user-select:none}.annualBar:active{background:transparent;box-shadow:none}.annualBarTrack{height:165px;flex:0 0 165px;overflow:hidden}.annualBarFill{flex:none;max-height:165px}.annualBar:focus-visible{outline:2px solid var(--text)}
+.annualMonthBack{border:0;background:transparent;color:var(--text);padding:8px 0 14px;font-size:15px;text-align:left}
+@media(max-width:360px){.card .k,.statLabel{font-size:12px!important}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -230,20 +237,20 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 
 
   <div class="balance editableStat" data-status-key="bank_balance" role="button" tabindex="0">
-    <small>CÒN LẠI TRONG NGÂN HÀNG</small>
+    <small>Còn lại trong ngân hàng</small>
     <div id="bankHero" class="big">—</div>
     <div id="bankDate" class="asOf">—</div>
     <div class="editHint">Nhấn giữ để sửa</div>
   </div>
 
   <div class="summarygrid">
-    <div class="card"><div class="k">CÒN LẠI THEO SỔ</div><div id="remain" class="v">—</div><div id="remainDate" class="asOf">—</div></div>
-    <div class="card gold"><div class="k">CHÊNH LỆCH ĂN UỐNG</div><div id="foodDifference" class="v">—</div><div id="foodDate" class="asOf">—</div></div>
-    <div class="card editableStat" data-status-key="savings_balance" role="button" tabindex="0"><div class="k">TIẾT KIỆM</div><div id="savingsBalance" class="v">—</div><div id="savingsDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
-    <div class="card editableStat" data-status-key="send_wife" role="button" tabindex="0"><div class="k">GỬI VỢ</div><div id="sendWife" class="v">—</div><div id="wifeDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
-    <div class="card editableStat" data-status-key="start_balance" role="button" tabindex="0"><div class="k">SỐ DƯ ĐẦU THÁNG</div><div id="startBalance" class="v">—</div><div id="startDate" class="asOf">—</div></div>
-    <div class="card"><div class="k">CHI TRUNG BÌNH / NGÀY</div><div id="dailyExpense" class="v">—</div><div id="dailyDate" class="asOf">—</div></div>
-    <div class="card payLaterCard"><div class="k">MUA TRẢ SAU THÁNG NÀY</div><div id="payLaterTotal" class="v">—</div><div class="asOf">Tính vào chi tiêu, chưa trừ số ngân hàng</div></div>
+    <div class="card"><div class="k">Còn lại theo sổ</div><div id="remain" class="v">—</div><div id="remainDate" class="asOf">—</div></div>
+    <div class="card gold"><div class="k">Chênh lệch ăn uống</div><div id="foodDifference" class="v">—</div><div id="foodDate" class="asOf">—</div></div>
+    <div class="card editableStat" data-status-key="savings_balance" role="button" tabindex="0"><div class="k">Tiết kiệm</div><div id="savingsBalance" class="v">—</div><div id="savingsDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
+    <div class="card editableStat" data-status-key="send_wife" role="button" tabindex="0"><div class="k">Gửi vợ</div><div id="sendWife" class="v">—</div><div id="wifeDate" class="asOf">—</div><div class="editHint">Nhấn giữ để sửa</div></div>
+    <div class="card editableStat" data-status-key="start_balance" role="button" tabindex="0"><div class="k">Số dư đầu tháng</div><div id="startBalance" class="v">—</div><div id="startDate" class="asOf">—</div></div>
+    <div class="card"><div class="k">Chi trung bình/ngày</div><div id="dailyExpense" class="v">—</div><div id="dailyDate" class="asOf">—</div></div>
+    <div class="card payLaterCard"><div class="k">Mua trả sau tháng này</div><div id="payLaterTotal" class="v">—</div><div class="asOf">Tính vào chi tiêu, chưa trừ số ngân hàng</div></div>
   </div>
 </div>
 
@@ -282,6 +289,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 <div id="summaryOverlay" class="overlay">
   <div class="panel summaryPanel">
     <div class="panelHead"><h2>Thống kê <span id="overviewMonth" style="display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px"></span></h2><div class="panelTools"><button type="button" class="settingsOpen headerBtn" aria-label="Mở cài đặt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 17h18"/><circle cx="9" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg></button><button id="closeSummary" class="closeBtn hidden">Đóng</button></div></div>
+    <button id="annualMonthBack" type="button" class="annualMonthBack hidden">‹ <span>Thống kê năm</span></button>
     <div class="overviewSwitch" role="group" aria-label="Khoảng thời gian thống kê"><button type="button" data-overview-mode="month" aria-pressed="true">Tháng</button><button type="button" data-overview-mode="year" aria-pressed="false">Năm</button></div>
     <section id="annualOverview" class="yearOverview hidden" aria-label="Thống kê năm"><div class="annualYearControl"><button id="annualPreviousYear" type="button" aria-label="Năm trước">‹</button><select id="annualYearSelect" aria-label="Chọn năm"></select><button id="annualNextYear" type="button" aria-label="Năm sau">›</button></div><div id="annualContent"></div></section>
     <div id="overviewStats" class="overviewSection"><div class="overviewLoading">Đang tính thống kê…</div></div>
@@ -553,11 +561,11 @@ function historyDateLabel(date){
  const parsed=new Date(date+'T12:00:00');return date==='unknown'||Number.isNaN(parsed.getTime())?HappyI18n.translate('Chưa rõ ngày'):new Intl.DateTimeFormat(HappyI18n.locale(),{weekday:'long',day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed);
 }
 function renderHistoryDays(rows){
- const groups=new Map();for(const row of rows){const date=normalizedIsoDate(row.txn_date,row.month)||'unknown';if(!groups.has(date))groups.set(date,[]);groups.get(date).push(row)}
- $('list').innerHTML=[...groups].map(([date,items])=>`<section class="historyDay" data-date="${escapeHtml(date)}"><div class="historyDayHeading"><h2>${escapeHtml(historyDateLabel(date))}</h2></div>${items.map(row=>{
+ $('list').innerHTML='<div class="historyDay historyFlat">'+rows.map(row=>{
   const category=categoryFor(row),note=String(row.description||'').trim()||category,income=Number(row.income||0)>0,amount=privacyHidden?'••••••':fmt(Number(income?row.income:row.expense)||0),font=Math.max(12,17-Math.max(0,amount.length-13)*.65),color=CATEGORY_COLORS[category]||'#9aa2af';
-  return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(note)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName" data-user-content>${escapeHtml(note)}</div>${note!==category||isPayLater(row)?`<div class="txMeta">${note!==category?`<span class="txCategory" data-category-label="${escapeHtml(category)}">${escapeHtml(category)}</span>`:''}${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div>`:''}</div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div></div></div>`;
- }).join('')}</section>`).join('')||'<div class="empty">Chưa có giao dịch</div>';
+  return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(note)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName" data-user-content>${escapeHtml(note)}</div>${note!==category||isPayLater(row)?`<div class="txMeta">${note!==category?`<span class="txCategory" data-category-label="${escapeHtml(category)}">${escapeHtml(category)}</span>`:''}${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div>`:''}<div class="txDate" data-date="${escapeHtml(normalizedIsoDate(row.txn_date,row.month)||'unknown')}">${escapeHtml(historyDateLabel(normalizedIsoDate(row.txn_date,row.month)||'unknown'))}</div></div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div></div></div>`;
+
+ }).join('')+'</div>';if(!rows.length)$('list').innerHTML='<div class="empty">Chưa có giao dịch</div>';
 }
 function bindTransactionLongPress(rows){
  const byId=new Map((rows||[]).map(row=>[String(row.id),row]));let opened=null;
@@ -695,13 +703,29 @@ function renderCategoryChart(expenses,container=$('categoryChart'),emptyLabel='C
     return `<button type="button" class="spendBarRow" style="--cat-color:${color}" data-chart-category="${escapeHtml(item.name)}" aria-label="Xem chi tiết ${escapeHtml(item.name)}"><span class="spendBarTop"><span class="spendBarName"><span aria-hidden="true">${CATEGORY_ICONS[item.name]||'•'}</span> <span data-category-label="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span></span><span class="spendBarAmount">${fmt(item.total)} <span class="spendChevron" aria-hidden="true">›</span></span></span><span class="spendTrack"><span class="spendFill" style="width:${share}%"></span></span><span class="spendShare">${Math.round(share)}%</span></button>`;
   }).join('')+'</div>';
 }
-let overviewMode='month',annualYear=currentYear,annualRows=null,annualSelectedMonth=null;
+function openCategoryDetails(name,expenses,periodLabel,{push=true}={}){
+    if(push&&!$('categoryOverlay').classList.contains('open'))history.pushState({...history.state,hmCategory:name},'');
+    activeCategoryName=name;
+    const matched=expenses.filter(row=>categoryFor(row)===name);
+    const matchedSorted=[...matched].sort((a,b)=>normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month))||String(b.created_at||'').localeCompare(String(a.created_at||'')));
+    const total=matched.reduce((sum,row)=>sum+Number(row.expense||0),0),totalExpense=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0),share=totalExpense?Math.round(total/totalExpense*100):0;
+    const transactionList=matchedSorted.map(row=>`<button type="button" class="categoryTxRow" data-category-tx-id="${row.id}"><div><div class="categoryTxName">${escapeHtml(row.description||'Không có nội dung')}</div><div class="categoryTxDate">${fmtDate(row.txn_date,row.month)}</div></div><div class="categoryTxAmount">${fmt(row.expense)}</div></button>`).join('');
+    $('categoryResult').innerHTML=`<div class="categoryHero" style="--cat-color:${CATEGORY_COLORS[name]||'#9aa2af'}"><div class="categoryHeroIcon" aria-hidden="true">${CATEGORY_ICONS[name]||'•'}</div><div><div class="categoryResultAmount">${fmt(total)}</div><div class="categoryResultNote">${matched.length} giao dịch · ${escapeHtml(periodLabel)}</div></div></div><div class="categoryTxList">${transactionList||'<div class="overviewLoading">Chưa có giao dịch</div>'}</div>`;
+    const matchedById=new Map(matchedSorted.map(row=>[String(row.id),row]));
+    $('categoryResult').querySelectorAll('[data-category-tx-id]').forEach(item=>item.onclick=()=>{const row=matchedById.get(item.dataset.categoryTxId);if(row)openTransactionEdit(row)});
+    $('categoryPageTitle').dataset.categoryLabel=name;$('categoryPageTitle').textContent=HappyI18n.categoryLabel(name);$('categoryResult').style.setProperty('--cat-color',CATEGORY_COLORS[name]||'#9aa2af');
+    $('categoryOverlay').classList.add('open');
+    document.querySelector('#categoryOverlay .categoryPanel').scrollTop=0;
+    $('categoryBack').focus({preventScroll:true});
+}
+let overviewMode='month',annualYear=currentYear,annualRows=null,annualSelectedMonth=null,annualDrilldownMonth=null,monthlyDetailRequest=0;
 function syncOverviewMode(){
  document.querySelector('#summaryOverlay .summaryPanel').classList.toggle('yearMode',overviewMode==='year');
+ $('annualMonthBack').classList.toggle('hidden',overviewMode!=='month'||!annualDrilldownMonth);
  $('annualOverview').classList.toggle('hidden',overviewMode!=='year');
  document.querySelectorAll('[data-overview-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.overviewMode===overviewMode)));
 }
-async function renderMonthlyOverview(){syncOverviewMode();if(overviewMode==='year')return renderAnnualOverview();return renderMonthDetails()}
+async function renderMonthlyOverview(){syncOverviewMode();if(overviewMode==='year')return renderAnnualOverview();return annualDrilldownMonth?renderMonthDetails(annualYear,annualDrilldownMonth):renderMonthDetails()}
 function drawAnnualOverview(){
  if(!annualRows)return;
  const years=[...new Set([new Date().getFullYear(),annualYear,...annualRows.map(row=>Number(row.year)).filter(year=>year>=1900&&year<=9999)])].sort((a,b)=>a-b);
@@ -711,10 +735,13 @@ function drawAnnualOverview(){
  const monthName=month=>new Intl.DateTimeFormat(locale,{month:'long'}).format(new Date(annualYear,month-1,1));
  $('annualContent').innerHTML=`<div class="annualTotal"><div class="statLabel">Chi tiêu trong năm</div><strong>${fmt(data.total)}</strong></div><div class="annualChartCard"><h3>Chi theo tháng</h3><div class="annualChart" role="group" aria-label="Biểu đồ chi tiêu từng tháng">${data.months.map(item=>{
   const height=data.maximum?Math.max(0,item.expense)/data.maximum*100:0,label=monthName(item.month),short=locale==='vi-VN'?'T'+item.month:new Intl.DateTimeFormat(locale,{month:'short'}).format(new Date(annualYear,item.month-1,1));
-  return `<button type="button" class="annualBar ${item.month===annualSelectedMonth?'selected':''}" data-annual-month="${item.month}" aria-pressed="${item.month===annualSelectedMonth}" aria-label="${escapeHtml(label)}: ${escapeHtml(fmt(item.expense))}"><span class="annualBarTrack" aria-hidden="true"><span class="annualBarFill" style="height:${height}%;${height===0?'min-height:2px;opacity:.3':''}"></span></span><span class="annualMonthLabel">${escapeHtml(short)}</span></button>`;
- }).join('')}</div>${data.total===0?'<div class="statNote annualEmpty">Chưa có khoản chi trong năm này</div>':''}<p class="annualChartHint">${annualSelectedMonth?'Chạm lại tháng đang chọn để xem cả năm':'Chạm một tháng để xem chi tiết'}</p></div><section id="annualBreakdown" class="annualBreakdown" aria-live="polite"></section><div class="annualMonthList"><h3>Các tháng trong năm</h3>${data.months.map(item=>`<button type="button" data-annual-month="${item.month}" aria-pressed="${item.month===annualSelectedMonth}"><span class="annualMonthName">${escapeHtml(monthName(item.month))}</span><strong>${fmt(item.expense)} <span aria-hidden="true">›</span></strong></button>`).join('')}</div>`;
+  return `<button type="button" class="annualBar ${item.month===annualSelectedMonth?'selected':''}" data-annual-month="${item.month}" aria-pressed="${item.month===annualSelectedMonth}" aria-label="${escapeHtml(label)}: ${escapeHtml(fmt(item.expense))}"><span class="annualBarTrack" aria-hidden="true"><span class="annualBarFill" style="height:${height*1.65}px;${height===0?'min-height:2px;opacity:.3':''}"></span></span><span class="annualMonthLabel">${escapeHtml(short)}</span></button>`;
+ }).join('')}</div>${data.total===0?'<div class="statNote annualEmpty">Chưa có khoản chi trong năm này</div>':''}<p class="annualChartHint">${annualSelectedMonth?'Chạm lại tháng đang chọn để xem cả năm':'Chạm một tháng để xem chi tiết'}</p></div><section id="annualBreakdown" class="annualBreakdown" aria-live="polite"></section><div class="annualMonthList"><h3>Các tháng trong năm</h3>${data.months.map(item=>`<button type="button" data-month-detail="${item.month}"><span class="annualMonthName">${escapeHtml(monthName(item.month))}</span><strong>${fmt(item.expense)} <span aria-hidden="true">›</span></strong></button>`).join('')}</div>`;
  $('annualContent').querySelectorAll('[data-annual-month]').forEach(button=>button.addEventListener('click',()=>{
   const month=Number(button.dataset.annualMonth);annualSelectedMonth=annualSelectedMonth===month?null:month;drawAnnualOverview();
+ }));
+ $('annualContent').querySelectorAll('[data-month-detail]').forEach(button=>button.addEventListener('click',()=>{
+  annualDrilldownMonth=Number(button.dataset.monthDetail);overviewMode='month';renderMonthlyOverview();document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0;
  }));
  drawAnnualBreakdown();
 }
@@ -724,13 +751,11 @@ function drawAnnualBreakdown(){
  const now=new Date(),isCurrentYear=annualYear===now.getFullYear(),isCurrentMonth=isCurrentYear&&annualSelectedMonth===now.getMonth()+1;
  const days=annualSelectedMonth?(isCurrentMonth?now.getDate():new Date(annualYear,annualSelectedMonth,0).getDate()):(isCurrentYear?Math.round((Date.UTC(annualYear,now.getMonth(),now.getDate())-Date.UTC(annualYear,0,1))/86400000)+1:(Date.UTC(annualYear+1,0,1)-Date.UTC(annualYear,0,1))/86400000);
  const label=annualSelectedMonth?new Intl.DateTimeFormat(HappyI18n.locale(),{month:'long',year:'numeric'}).format(new Date(annualYear,annualSelectedMonth-1,1)):String(annualYear);
- $('annualBreakdown').innerHTML=`<h3>${escapeHtml(label)}</h3><div class="statGrid"><div class="statBox"><div class="statLabel">Tổng chi</div><div class="statValue">${fmt(total)}</div></div><div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(total/Math.max(1,days)))}</div></div></div><div class="categorySection"><div class="sectionTitle">Chi theo danh mục</div><div id="annualCategoryChart"></div><div id="annualCategoryTransactions" class="annualCategoryTransactions hidden"></div></div>`;
+ $('annualBreakdown').innerHTML=`<h3>${escapeHtml(label)}</h3><div class="statGrid"><div class="statBox"><div class="statLabel">Tổng chi</div><div class="statValue">${fmt(total)}</div></div><div class="statBox"><div class="statLabel">Chi trung bình/ngày</div><div class="statValue">${fmt(Math.round(total/Math.max(1,days)))}</div></div></div><div class="categorySection"><div class="sectionTitle">Chi theo danh mục</div><div id="annualCategoryChart"></div><div id="annualCategoryTransactions" class="annualCategoryTransactions hidden"></div></div>`;
  renderCategoryChart(expenses,$('annualCategoryChart'),annualSelectedMonth?'Chưa có khoản chi trong tháng này':'Chưa có khoản chi trong năm này');
- $('annualCategoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.addEventListener('click',()=>{
-  const list=$('annualCategoryTransactions'),name=button.dataset.chartCategory,wasOpen=button.getAttribute('aria-expanded')==='true';
-  $('annualCategoryChart').querySelectorAll('[data-chart-category]').forEach(item=>item.setAttribute('aria-expanded','false'));button.setAttribute('aria-expanded',String(!wasOpen));list.classList.toggle('hidden',wasOpen);
-  if(!wasOpen)list.innerHTML=expenses.filter(row=>categoryFor(row)===name).sort((a,b)=>String(b.txn_date||'').localeCompare(String(a.txn_date||''))).map(row=>`<div class="annualTx"><div><strong data-user-content>${escapeHtml(row.description||name)}</strong><small>${escapeHtml(historyDateLabel(normalizedIsoDate(row.txn_date,row.month)||'unknown'))}</small></div><span>${fmt(row.expense)}</span></div>`).join('');
- }));
+ const openCategory=(name,options)=>openCategoryDetails(name,expenses,label,options);categoryNavigation=openCategory;
+ $('annualCategoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.addEventListener('click',()=>openCategory(button.dataset.chartCategory)));
+
 }
 async function renderAnnualOverview(){
  const requestedYear=annualYear;$('annualContent').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
@@ -740,18 +765,20 @@ function changeAnnualYear(direction){
  const years=[...$('annualYearSelect').options].map(option=>Number(option.value)).sort((a,b)=>a-b),index=years.indexOf(annualYear),next=years[index+direction];if(next){annualYear=next;annualSelectedMonth=null;drawAnnualOverview()}
 }
 (function bindYearAndLanguageControls(){
- document.querySelectorAll('[data-overview-mode]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.overviewMode==='year'&&overviewMode!=='year'){annualYear=currentYear;annualSelectedMonth=null}overviewMode=button.dataset.overviewMode;closeCategory();renderMonthlyOverview()}));
+ document.querySelectorAll('[data-overview-mode]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.overviewMode==='year'&&overviewMode!=='year'){annualYear=currentYear;annualSelectedMonth=null}annualDrilldownMonth=null;overviewMode=button.dataset.overviewMode;closeCategory();renderMonthlyOverview()}));
+ $('annualMonthBack').addEventListener('click',()=>{annualDrilldownMonth=null;overviewMode='year';renderMonthlyOverview();document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0});
  $('annualYearSelect').addEventListener('change',()=>{annualYear=Number($('annualYearSelect').value);annualSelectedMonth=null;drawAnnualOverview()});
  $('annualPreviousYear').addEventListener('click',()=>changeAnnualYear(-1));$('annualNextYear').addEventListener('click',()=>changeAnnualYear(1));
  $('languageSelect').value=HappyI18n.getLanguage();$('languageSelect').addEventListener('change',()=>HappyI18n.setLanguage($('languageSelect').value));
  window.addEventListener('happy-language-change',()=>{
-  document.querySelectorAll('.historyDay[data-date]').forEach(section=>section.querySelector('h2').textContent=historyDateLabel(section.dataset.date));
+  document.querySelectorAll('.txDate[data-date]').forEach(label=>label.textContent=historyDateLabel(label.dataset.date));
   if(overviewMode==='year'&&annualRows)drawAnnualOverview();
   if($('editTxOverlay').classList.contains('open'))updateEditDate();
   updateNoteWidth();
  });
 })();
-async function renderMonthDetails(){
+async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
+  const currentYear=reportYear,current=reportMonth,request=++monthlyDetailRequest;
   const requestedYear=currentYear,requestedMonth=current;
   $('overviewMonth').textContent=current+' · '+currentYear;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
@@ -759,7 +786,7 @@ async function renderMonthDetails(){
   $('categoryChart').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
   const previous=shiftPeriod(currentYear,current,-1),previousMonth=previous.month;
   let loaded;try{loaded=await loadBalanceLedger(requestedYear,requestedMonth)}catch(error){$('overviewStats').textContent='Chưa tải được số dư. Anh kéo xuống để thử lại.';return}
-  if(currentYear!==requestedYear||current!==requestedMonth)return;
+  if(request!==monthlyDetailRequest||overviewMode!=='month')return;
   const rows=loaded.rows.filter(row=>row.year===currentYear&&row.month===current&&!isDeletedTransaction(row)),status=loaded.statuses.find(row=>row.year===currentYear&&row.month===current),currentTotals=monthTotals(rows,status);
   const previousRows=loaded.rows.filter(row=>row.year===previous.year&&row.month===previous.month&&!isDeletedTransaction(row)),previousStatus=loaded.statuses.find(row=>row.year===previous.year&&row.month===previous.month),previousTotals=monthTotals(previousRows,previousStatus);
   const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
@@ -811,11 +838,11 @@ async function renderMonthDetails(){
     ${comparisonRow('Chênh lệch ăn uống',previousFoodDifference,currentFoodDifference,true)}
   </div>`:'';
   $('overviewStats').innerHTML=`<div class="statGrid">
-    <div class="statBox"><div class="statLabel">THU NHẬP THỰC</div><div class="statValue inc">${privateFmt(currentTotals.income)}</div></div>
-    <div class="statBox"><div class="statLabel">TỔNG CHI</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
-    <div class="statBox"><div class="statLabel">CHI TRUNG BÌNH / NGÀY</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
-    <div class="statBox sideStat"><div class="statLabel">KHOẢN CHI LỚN NHẤT</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
-    <div class="statBox payLaterOverview"><div class="statLabel">MUA TRẢ SAU</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
+    <div class="statBox"><div class="statLabel">Thu nhập thực</div><div class="statValue inc">${privateFmt(currentTotals.income)}</div></div>
+    <div class="statBox"><div class="statLabel">Tổng chi</div><div class="statValue exp">${fmt(currentTotals.expense)}</div></div>
+    <div class="statBox"><div class="statLabel">Chi trung bình/ngày</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
+    <div class="statBox sideStat"><div class="statLabel">Khoản chi lớn nhất</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
+    <div class="statBox payLaterOverview"><div class="statLabel">Mua trả sau</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
     <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
   const grid=$('overviewStats').querySelector('.statGrid'),cards=[...grid.children];
@@ -826,21 +853,7 @@ async function renderMonthDetails(){
   const pace=document.createElement('div');pace.className='paceSummary';
   pace.innerHTML=current===now.getMonth()+1&&currentYear===now.getFullYear()?`<div>Dự tính cuối tháng <strong>${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)*daysInMonth))}</strong></div><small>${fmt(averageDaily)}/ngày bình quân · nếu giữ mức chi hiện tại</small>`:`<small>${fmt(averageDaily)}/ngày bình quân</small>`;
   $('overviewStats').appendChild(pace);
-  const openCategory=(name,{push=true}={})=>{
-    if(push&&!$('categoryOverlay').classList.contains('open'))history.pushState({...history.state,hmCategory:name},'');
-    activeCategoryName=name;
-    const matched=expenses.filter(row=>categoryFor(row)===name);
-    const matchedSorted=[...matched].sort((a,b)=>normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month))||String(b.created_at||'').localeCompare(String(a.created_at||'')));
-    const total=matched.reduce((sum,row)=>sum+Number(row.expense||0),0),totalExpense=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0),share=totalExpense?Math.round(total/totalExpense*100):0;
-    const transactionList=matchedSorted.map(row=>`<button type="button" class="categoryTxRow" data-category-tx-id="${row.id}"><div><div class="categoryTxName">${escapeHtml(row.description||'Không có nội dung')}</div><div class="categoryTxDate">${fmtDate(row.txn_date,row.month)}</div></div><div class="categoryTxAmount">${fmt(row.expense)}</div></button>`).join('');
-    $('categoryResult').innerHTML=`<div class="categoryHero" style="--cat-color:${CATEGORY_COLORS[name]||'#9aa2af'}"><div class="categoryHeroIcon" aria-hidden="true">${CATEGORY_ICONS[name]||'•'}</div><div><div class="categoryResultAmount">${fmt(total)}</div><div class="categoryResultNote">${matched.length} giao dịch · Tháng ${current}/${currentYear}</div></div></div><div class="categoryTxList">${transactionList||'<div class="overviewLoading">Chưa có giao dịch</div>'}</div>`;
-    const matchedById=new Map(matchedSorted.map(row=>[String(row.id),row]));
-    $('categoryResult').querySelectorAll('[data-category-tx-id]').forEach(item=>item.onclick=()=>{const row=matchedById.get(item.dataset.categoryTxId);if(row)openTransactionEdit(row)});
-    $('categoryPageTitle').dataset.categoryLabel=name;$('categoryPageTitle').textContent=HappyI18n.categoryLabel(name);$('categoryResult').style.setProperty('--cat-color',CATEGORY_COLORS[name]||'#9aa2af');
-    $('categoryOverlay').classList.add('open');
-    document.querySelector('#categoryOverlay .categoryPanel').scrollTop=0;
-    $('categoryBack').focus({preventScroll:true});
-  };
+  const openCategory=(name,options)=>openCategoryDetails(name,expenses,`Tháng ${current}/${currentYear}`,options);
   categoryNavigation=openCategory;
   $('categoryChart').querySelectorAll('[data-chart-category]').forEach(button=>button.onclick=()=>openCategory(button.dataset.chartCategory));
   if(activeCategoryName&&$('categoryOverlay').classList.contains('open'))openCategory(activeCategoryName);
