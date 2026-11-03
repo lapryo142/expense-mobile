@@ -161,6 +161,14 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 .bottom{padding:5px 14px calc(4px + env(safe-area-inset-bottom))}.tabbar button,.tabbar .addBtn{-webkit-tap-highlight-color:transparent;min-height:44px;padding:4px;gap:3px;border:0!important;border-radius:0;box-shadow:none!important;background:transparent!important;color:var(--muted)}.tabbar button[aria-current="page"]{color:var(--text);background:transparent!important}.tabbar button[aria-current="page"] svg{stroke:currentColor}.tabbar svg{width:21px;height:21px}.tabbar .addBtn svg{width:24px;height:24px}.bottom .historySummary{margin:-5px -14px 5px;min-height:52px;padding:11px 20px}.bottom .historySummary span{font-size:14px}.bottom .historySummary strong{font-size:23px}.app{padding-bottom:calc(132px + env(safe-area-inset-bottom))}
 .historyDay{margin-bottom:22px}.historyDayHeading{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:19px 0 7px;color:var(--muted)}.historyDayHeading h2{font-size:12px;font-weight:500;letter-spacing:.5px;text-transform:uppercase;margin:0}.historyDayTotal{font-size:12px;white-space:nowrap;font-variant-numeric:tabular-nums}.historyDay .tx{grid-template-columns:44px minmax(0,1fr) auto;gap:12px;min-height:78px;padding:13px 0}.historyDay .txIcon{height:44px;width:44px;font-size:24px;background:color-mix(in srgb,var(--tx-color) 18%,var(--bg))}.historyDay .txContent{min-width:0}.historyDay .txName.txCategory{font-size:16px;font-weight:750;line-height:1.35;color:var(--text);padding:0;margin:0;background:transparent;display:block}.historyDay .txMeta{display:block;margin-top:4px;min-width:0}.txNote{font-size:14px;color:var(--muted);font-weight:400;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.txMoney{text-align:right;min-width:0}.historyDay .txAmt{font-size:var(--amount-font,17px);font-weight:750}.txTime{font-size:12px;color:var(--muted);margin-top:5px}.txBadge{font-size:10px;color:#dca9cd}.historyDay .txSwipe{border-bottom-color:var(--line)}html[data-theme="light"] .historyDay .txIcon{background:color-mix(in srgb,var(--tx-color) 13%,white)}
 #addOverlay .formPanel{gap:6px}#addOverlay .entryFields{display:flex;flex-direction:column;flex:1 0 auto;justify-content:space-between;gap:8px;min-height:0}#addOverlay .entryFields .amountField{margin:0}#addOverlay .entryFields .toggle{align-self:center}#addOverlay #saveTx{min-height:54px}#addOverlay.noteMode .entryFields{flex:0 1 auto;justify-content:flex-start;gap:6px}#addOverlay.noteMode .entryFields .amountField{margin:0}@media(max-height:680px){#addOverlay .formPanel{gap:3px}#addOverlay .entryFields{gap:4px}#addOverlay #saveTx{min-height:48px}}@media(max-height:620px){#addOverlay #saveTx{min-height:46px}}
+
+/* Note-first compact rows; selected category color remains visible in both themes. */
+.appBrand{position:absolute;left:0;top:0;font-size:11px;line-height:1.2;font-weight:600;letter-spacing:.15px;color:var(--muted)}
+.historyDay .tx{grid-template-columns:36px minmax(0,1fr) auto;gap:10px;min-height:0;padding:10px 0}.historyDay .txIcon{width:36px;height:36px;font-size:20px}.historyDay .txName{font-size:16px;font-weight:750;line-height:1.35;white-space:normal;overflow-wrap:anywhere}.historyDay .txMeta{margin-top:2px;line-height:1.3}.historyDay .txCategory{font-size:12px;font-weight:400;color:var(--muted);margin:0;padding:0;background:transparent}.historyDay .txBadge{margin-left:6px}
+#addOverlay #quickExpense button.selected,html[data-theme="light"] #addOverlay #quickExpense button.selected{border-color:var(--cat-color,#ff626b)!important;color:var(--cat-color,#ff626b)!important;background:color-mix(in srgb,var(--cat-color,#ff626b) 14%,var(--bg))!important}
+#languageSelect{font-family:inherit;font-size:15px;min-height:40px;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:8px 10px;max-width:52%}.overviewSwitch{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:4px 0 18px}.overviewSwitch button{border:0;border-radius:999px;background:var(--card);color:var(--muted);min-height:42px;font-size:15px;font-family:inherit;font-weight:700;padding:10px}.overviewSwitch button[aria-pressed="true"]{background:var(--text);color:var(--bg)}
+#summaryOverlay .summaryPanel.yearMode>.overviewSection{display:none}#summaryOverlay .summaryPanel.yearMode #overviewMonth{display:none!important}.annualYearControl{display:grid;grid-template-columns:40px 1fr 40px;gap:12px;align-items:center;margin-bottom:18px}.annualYearControl button,.annualYearControl select{border:0;background:var(--card);color:var(--text);border-radius:12px;min-height:40px;font-size:17px;font-weight:700;text-align:center}.annualYearControl button{font-size:26px}.annualYearControl button:disabled{opacity:.3}.annualTotal{padding:18px;background:var(--card);border-radius:18px;margin-bottom:18px}.annualTotal .statLabel{font-size:13px;margin-bottom:8px}.annualTotal strong{font-size:29px;font-weight:800;letter-spacing:-.6px}.annualChartCard{background:var(--card);padding:16px 12px 12px;border-radius:18px}.annualChartCard h3,.annualMonthList h3{font-size:14px;font-weight:500;color:var(--muted);margin:0 0 16px}.annualChart{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:5px;height:210px}.annualBar{display:flex;align-items:center;justify-content:flex-end;flex-direction:column;gap:8px;border:0;padding:0;min-width:0;background:transparent;color:var(--muted);font-family:inherit}.annualBarTrack{display:flex;align-items:flex-end;flex:1;width:100%;min-height:0}.annualBarFill{display:block;width:100%;min-height:3px;background:#48c6bc;border-radius:5px 5px 2px 2px}.annualBar.selected .annualBarFill{background:var(--text)}.annualMonthLabel{font-size:10px;white-space:nowrap}.annualBar:focus-visible{outline:2px solid var(--text);outline-offset:3px}.annualEmpty{margin-top:16px;text-align:center}.annualMonthList{margin-top:22px}.annualMonthList button{display:flex;justify-content:space-between;align-items:center;gap:12px;min-height:48px;width:100%;padding:11px 0;border:0;border-bottom:1px solid var(--line);font-family:inherit;background:transparent;color:var(--text);text-align:left}.annualMonthName{font-size:15px;text-transform:capitalize}.annualMonthList strong{font-size:15px;white-space:nowrap}.annualMonthList strong>span{font-size:21px;font-weight:400;color:var(--muted);margin-left:6px}
+@media(max-width:360px){.appBrand{font-size:10px;top:-2px}.annualChart{gap:4px;height:185px}.annualMonthLabel{font-size:9px}.annualTotal strong{font-size:26px}}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -188,7 +196,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 
 <div id="app" class="app hidden">
   <div class="header">
-    <div class="eyebrow">HAPPY MONEY</div><h1>Chi tiêu</h1>
+    <div class="appBrand">Happy Money</div><h1>Chi tiêu</h1>
     <div class="headerActions"><button type="button" class="settingsOpen headerBtn" aria-label="Mở cài đặt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 17h18"/><circle cx="9" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg></button>
 
       <button id="refreshBtn" class="headerBtn hidden" aria-label="Làm mới" title="Làm mới">↻</button>
@@ -253,6 +261,8 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 <div id="summaryOverlay" class="overlay">
   <div class="panel summaryPanel">
     <div class="panelHead"><h2>Thống kê <span id="overviewMonth" style="display:block;font-size:12px;color:var(--muted);font-weight:500;letter-spacing:0;margin-top:5px"></span></h2><div class="panelTools"><button type="button" class="settingsOpen headerBtn" aria-label="Mở cài đặt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h18M3 17h18"/><circle cx="9" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg></button><button id="closeSummary" class="closeBtn hidden">Đóng</button></div></div>
+    <div class="overviewSwitch" role="group" aria-label="Khoảng thời gian thống kê"><button type="button" data-overview-mode="month" aria-pressed="true">Tháng</button><button type="button" data-overview-mode="year" aria-pressed="false">Năm</button></div>
+    <section id="annualOverview" class="yearOverview hidden" aria-label="Thống kê năm"><div class="annualYearControl"><button id="annualPreviousYear" type="button" aria-label="Năm trước">‹</button><select id="annualYearSelect" aria-label="Chọn năm"></select><button id="annualNextYear" type="button" aria-label="Năm sau">›</button></div><div id="annualContent"></div></section>
     <div id="overviewStats" class="overviewSection"><div class="overviewLoading">Đang tính thống kê…</div></div>
 
     <div class="overviewSection categorySection">
@@ -280,6 +290,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
  <div class="panel settingsPanel"><div class="settingsHeader"><button id="settingsBack" type="button" class="categoryBack" aria-label="Quay lại"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Cài đặt</h2><span></span></div>
  <div class="settingsRow"><div><strong>Giao diện</strong><div id="themeName" class="statNote">Tối</div></div><button type="button" class="themeToggle" aria-label="Đổi giao diện"></button></div>
  <div class="settingsRow"><div><strong>Ẩn số nhạy cảm</strong><div class="statNote">Số dư và thu nhập trên thiết bị này</div></div><button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button></div>
+ <div class="settingsRow"><label for="languageSelect"><strong>Ngôn ngữ</strong></label><select id="languageSelect" aria-label="Ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
  <section class="settingsCatalog"><h3>DANH MỤC</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section>
     <div class="overviewSection"><div class="sectionTitle">XUẤT DỮ LIỆU</div><div class="exportOptions"><select id="exportRange" aria-label="Khoảng thời gian xuất CSV"><option value="selected">Tháng đang xem</option><option value="year">Năm đang xem</option><option value="all">Toàn bộ dữ liệu</option></select></div><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải giao dịch và danh mục trong khoảng đã chọn dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Chi tiêu.</div></div>
@@ -325,6 +336,8 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
  </div>
 </div>
 
+<script src="i18n.js"></script>
+<script src="annual-stats.js"></script>
 <script src="balance-engine.js"></script>
 <script>
 const SUPABASE_URL="https://cmejwdeklvmgqrollnqn.supabase.co";
@@ -433,7 +446,7 @@ function updateEntryDateButtons(){
   $('yesterdayBtn').setAttribute('aria-pressed',String($('date').value===yesterdayIso()));
   const custom=$('date').value!==todayIso()&&$('date').value!==yesterdayIso();$('datePick').classList.toggle('selected',custom);$('datePickText').textContent=custom?fmtDate($('date').value):'Chọn ngày';
 }
-function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>button.classList.toggle('selected',entryType==='expense'&&button.dataset.category===$('category').value))}
+function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>{const selected=entryType==='expense'&&button.dataset.category===$('category').value;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected))})}
 
 function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;selected=resolveCategoryName(selected,{activeOnly:id!=='editTxCategory'});const names=mode==='income'?INCOME_CATEGORIES:[...EXPENSE_CATEGORIES,...(selected&&!EXPENSE_CATEGORIES.includes(selected)&&(id==='editTxCategory'||selected===fallbackCategoryName())?[selected]:[])];select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
 const privateFmt=value=>privacyHidden?'••••••':fmt(value);
@@ -515,19 +528,15 @@ async function refresh(){
   bindTransactionLongPress(sortedTx);
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
+function historyDateLabel(date){
+ const parsed=new Date(date+'T12:00:00');return date==='unknown'||Number.isNaN(parsed.getTime())?HappyI18n.translate('Chưa rõ ngày'):new Intl.DateTimeFormat(HappyI18n.locale(),{weekday:'long',day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed);
+}
 function renderHistoryDays(rows){
  const groups=new Map();for(const row of rows){const date=normalizedIsoDate(row.txn_date,row.month)||'unknown';if(!groups.has(date))groups.set(date,[]);groups.get(date).push(row)}
- $('list').innerHTML=[...groups].map(([date,items])=>{
-  const parsed=new Date(date+'T12:00:00'),valid=date!=='unknown'&&!Number.isNaN(parsed.getTime());
-  const label=date===todayIso()?'Hôm nay':date===yesterdayIso()?'Hôm qua':valid?new Intl.DateTimeFormat('vi-VN',{weekday:'long',day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed):'Chưa rõ ngày';
-  const total=items.reduce((sum,row)=>sum+Number(row.expense||0),0);
-  return `<section class="historyDay" data-date="${escapeHtml(date)}"><div class="historyDayHeading"><h2>${escapeHtml(label)}</h2><span class="historyDayTotal" aria-label="Tổng chi trong ngày">${privateFmt(total)}</span></div>${items.map(row=>{
-   const category=categoryFor(row),income=Number(row.income||0)>0,amount=privacyHidden?'••••••':fmt(Number(income?row.income:row.expense)||0),font=Math.max(12,17-Math.max(0,amount.length-13)*.65),color=CATEGORY_COLORS[category]||'#9aa2af';
-   const timestamp=(String(row.source_key||'').startsWith('app-')||['app','app_cash','app_pay_later'].includes(row.source))&&row.created_at?new Date(row.created_at):null;
-   const time=timestamp&&!Number.isNaN(timestamp.getTime())?new Intl.DateTimeFormat('vi-VN',{hour:'2-digit',minute:'2-digit'}).format(timestamp):'';
-   return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(row.description)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName txCategory">${escapeHtml(category)}</div><div class="txMeta"><div class="txNote">${escapeHtml(row.description)}</div>${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div></div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div>${time?`<div class="txTime">${time}</div>`:''}</div></div>`;
-  }).join('')}</section>`;
- }).join('')||'<div class="empty">Chưa có giao dịch</div>';
+ $('list').innerHTML=[...groups].map(([date,items])=>`<section class="historyDay" data-date="${escapeHtml(date)}"><div class="historyDayHeading"><h2>${escapeHtml(historyDateLabel(date))}</h2></div>${items.map(row=>{
+  const category=categoryFor(row),note=String(row.description||'').trim()||category,income=Number(row.income||0)>0,amount=privacyHidden?'••••••':fmt(Number(income?row.income:row.expense)||0),font=Math.max(12,17-Math.max(0,amount.length-13)*.65),color=CATEGORY_COLORS[category]||'#9aa2af';
+  return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(note)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName" data-user-content>${escapeHtml(note)}</div>${note!==category||isPayLater(row)?`<div class="txMeta">${note!==category?`<span class="txCategory" data-user-content>${escapeHtml(category)}</span>`:''}${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div>`:''}</div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div></div></div>`;
+ }).join('')}</section>`).join('')||'<div class="empty">Chưa có giao dịch</div>';
 }
 function bindTransactionLongPress(rows){
  const byId=new Map((rows||[]).map(row=>[String(row.id),row]));let opened=null;
@@ -665,7 +674,48 @@ function renderCategoryChart(expenses){
     return `<button type="button" class="spendBarRow" style="--cat-color:${color}" data-chart-category="${escapeHtml(item.name)}" aria-label="Xem chi tiết ${escapeHtml(item.name)}"><span class="spendBarTop"><span class="spendBarName"><span aria-hidden="true">${CATEGORY_ICONS[item.name]||'•'}</span> ${escapeHtml(item.name)}</span><span class="spendBarAmount">${fmt(item.total)} <span class="spendChevron" aria-hidden="true">›</span></span></span><span class="spendTrack"><span class="spendFill" style="width:${share}%"></span></span><span class="spendShare">${Math.round(share)}%</span></button>`;
   }).join('')+'</div>';
 }
-async function renderMonthlyOverview(){
+let overviewMode='month',annualYear=currentYear,annualRows=null;
+function syncOverviewMode(){
+ document.querySelector('#summaryOverlay .summaryPanel').classList.toggle('yearMode',overviewMode==='year');
+ $('annualOverview').classList.toggle('hidden',overviewMode!=='year');
+ document.querySelectorAll('[data-overview-mode]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.overviewMode===overviewMode)));
+}
+async function renderMonthlyOverview(){syncOverviewMode();if(overviewMode==='year')return renderAnnualOverview();return renderMonthDetails()}
+function drawAnnualOverview(){
+ if(!annualRows)return;
+ const years=[...new Set([new Date().getFullYear(),annualYear,...annualRows.map(row=>Number(row.year)).filter(year=>year>=1900&&year<=9999)])].sort((a,b)=>a-b);
+ $('annualYearSelect').innerHTML=[...years].reverse().map(year=>`<option value="${year}" ${year===annualYear?'selected':''}>${year}</option>`).join('');
+ const index=years.indexOf(annualYear);$('annualPreviousYear').disabled=index===0;$('annualNextYear').disabled=index===years.length-1;
+ const data=HappyAnnual.summarize(annualRows,annualYear,{categoryFor}),locale=HappyI18n.locale();
+ const monthName=month=>new Intl.DateTimeFormat(locale,{month:'long'}).format(new Date(annualYear,month-1,1));
+ $('annualContent').innerHTML=`<div class="annualTotal"><div class="statLabel">Chi tiêu trong năm</div><strong>${fmt(data.total)}</strong></div><div class="annualChartCard"><h3>Chi theo tháng</h3><div class="annualChart" role="group" aria-label="Biểu đồ chi tiêu từng tháng">${data.months.map(item=>{
+  const height=data.maximum?Math.max(0,item.expense)/data.maximum*100:0,label=monthName(item.month),short=locale==='vi-VN'?'T'+item.month:new Intl.DateTimeFormat(locale,{month:'short'}).format(new Date(annualYear,item.month-1,1));
+  return `<button type="button" class="annualBar ${item.month===current&&annualYear===currentYear?'selected':''}" data-annual-month="${item.month}" aria-label="${escapeHtml(label)}: ${escapeHtml(fmt(item.expense))}"><span class="annualBarTrack" aria-hidden="true"><span class="annualBarFill" style="height:${height}%;${height===0?'min-height:2px;opacity:.3':''}"></span></span><span class="annualMonthLabel">${escapeHtml(short)}</span></button>`;
+ }).join('')}</div>${data.total===0?'<div class="statNote annualEmpty">Chưa có khoản chi trong năm này</div>':''}</div><div class="annualMonthList"><h3>Các tháng trong năm</h3>${data.months.map(item=>`<button type="button" data-annual-month="${item.month}"><span class="annualMonthName">${escapeHtml(monthName(item.month))}</span><strong>${fmt(item.expense)} <span aria-hidden="true">›</span></strong></button>`).join('')}</div>`;
+ $('annualContent').querySelectorAll('[data-annual-month]').forEach(button=>button.addEventListener('click',()=>{
+  currentYear=annualYear;current=Number(button.dataset.annualMonth);overviewMode='month';syncOverviewMode();renderMonths();refresh();renderMonthlyOverview();
+ }));
+}
+async function renderAnnualOverview(){
+ const requestedYear=annualYear;$('annualContent').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
+ try{const rows=await readBalanceRows('transactions');if(overviewMode!=='year'||annualYear!==requestedYear)return;annualRows=rows;drawAnnualOverview()}catch(error){$('annualContent').textContent='Chưa tải được dữ liệu. Anh kéo xuống để thử lại.'}
+}
+function changeAnnualYear(direction){
+ const years=[...$('annualYearSelect').options].map(option=>Number(option.value)).sort((a,b)=>a-b),index=years.indexOf(annualYear),next=years[index+direction];if(next){annualYear=next;drawAnnualOverview()}
+}
+(function bindYearAndLanguageControls(){
+ document.querySelectorAll('[data-overview-mode]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.overviewMode==='year'&&overviewMode!=='year')annualYear=currentYear;overviewMode=button.dataset.overviewMode;closeCategory();renderMonthlyOverview()}));
+ $('annualYearSelect').addEventListener('change',()=>{annualYear=Number($('annualYearSelect').value);drawAnnualOverview()});
+ $('annualPreviousYear').addEventListener('click',()=>changeAnnualYear(-1));$('annualNextYear').addEventListener('click',()=>changeAnnualYear(1));
+ $('languageSelect').value=HappyI18n.getLanguage();$('languageSelect').addEventListener('change',()=>HappyI18n.setLanguage($('languageSelect').value));
+ window.addEventListener('happy-language-change',()=>{
+  document.querySelectorAll('.historyDay[data-date]').forEach(section=>section.querySelector('h2').textContent=historyDateLabel(section.dataset.date));
+  if(overviewMode==='year'&&annualRows)drawAnnualOverview();
+  if($('editTxOverlay').classList.contains('open'))updateEditDate();
+  updateNoteWidth();
+ });
+})();
+async function renderMonthDetails(){
   const requestedYear=currentYear,requestedMonth=current;
   $('overviewMonth').textContent=current+' · '+currentYear;
   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
@@ -1036,7 +1086,7 @@ $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType'
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
 $('category').addEventListener('change',()=>{categoryManuallySelected=true;syncQuickCategory();$('amount').focus()});
 $('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):resolveCategoryName(guessed,{activeOnly:true});syncQuickCategory()});
-$('quickExpense').addEventListener('click',event=>{const button=event.target.closest('button[data-category]');if(!button)return;document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;$('amount').focus()});
+$('quickExpense').addEventListener('click',event=>{const button=event.target.closest('button[data-category]');if(!button)return;document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;syncQuickCategory();$('amount').focus()});
 document.querySelectorAll('#quickIncome button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');$('desc').value=button.dataset.name||'';updateNoteWidth();categoryManuallySelected=true;$('category').value=button.dataset.name==='Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập';(button.dataset.name?$('amount'):$('desc')).focus()}));
 $('saveTx').addEventListener('click',async()=>{
   if(savingTransaction)return;
@@ -1129,7 +1179,7 @@ $('exportBtn').addEventListener('click',async()=>{
     const quote=value=>'"'+String(value??'').replace(/"/g,'""')+'"';
     // Neutralize spreadsheet formulas in user-entered text on CSV open.
     const textCell=value=>/^[\s]*[=+@-]/.test(String(value||''))?"'"+value:value;
-    const lines=[['Ngày','Nội dung','Danh mục','Thu','Chi','Nguồn'].map(quote).join(',')];
+    const lines=[['Ngày','Nội dung','Danh mục','Thu','Chi','Nguồn'].map(value=>quote(HappyI18n.translate(value))).join(',')];
     rows.filter(row=>!isDeletedTransaction(row)).forEach(row=>lines.push([normalizedIsoDate(row.txn_date,row.month),textCell(row.description),textCell(categoryFor(row)),Number(row.income||0),Number(row.expense||0),row.source].map(quote).join(',')));
     const blob=new Blob(['\uFEFF'+lines.join('\r\n')],{type:'text/csv;charset=utf-8'}),url=URL.createObjectURL(blob),link=document.createElement('a');
     link.href=url;link.download=`happy-money-${range==='selected'?periodId(year,month):range==='year'?year:'all'}-${todayIso()}.csv`;document.body.appendChild(link);link.click();link.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
@@ -1283,7 +1333,7 @@ function renderEditChips(){
 $('editCategoryChips').addEventListener('click',event=>{const button=event.target.closest('[data-edit-category]');if(!button)return;$('editTxCategory').value=button.dataset.editCategory;renderEditChips()});
 function updateEditDate(){
  const value=$('editTxDate').value;$('editTxTodayBtn').setAttribute('aria-pressed',String(value===todayIso()));$('editTxYesterdayBtn').setAttribute('aria-pressed',String(value===yesterdayIso()));
- $('editDatePickText').textContent=value?new Intl.DateTimeFormat('vi-VN',{day:'numeric',month:'short',year:'numeric'}).format(new Date(value+'T12:00:00')):'Chọn ngày';
+ $('editDatePickText').textContent=value?new Intl.DateTimeFormat(HappyI18n.locale(),{day:'numeric',month:'short',year:'numeric'}).format(new Date(value+'T12:00:00')):'Chọn ngày';
 }
 $('editTxYesterdayBtn').addEventListener('click',()=>{$('editTxDate').value=yesterdayIso();updateEditDate()});$('editTxDate').addEventListener('change',updateEditDate);
 $('editPayLaterToggle').addEventListener('click',()=>{const payLater=$('editTxPayment').value!=='pay_later';$('editTxPayment').value=payLater?'pay_later':'bank';$('editPayLaterToggle').setAttribute('aria-pressed',String(payLater))});

@@ -22,11 +22,14 @@ jobs:
         run: |
           node -e "new Function(require('fs').readFileSync('index.html','utf8').split('<script>')[1].split('</script>')[0])"
           node --check balance-engine.js
+          node --check annual-stats.js
+          node --check i18n.js
       - name: Test balances and browser flows against fixtures
         env:
           NODE_PATH: /tmp/happy-ci/node_modules
         run: |
           node tests/balance-engine.cjs
+          node tests/annual-i18n.cjs
           node tests/tappy-flows.cjs
       - name: Keep UI screenshots for review
         if: always()

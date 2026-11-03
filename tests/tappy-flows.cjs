@@ -53,7 +53,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
  await page.route('**/*',async route=>{
   if(route.request().url().includes('cdn.jsdelivr.net'))return route.fulfill({contentType:'text/javascript',body:mock.replace('session:true','session:'+session)});
-  if(route.request().url()==='https://happy.test/balance-engine.js')return route.fulfill({contentType:'text/javascript',body:fs.readFileSync(require('node:path').join(__dirname,'../balance-engine.js'),'utf8')});
+  const scriptName=new URL(route.request().url()).pathname.slice(1);if(['balance-engine.js','annual-stats.js','i18n.js'].includes(scriptName))return route.fulfill({contentType:'text/javascript',body:fs.readFileSync(require('node:path').join(__dirname,'../'+scriptName),'utf8')});
   if(route.request().url().startsWith('https://happy.test/'))return route.fulfill({contentType:'text/html',body:html});
   await route.abort();
  });
@@ -209,7 +209,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    assert.equal(await money('startBalance'),5000000);assert.equal(await money('bankHero'),5000000);assert.equal(await money('savingsBalance'),20000000);
    await add(100000,'Ăn uống');assert.equal(await money('bankHero'),4900000);await add(1000000,'Rút tiết kiệm',{income:true});assert.equal(await money('bankHero'),5900000);assert.equal(await money('savingsBalance'),19000000);await add(200000,'Lương',{income:true});assert.equal(await money('bankHero'),6100000);
    await reconcile('bank_balance',6000000);assert.equal(await money('bankHero'),6000000);await add(50000,'Ăn uống',{date:'2026-11-02'});assert.equal(await money('bankHero'),5950000);
-   assert.equal(await p.locator('.historyDay[data-date="2026-11-03"] .tx').count(),3);assert.equal(await p.locator('.historyDay[data-date="2026-11-03"] h2').textContent(),'Hôm nay');assert.match(await p.locator('.historyDay[data-date="2026-11-02"] h2').textContent(),/Hôm qua/);assert.equal(await p.locator('.txTime').first().innerText(),'10:00');
+   assert.equal(await p.locator('.historyDay[data-date="2026-11-03"] .tx').count(),3);assert.match(await p.locator('.historyDay[data-date="2026-11-03"] h2').textContent(),/03\/11/);assert.match(await p.locator('.historyDay[data-date="2026-11-02"] h2').textContent(),/02\/11/);assert.equal(await p.locator('.txTime,.historyDayTotal').count(),0);
    await p.locator('.tx[data-tx-id="101"]').click();await p.locator('#editTxAmount').fill('150000');await p.locator('#saveEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('5.900.000'));assert.equal(await money('bankHero'),5900000);
    p.removeAllListeners('dialog');p.on('dialog',d=>d.accept());await p.locator('.tx[data-tx-id="104"]').click();await p.locator('#deleteEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('5.950.000'));assert.equal(await money('bankHero'),5950000);
    await p.locator('.tx[data-tx-id="102"]').click();await p.locator('#deleteEditTx').click();await p.locator('#editTxOverlay').waitFor({state:'hidden'});await p.waitForFunction(()=>document.getElementById('bankHero').textContent.includes('4.950.000'));assert.equal(await money('savingsBalance'),20000000);
@@ -220,6 +220,41 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   {
    const {page:p,errors:e}=await boot(browser,{date:'2026-11-03T10:00:00+07:00'});await p.evaluate(async()=>{fixture.statuses=[{id:'oct',user_id:'fixture',year:2026,month:10,bank_balance:5000000,bank_balance_date:'2026-10-31'}];await refresh();fixture.statuses[0].balance_checkpoint=null;fixture.failBalance=true});
    await p.locator('#addBtn').click();await p.locator('#amount').fill('100000');await p.locator('#quickExpense [data-category="Ăn uống"]').click();await p.locator('#saveTx').click();await p.waitForFunction(()=>document.getElementById('entryError').textContent.includes('Fixture balance failure'));assert.equal(await p.evaluate(()=>fixture.inserts.length),0);assert.equal(await p.locator('#saveTx').isEnabled(),true);assert.equal(await p.locator('#amount').inputValue(),'100.000');assert.deepEqual(e,[]);await p.close();
+  }
+
+  // Note-first compact history, configured selection colors and yearly analytics.
+  {
+   const {page:p,errors:e}=await boot(browser);
+   assert.equal(await p.locator('.appBrand').innerText(),'Happy Money');
+   assert.equal(await p.locator('.tx[data-tx-id="1"] .txName').innerText(),'Cà phê');
+   assert.equal(await p.locator('.historyDayTotal,.txTime').count(),0);
+   assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<70);
+   assert.match(await p.locator('.historyDay[data-date="2026-10-21"] h2').textContent(),/21\/10/);
+   await p.locator('#addBtn').click();
+   for(const theme of ['dark','light']){
+    await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
+    for(const [name,color] of [['Ăn uống','rgb(255, 98, 107)'],['Di chuyển & xe','rgb(72, 198, 188)']]){
+     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
+    }
+   }
+   await p.locator('#historyTab').click();
+   await p.evaluate(async()=>{fixture.rows.push({id:'year-old',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-02',description:'Old expense',expense:123000,income:0,source:'app'});fixture.rows.push({id:'year-future',user_id:'fixture',year:2026,month:12,txn_date:'2026-12-02',description:'December expense',expense:80000,income:0,source:'app'});fixture.rows.push({id:'year-deleted',user_id:'fixture',year:2026,month:1,txn_date:null,description:'',expense:0,income:0,source:'app_edited'});await refresh()});
+   await p.locator('#statsTab').click();await p.locator('[data-overview-mode="year"]').click();await p.locator('.annualBar').first().waitFor({state:'visible'});
+   assert.equal(await p.locator('.annualBar').count(),12);assert.equal(await p.locator('.annualMonthList [data-annual-month]').count(),12);assert.match(await p.locator('.annualTotal strong').innerText(),/450.000/);
+   assert.equal(await p.locator('#overviewStats').isVisible(),false);assert.match(await p.locator('.annualMonthList [data-annual-month="10"]').innerText(),/300.000/);await p.screenshot({path:'/tmp/happy-year-overview.png'});
+   await p.locator('#annualPreviousYear').click();assert.equal(await p.locator('#annualYearSelect').inputValue(),'2025');assert.match(await p.locator('.annualTotal strong').innerText(),/123.000/);await p.locator('#annualNextYear').click();
+   await p.locator('.annualBar[data-annual-month="9"]').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable')||document.getElementById('overviewDetails').textContent.includes('Chưa có dữ liệu'));assert.equal(await p.locator('[data-overview-mode="month"]').getAttribute('aria-pressed'),'true');assert.match(await p.locator('#overviewMonth').innerText(),/9/);
+   await p.locator('[data-overview-mode="year"]').click();await p.locator('.annualBar').first().waitFor({state:'visible'});await p.setViewportSize({width:320,height:568});assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:'/tmp/happy-year-320.png'});assert.deepEqual(e,[]);await p.close();
+  }
+  // Language is remembered on this device and does not translate or edit user content.
+  {
+   const {page:p,errors:e}=await boot(browser);await p.locator('#app .settingsOpen').click();await p.locator('#languageSelect').selectOption('en');
+   await p.waitForFunction(()=>document.documentElement.lang==='en');assert.equal(await p.locator('#settingsOverlay h2').innerText(),'Settings');assert.equal(await p.locator('#languageSelect').inputValue(),'en');
+   await p.locator('#settingsBack').click();assert.equal(await p.locator('#historyTab span').innerText(),'Expenses');assert.equal(await p.locator('.tx[data-tx-id="1"] .txName').innerText(),'Cà phê');
+   await p.locator('#addBtn').click();assert.equal(await p.locator('#desc').getAttribute('placeholder'),'Note');assert.equal(await p.locator('#saveTx').innerText(),'Save transaction');await p.locator('#desc').fill('Gửi Ba nguyên văn');await p.locator('#desc').blur();await p.locator('#historyTab').click();
+   await p.locator('#statsTab').click();await p.locator('[data-overview-mode="year"]').click();await p.locator('.annualBar').first().waitFor({state:'visible'});await p.waitForFunction(()=>document.querySelector('.annualChartCard h3').textContent==='By month');assert.equal(await p.locator('.annualMonthLabel').first().innerText(),'Jan');await p.screenshot({path:'/tmp/happy-year-english.png'});
+   await p.locator('#historyTab').click();await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.lang),'en');assert.equal(await p.locator('#historyTab span').innerText(),'Expenses');
+   await p.locator('#app .settingsOpen').click();await p.locator('#languageSelect').selectOption('vi');await p.waitForFunction(()=>document.documentElement.lang==='vi');assert.equal(await p.locator('#settingsOverlay h2').innerText(),'Cài đặt');assert.equal(await p.locator('.catalogName').first().innerText(),'Ăn uống');assert.deepEqual(e,[]);await p.close();
   }
   // Centered note/caret, compact keyboard controls, safe-area space and settings order.
   {
