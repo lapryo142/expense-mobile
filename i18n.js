@@ -1,6 +1,6 @@
 (function(root){const api=(function(root){
  'use strict';
- const categoryNames={'Ăn uống':'Food','Di chuyển & xe':'Transport & car','Nhà cửa & hóa đơn':'Home & bills','Dịch vụ số':'Digital services','Tennis':'Tennis','Mua sắm':'Shopping','Gia đình & quà tặng':'Family & gifts','Sunny & sức khỏe':'Sunny & health','Giải trí & sách':'Entertainment & books','Tiền mặt & lặt vặt':'Cash & miscellaneous','Chưa phân loại':'Uncategorized','Thu nhập':'Income','Rút tiết kiệm':'Savings withdrawal','Số dư đầu tháng':'Opening balance'};
+ const categoryNames={'Lương':'Salary','Ăn uống':'Food','Di chuyển & xe':'Transport & car','Nhà cửa & hóa đơn':'Home & bills','Dịch vụ số':'Digital services','Tennis':'Tennis','Mua sắm':'Shopping','Gia đình & quà tặng':'Family & gifts','Sunny & sức khỏe':'Sunny & health','Giải trí & sách':'Entertainment & books','Tiền mặt & lặt vặt':'Cash & miscellaneous','Chưa phân loại':'Uncategorized','Thu nhập':'Income','Rút tiết kiệm':'Savings withdrawal','Số dư đầu tháng':'Opening balance'};
  const categoryLabel=(name,lang=language)=>lang==='en'?(categoryNames[name]||name):name;
  const dictionary={
  'Chạm một tháng để xem chi tiết':'Tap a month to see its breakdown','Chạm lại tháng đang chọn để xem cả năm':'Tap it again to see the whole year',
@@ -42,7 +42,7 @@
   }
   if(!result){
    const prefixes={'Chưa lưu được giao dịch. ':"Couldn't save the transaction. ",'Chưa cập nhật được giao dịch. ':"Couldn't update the transaction. ",'Chưa xóa được giao dịch. ':"Couldn't delete the transaction. ",'Chưa cập nhật được số dư. ':"Couldn't update the balance. ",'Chưa tải được số dư. ':"Couldn't load balances. ",'Không thể xuất dữ liệu. ':"Couldn't export data. ",'Sửa giao dịch ':'Edit transaction ','Chỉnh giao dịch ':'Edit transaction ','Sửa danh mục ':'Edit category ','Xóa danh mục ':'Delete category ','Kéo để sắp xếp ':'Drag to reorder ','Xem chi tiết ':'View details ','Chọn ':'Choose '};
-   for(const [prefix,en] of Object.entries(prefixes))if(text.startsWith(prefix)){result=en+text.slice(prefix.length);break}
+   for(const [prefix,en] of Object.entries(prefixes))if(text.startsWith(prefix)){result=en+(['Sửa danh mục ','Xóa danh mục ','Kéo để sắp xếp ','Xem chi tiết '].includes(prefix)?categoryLabel(text.slice(prefix.length),lang):text.slice(prefix.length));break}
   }
   if(!result&&/^Xóa “/.test(text))result=text.replace(/^Xóa “/,'Delete “').replace('Thao tác này không thể hoàn tác.','This action cannot be undone.').replace('Các giao dịch đã ghi vẫn được giữ nguyên.','Recorded transactions will be kept.');
   if(result)result=result.replace(/Các giao dịch đã ghi vẫn được giữ nguyên\.$/,'Recorded transactions will be kept.').replace(/Anh kiểm tra kết nối rồi thử lại nhé\.$/,'Please check your connection and try again.');
