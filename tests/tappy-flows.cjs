@@ -109,7 +109,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const chip=await p.locator('#quickExpense button').first().boundingBox();assert.ok(chip.height>=44);
    if(engine===chromium){const cdp=await p.context().newCDPSession(p);const box=await p.locator('#quickExpense').boundingBox();const y=box.y+box.height/2;await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:300,y}]});for(const x of [260,210,160,110,60])await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await p.waitForFunction(()=>document.getElementById('quickExpense').scrollLeft>30);assert.equal(await p.locator('#addOverlay').isVisible(),true)}
    await p.locator('#historyTab').click();await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay .themeToggle').click();await p.locator('#settingsBack').click();await p.locator('#addBtn').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');
-   await p.screenshot({path:'/tmp/happy-light-entry.png'});await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.equal(await p.locator('.comparisonTable').isVisible(),true);assert.match(await p.locator('#overviewDetails').innerText(),/CÙNG KỲ/);await p.screenshot({path:'/tmp/happy-light-stats.png'});
+   await p.screenshot({path:'/tmp/happy-light-entry.png'});await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.equal(await p.locator('.comparisonTable').isVisible(),true);assert.match(await p.locator('#overviewDetails').innerText(),/cùng kỳ/);await p.screenshot({path:'/tmp/happy-light-stats.png'});
    await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');assert.equal(await p.locator('meta[name="theme-color"]').getAttribute('content'),'#f7f7f3');await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay .themeToggle').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'dark');await p.close();
   }
   // Revised capture: dedicated dates, pay-later toggle, note keyboard mode, haptics and category pages.
@@ -322,3 +322,4 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
+
