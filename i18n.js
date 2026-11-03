@@ -1,6 +1,9 @@
 (function(root){const api=(function(root){
  'use strict';
+ const categoryNames={'Ăn uống':'Food','Di chuyển & xe':'Transport & car','Nhà cửa & hóa đơn':'Home & bills','Dịch vụ số':'Digital services','Tennis':'Tennis','Mua sắm':'Shopping','Gia đình & quà tặng':'Family & gifts','Sunny & sức khỏe':'Sunny & health','Giải trí & sách':'Entertainment & books','Tiền mặt & lặt vặt':'Cash & miscellaneous','Chưa phân loại':'Uncategorized','Thu nhập':'Income','Rút tiết kiệm':'Savings withdrawal','Số dư đầu tháng':'Opening balance'};
+ const categoryLabel=(name,lang=language)=>lang==='en'?(categoryNames[name]||name):name;
  const dictionary={
+ 'Chạm một tháng để xem chi tiết':'Tap a month to see its breakdown','Chạm lại tháng đang chọn để xem cả năm':'Tap it again to see the whole year',
   'Thống kê năm':'Yearly analytics','Khoảng thời gian thống kê':'Analytics period','Năm trước':'Previous year','Năm sau':'Next year','Biểu đồ chi tiêu từng tháng':'Monthly spending chart','Nội dung':'Note','Nguồn':'Source','Số dư vừa được cập nhật ở nơi khác. Anh thử lại nhé.':'The balance changed elsewhere. Please try again.','Chi tiêu':'Expenses','Nhập':'Tap','Thống kê':'Analytics','Cài đặt':'Settings','Mở cài đặt':'Open settings','Mở thống kê':'Open analytics','Điều hướng chính':'Main navigation',
   'Tổng chi':'Total spending','Tổng chi trong tháng':'Total spent this month','Tháng':'Month','Năm':'Year','Chọn năm':'Select year','Chi tiêu trong năm':'Yearly spending','Chi theo tháng':'By month','Các tháng trong năm':'Months of the year','Chưa có khoản chi trong năm này':'No spending recorded this year',
   'CÒN LẠI TRONG NGÂN HÀNG':'BANK BALANCE','CÒN LẠI THEO SỔ':'BOOK BALANCE','CHÊNH LỆCH ĂN UỐNG':'BALANCE DIFFERENCE','TIẾT KIỆM':'SAVINGS','GỬI VỢ':'SENT TO WIFE','SỐ DƯ ĐẦU THÁNG':'OPENING BALANCE','CHI TRUNG BÌNH / NGÀY':'DAILY AVERAGE','MUA TRẢ SAU THÁNG NÀY':'PAY LATER THIS MONTH',
@@ -52,7 +55,7 @@
   if(doc){apply();root.dispatchEvent(new root.CustomEvent('happy-language-change',{detail:{language}}))}
  }
  if(doc){
-  const skip='script,style,code,textarea,[data-user-content],#entryNoteSizer,.txName,.txNote,.txCategory,.categoryText,.catalogName,.categoryTxName,.reviewName,.topName,.spendBarName,#categoryPageTitle,#category,#editTxCategory,.sideStat .statNote';
+  const skip='script,style,code,textarea,[data-category-label],[data-user-content],#entryNoteSizer,.txName,.txNote,.txCategory,.categoryText,.catalogName,.categoryTxName,.reviewName,.topName,.spendBarName,#categoryPageTitle,#category,#editTxCategory,.sideStat .statNote';
   const texts=new WeakMap(),attributes=new WeakMap();let scheduled=false;
   const ignored=node=>(node.nodeType===1?node:node.parentElement)?.closest(skip);
   const observer=new root.MutationObserver(records=>{
@@ -72,6 +75,7 @@
      const current=el.getAttribute(name),state=states[name],original=state&&current===state.last?state.original:current,last=translate(original);states[name]={original,last};if(current!==last)el.setAttribute(name,last);
     }
    }
+   for(const el of doc.body.querySelectorAll('[data-category-label]')){const label=categoryLabel(el.dataset.categoryLabel);if(el.textContent!==label)el.textContent=label;}
    const select=doc.getElementById('languageSelect');if(select)select.value=language;
    observer.observe(doc.body,{subtree:true,childList:true,characterData:true,attributes:true,attributeFilter:['placeholder','aria-label','title']});
   };
@@ -80,5 +84,5 @@
   if(nativeConfirm)root.confirm=message=>nativeConfirm(translate(message));
   apply();
  }
- return {translate,setLanguage,getLanguage:()=>language,locale,apply};
+ return {translate,categoryLabel,setLanguage,getLanguage:()=>language,locale,apply};
 })(root);if(typeof module==='object'&&module.exports)module.exports=api;else root.HappyI18n=api;})(globalThis);
