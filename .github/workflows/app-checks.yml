@@ -1,0 +1,37 @@
+name: Happy Money checks
+on:
+  push:
+    branches: [main, 'fix/**']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install pinned browser test runtime
+        run: |
+          npm install --prefix /tmp/happy-ci --no-audit --no-fund playwright@1.62.1
+          /tmp/happy-ci/node_modules/.bin/playwright install --with-deps chromium
+      - name: Check JavaScript syntax
+        run: |
+          node -e "new Function(require('fs').readFileSync('index.html','utf8').split('<script>')[1].split('</script>')[0])"
+          node --check balance-engine.js
+      - name: Test balances and browser flows against fixtures
+        env:
+          NODE_PATH: /tmp/happy-ci/node_modules
+        run: |
+          node tests/balance-engine.cjs
+          node tests/tappy-flows.cjs
+      - name: Keep UI screenshots for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: happy-money-ui
+          path: /tmp/happy-*.png
+          retention-days: 7
