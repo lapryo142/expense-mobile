@@ -32,3 +32,11 @@ assert.equal(calc([],[oct,{year:2026,month:11,bank_balance:0,bank_balance_date:'
 const changed={...anchored,bank_balance:9000000};assert.equal(calc(rows,[oct,changed]).at(3).bank,9000000);
 assert.equal(B.lastDay(2028,2),29);assert.equal(B.lastDay(2027,2),28);
 console.log('balance-engine: PASS — carry, explicit zero, snapshots, transfers, backdates, edit/delete/move, reconciliation, cash/pay later, Sheet sync, wife, leap years');
+// Historical closing book snapshots retain Sheet adjustments without inflating spending.
+const archivedRows=[{id:'archive',year:2025,month:12,txn_date:'2025-12-20',description:'Recorded expense',expense:100,income:0,source:'sheet'}];
+const archived={year:2025,month:12,start_balance:1000,bank_balance:500,bank_balance_date:'2025-12-31',savings_balance:2000,savings_balance_date:'2025-12-31',remaining:700,balance_checkpoint:{book:{date:'2025-12-31',amount:700,basis:-100}}};
+assert.equal(calc(archivedRows,[archived],2025,12).closing.remaining,700);
+assert.equal(calc([{...archivedRows[0],expense:150}],[archived],2025,12).closing.remaining,650);
+const nextYear={year:2026,month:1,start_balance:500,bank_balance:400,bank_balance_date:'2026-01-31',savings_balance:2500,savings_balance_date:'2026-01-31'};
+const onlyNewYear=calc([],[nextYear],2026,1).closing,withArchive=calc(archivedRows,[archived,nextYear],2026,1).closing;
+for(const key of ['opening','bank','savings','remaining'])assert.equal(withArchive[key],onlyNewYear[key]);

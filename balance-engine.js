@@ -82,7 +82,7 @@
           year, month, date, opening, inherited: !explicitOpening,
           bank: checkpoint.bank ? checkpoint.bank.amount + effects.bank - checkpoint.bank.basis : baseBank + effects.bank,
           savings: checkpoint.savings ? checkpoint.savings.amount + effects.savings - checkpoint.savings.basis : baseSavings + effects.savings,
-          remaining: opening + effects.book,
+          remaining: checkpoint.book ? checkpoint.book.amount + effects.book - checkpoint.book.basis : opening + effects.book,
           checkpoint, status
         };
       };

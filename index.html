@@ -181,7 +181,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 .card .k,.balance small,.statLabel{font-size:var(--font-label)!important;line-height:1.4}
 .asOf,.editHint,.statNote,.settingsRow .statNote,.categoryTxDate,.reviewDate,.comparisonName,.comparisonHead,.spendShare,.categoryResultNote,#categoryResult .categoryResultNote{font-size:var(--font-support);line-height:1.4}
 .historyDayHeading h2,.sectionTitle,.txBadge{font-size:var(--font-support)}
-#addOverlay #quickExpense button{border-width:2.5px}
+#addOverlay .quick button{border-width:2px;border-color:transparent}
 .spendBarName>[data-category-label]{font-size:inherit}
 .annualChartHint{font-size:var(--font-support);line-height:1.4;color:var(--muted);text-align:center;margin:14px 0 0}
 .annualMonthLabel{font-size:11px}.annualBar[aria-pressed="true"]{color:var(--text);font-weight:750}
@@ -197,7 +197,7 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 .annualBar{-webkit-tap-highlight-color:transparent;appearance:none;box-shadow:none;outline:none;touch-action:manipulation;user-select:none}.annualBar:active{background:transparent;box-shadow:none}.annualBarTrack{height:165px;flex:0 0 165px;overflow:hidden}.annualBarFill{flex:none;max-height:165px}.annualBar:focus-visible{outline:2px solid var(--text)}
 .annualMonthBack{border:0;background:transparent;color:var(--text);padding:8px 0 14px;font-size:15px;text-align:left}
 @media(max-width:360px){.summarygrid .card,.statBox{padding:10px}.card .k,.statLabel{font-size:10px!important}}
-.historyFlat .txMeta{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;min-width:0;margin-top:2px}.historyFlat .txCategory{display:block;flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.historyFlat .txDate{flex:none;margin:0;white-space:nowrap;font-size:12px}.historyFlat .txDate:before{content:'·';margin-right:5px}.historyFlat .txMoney .txBadge{display:block;margin-top:2px}
+.historyFlat .txMeta{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;min-width:0;margin-top:2px}.historyFlat .txCategory{display:block;flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.historyFlat .txDate{flex:none;margin:0;white-space:nowrap;font-size:12px}.historyFlat .txDate:after{content:'·';margin-left:5px}.historyFlat .txMoney .txBadge{display:block;margin-top:2px}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -495,7 +495,7 @@ function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('
 const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
 const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
 function renderMonths(){
-  const firstYear=2026,lastYear=appNow.getFullYear(),options=[];
+  const firstYear=2025,lastYear=appNow.getFullYear(),options=[];
   for(let year=lastYear;year>=firstYear;year--){
     const lastMonth=year===appNow.getFullYear()?appNow.getMonth()+1:12;
     for(let month=lastMonth;month>=1;month--)options.push({year,month});
@@ -564,7 +564,7 @@ function historyDateLabel(date){
 function renderHistoryDays(rows){
  $('list').innerHTML='<div class="historyDay historyFlat">'+rows.map(row=>{
   const category=categoryFor(row),note=String(row.description||'').trim()||category,income=Number(row.income||0)>0,amount=privacyHidden?'••••••':fmt(Number(income?row.income:row.expense)||0),font=Math.max(12,17-Math.max(0,amount.length-13)*.65),color=CATEGORY_COLORS[category]||'#9aa2af';
-  return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(note)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName" data-user-content>${escapeHtml(note)}</div><div class="txMeta"><span class="txCategory" data-category-label="${escapeHtml(category)}">${escapeHtml(category)}</span><span class="txDate" data-date="${escapeHtml(normalizedIsoDate(row.txn_date,row.month)||'unknown')}">${escapeHtml(historyDateLabel(normalizedIsoDate(row.txn_date,row.month)||'unknown'))}</span></div></div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div>${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div></div>`;
+  return `<div class="tx" role="button" tabindex="0" aria-label="Chỉnh giao dịch ${escapeHtml(note)}" data-tx-id="${escapeHtml(row.id)}" style="--tx-color:${color};--amount-font:${font}px"><div class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</div><div class="txContent"><div class="txName" data-user-content>${escapeHtml(note)}</div><div class="txMeta"><span class="txDate" data-date="${escapeHtml(normalizedIsoDate(row.txn_date,row.month)||'unknown')}">${escapeHtml(historyDateLabel(normalizedIsoDate(row.txn_date,row.month)||'unknown'))}</span><span class="txCategory" data-category-label="${escapeHtml(category)}">${escapeHtml(category)}</span></div></div><div class="txMoney"><div class="txAmt ${income?'inc':'exp'}">${amount}</div>${isPayLater(row)?'<span class="txBadge">Trả sau</span>':''}</div></div>`;
 
  }).join('')+'</div>';if(!rows.length)$('list').innerHTML='<div class="empty">Chưa có giao dịch</div>';
 }
@@ -1420,4 +1420,5 @@ async function init(){
 init();
 </script>
 </body></html>
+
 

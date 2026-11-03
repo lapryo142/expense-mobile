@@ -225,18 +225,18 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   // Note-first compact history, configured selection colors and yearly analytics.
   {
    const {page:p,errors:e}=await boot(browser);
-   assert.equal(await p.locator('.appBrand').innerText(),'Happy Money');assert.ok(await p.locator('.appBrand').evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=14);assert.ok((await p.locator('.tx[data-tx-id="1"]').boundingBox()).height<78);assert.ok(await p.locator('.txCategory').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=14);assert.ok(await p.locator('.card .k').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=12);
+   assert.equal(await p.locator('#periodMenu [data-year="2025"]').count(),12);assert.equal(await p.locator('.appBrand').innerText(),'Happy Money');assert.ok(await p.locator('.appBrand').evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=14);assert.ok((await p.locator('.tx[data-tx-id="1"]').boundingBox()).height<78);assert.ok(await p.locator('.txCategory').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=14);assert.ok(await p.locator('.card .k').first().evaluate(el=>parseFloat(getComputedStyle(el).fontSize))>=12);
    assert.equal(await p.locator('.tx[data-tx-id="1"] .txName').innerText(),'Cà phê');
    for(const width of [320,390]){await p.setViewportSize({width,height:844});assert.ok(await p.locator('.card.gold .k').evaluate(el=>el.scrollWidth<=el.clientWidth),'Food difference title must fit in full on one line');}await p.setViewportSize({width:390,height:844});
    assert.equal(await p.locator('.historyDayHeading,.historyDayTotal,.txTime').count(),0);
    assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<70);
    assert.equal(await p.locator('.tx[data-tx-id="2"] .txDate').textContent(),'21/10');
-   for(const width of [320,390]){await p.setViewportSize({width,height:844});const meta=p.locator('.tx[data-tx-id="2"] .txMeta');assert.equal(await meta.locator('.txCategory').innerText(),'Tennis');const category=await meta.locator('.txCategory').boundingBox(),date=await meta.locator('.txDate').boundingBox();assert.ok(Math.abs(category.y+category.height/2-date.y-date.height/2)<2,'Category and date must share one line');assert.ok(date.x>=category.x+category.width);assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<60);}await p.setViewportSize({width:390,height:844});
+   for(const width of [320,390]){await p.setViewportSize({width,height:844});const meta=p.locator('.tx[data-tx-id="2"] .txMeta');assert.equal(await meta.locator('.txCategory').innerText(),'Tennis');const category=await meta.locator('.txCategory').boundingBox(),date=await meta.locator('.txDate').boundingBox();assert.ok(Math.abs(category.y+category.height/2-date.y-date.height/2)<2,'Category and date must share one line');assert.ok(category.x>=date.x+date.width);assert.ok((await p.locator('.tx[data-tx-id="2"]').boundingBox()).height<60);}await p.setViewportSize({width:390,height:844});
    await p.locator('#addBtn').click();
    for(const theme of ['dark','light']){
     await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
     for(const [name,color] of [['Ăn uống','rgb(255, 98, 107)'],['Di chuyển & xe','rgb(72, 198, 188)']]){
-     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.ok(await chip.evaluate(el=>{const width=parseFloat(getComputedStyle(el).borderTopWidth);return width>=2&&width<=2.5}),'Category borders must be reduced from 3px by 0.5px in both themes');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
+     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.ok(await chip.evaluate(el=>{const width=parseFloat(getComputedStyle(el).borderTopWidth);return width===2}),'Selected category borders must match the 2px Tappy reference in both themes');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
     }
    }
    await p.locator('#historyTab').click();
@@ -323,3 +323,4 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
+
