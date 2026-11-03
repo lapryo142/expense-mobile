@@ -219,7 +219,11 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 /* Detail metrics use the same type and neutral amount color as the summary. */
 #overviewDetails .statBox .statValue{font-size:18px;font-weight:650;letter-spacing:-.5px;color:var(--text);font-variant-numeric:tabular-nums}
 #overviewDetails .statBox .comparisonTrend{font-size:16px;letter-spacing:-.2px}
-#overviewDetails .comparisonName{font-size:13px;font-weight:500;line-height:1.4}
+#overviewDetails .comparisonTable{display:table;width:100%;border-collapse:collapse;table-layout:auto}
+#overviewDetails .comparisonRow{display:table-row}
+#overviewDetails .comparisonRow>span{display:table-cell;vertical-align:middle;padding:9px 0}
+#overviewDetails .comparisonRow>span:nth-child(n+2){width:1%;padding-left:10px;white-space:nowrap}
+#overviewDetails .comparisonName{padding-right:8px!important;overflow-wrap:anywhere;font-size:13px;font-weight:500;line-height:1.4}
 #overviewDetails .comparisonAmount{font-size:13px;font-weight:650;color:var(--text);font-variant-numeric:tabular-nums}
 #overviewDetails .comparisonHead{font-size:12px;font-weight:600;letter-spacing:0}
 #overviewDetails .comparisonArrow{display:inline-block;margin-right:2px;font-size:12px}
@@ -1544,6 +1548,7 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
 
