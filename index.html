@@ -765,7 +765,7 @@ async function renderAnnualOverview(){
  try{const rows=await readBalanceRows('transactions');if(overviewMode!=='year'||annualYear!==requestedYear)return;annualRows=rows;drawAnnualOverview()}catch(error){$('annualContent').textContent='Chưa tải được dữ liệu. Anh kéo xuống để thử lại.'}
 }
 async function returnToAnnualOverview(){
- annualDrilldownMonth=null;overviewMode='year';await renderMonthlyOverview();if(overviewMode==='year')document.querySelector('#summaryOverlay .summaryPanel').scrollTop=annualDrilldownScrollTop;
+ annualDrilldownMonth=null;overviewMode='year';syncOverviewMode();if(annualRows)drawAnnualOverview();else await renderAnnualOverview();if(overviewMode==='year')document.querySelector('#summaryOverlay .summaryPanel').scrollTop=annualDrilldownScrollTop;
 }
 function changeAnnualYear(direction){
  const years=[...$('annualYearSelect').options].map(option=>Number(option.value)).sort((a,b)=>a-b),index=years.indexOf(annualYear),next=years[index+direction];if(next){annualYear=next;annualSelectedMonth=null;drawAnnualOverview()}
@@ -793,6 +793,7 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
   const previous=shiftPeriod(currentYear,current,-1),previousMonth=previous.month;
   let loaded;try{loaded=await loadBalanceLedger(requestedYear,requestedMonth)}catch(error){$('overviewStats').textContent='Chưa tải được số dư. Anh kéo xuống để thử lại.';return}
   if(request!==monthlyDetailRequest||overviewMode!=='month')return;
+  if(annualDrilldownMonth)annualRows=loaded.rows;
   const rows=loaded.rows.filter(row=>row.year===currentYear&&row.month===current&&!isDeletedTransaction(row)),status=loaded.statuses.find(row=>row.year===currentYear&&row.month===current),currentTotals=monthTotals(rows,status);
   const previousRows=loaded.rows.filter(row=>row.year===previous.year&&row.month===previous.month&&!isDeletedTransaction(row)),previousStatus=loaded.statuses.find(row=>row.year===previous.year&&row.month===previous.month),previousTotals=monthTotals(previousRows,previousStatus);
   const now=new Date(),daysInMonth=new Date(currentYear,current,0).getDate();
@@ -1439,6 +1440,7 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
 
