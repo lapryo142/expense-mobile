@@ -236,7 +236,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    for(const theme of ['dark','light']){
     await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);
     for(const [name,color] of [['Ăn uống','rgb(255, 98, 107)'],['Di chuyển & xe','rgb(72, 198, 188)']]){
-     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.ok(await chip.evaluate(el=>parseFloat(getComputedStyle(el).borderTopWidth))<=1,'Category borders must stay thin in both themes');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
+     const chip=p.locator('#quickExpense [data-category="'+name+'"]');await chip.click();assert.equal(await chip.getAttribute('aria-pressed'),'true');assert.ok(await chip.evaluate(el=>{const width=parseFloat(getComputedStyle(el).borderTopWidth);return width>=2&&width<=2.5}),'Category borders must be reduced from 3px by 0.5px in both themes');assert.equal(await chip.evaluate(el=>getComputedStyle(el).borderTopColor),color);
     }
    }
    await p.locator('#historyTab').click();
