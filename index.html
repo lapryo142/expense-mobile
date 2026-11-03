@@ -192,9 +192,9 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 @media(max-width:360px){.appBrand{font-size:14px;top:0}.annualMonthLabel{font-size:10px}}
 
 /* Compact ledger dates and aligned sentence-case metric labels. */
-.historyFlat{margin-bottom:0}.historyFlat .tx{min-height:56px;padding:10px 0}.txDate{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
+.historyFlat{margin-bottom:0}.historyFlat .tx{min-height:60px;padding:12px 0}.txDate{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
 .card,.statBox{min-width:0}.summarygrid .card{padding:12px}.card .k,.statLabel{font-size:12px!important;font-weight:500}.card .k,.balance small,.statLabel{white-space:nowrap;text-transform:none;letter-spacing:0;font-weight:600;overflow:hidden;text-overflow:ellipsis}
-.annualBar{-webkit-tap-highlight-color:transparent;appearance:none;box-shadow:none;outline:none;touch-action:manipulation;user-select:none}.annualBar:active{background:transparent;box-shadow:none}.annualBarTrack{height:165px;flex:0 0 165px;overflow:hidden}.annualBarFill{flex:none;max-height:165px}.annualBar:focus-visible{outline:2px solid var(--text)}
+.annualBar{-webkit-tap-highlight-color:transparent;appearance:none;box-shadow:none;outline:none;touch-action:manipulation;user-select:none}.annualBar:active{background:transparent;box-shadow:none}.annualBarTrack{height:165px;flex:0 0 165px;overflow:hidden}.annualBarFill{flex:none;max-height:165px;width:64%;max-width:14px;margin-inline:auto}.annualBar:focus-visible{outline:2px solid var(--text)}
 .annualMonthBack{border:0;background:transparent;color:var(--text);padding:8px 0 14px;font-size:15px;text-align:left}
 @media(max-width:360px){.summarygrid .card,.statBox{padding:10px}.card .k,.statLabel{font-size:10px!important}}
 .historyFlat .txMeta{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;min-width:0;margin-top:2px}.historyFlat .txCategory{display:block;flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.historyFlat .txDate{flex:none;margin:0;white-space:nowrap;font-size:12px}.historyFlat .txDate:after{content:'·';margin-left:5px}.historyFlat .txMoney .txBadge{display:block;margin-top:2px}
@@ -849,11 +849,13 @@ function drawAnnualOverview(){
  $('annualYearSelect').innerHTML=[...years].reverse().map(year=>`<option value="${year}" ${year===annualYear?'selected':''}>${year}</option>`).join('');
  const index=years.indexOf(annualYear);$('annualPreviousYear').disabled=index===0;$('annualNextYear').disabled=index===years.length-1;
  const data=HappyAnnual.summarize(annualRows,annualYear,{categoryFor}),locale=HappyI18n.locale();
+ const today=new Date(),lastVisibleMonth=annualYear<today.getFullYear()?12:annualYear===today.getFullYear()?today.getMonth()+1:0;
+ const visibleMonths=data.months.filter(item=>item.month<=lastVisibleMonth).reverse();
  const monthName=month=>new Intl.DateTimeFormat(locale,{month:'long'}).format(new Date(annualYear,month-1,1));
  $('annualContent').innerHTML=`<div class="annualTotal"><div class="statLabel">Chi tiêu trong năm</div><strong>${fmt(data.total)}</strong></div><div class="annualChartCard"><h3>Chi theo tháng</h3><div class="annualChart" role="group" aria-label="Biểu đồ chi tiêu từng tháng">${data.months.map(item=>{
   const height=data.maximum?Math.max(0,item.expense)/data.maximum*100:0,label=monthName(item.month),short=locale==='vi-VN'?'T'+item.month:new Intl.DateTimeFormat(locale,{month:'short'}).format(new Date(annualYear,item.month-1,1));
   return `<button type="button" class="annualBar ${item.month===annualSelectedMonth?'selected':''}" data-annual-month="${item.month}" aria-pressed="${item.month===annualSelectedMonth}" aria-label="${escapeHtml(label)}: ${escapeHtml(fmt(item.expense))}"><span class="annualBarTrack" aria-hidden="true"><span class="annualBarFill" style="height:${height*1.65}px;${height===0?'min-height:2px;opacity:.3':''}"></span></span><span class="annualMonthLabel">${escapeHtml(short)}</span></button>`;
- }).join('')}</div>${data.total===0?'<div class="statNote annualEmpty">Chưa có khoản chi trong năm này</div>':''}<p class="annualChartHint">${annualSelectedMonth?'Chạm lại tháng đang chọn để xem cả năm':'Chạm một tháng để xem chi tiết'}</p></div><section id="annualBreakdown" class="annualBreakdown" aria-live="polite"></section><div class="annualMonthList"><h3>Các tháng trong năm</h3>${[...data.months].reverse().map(item=>`<button type="button" data-month-detail="${item.month}"><span class="annualMonthName">${escapeHtml(monthName(item.month))}</span><strong>${fmt(item.expense)} <span aria-hidden="true">›</span></strong></button>`).join('')}</div>`;
+ }).join('')}</div>${data.total===0?'<div class="statNote annualEmpty">Chưa có khoản chi trong năm này</div>':''}<p class="annualChartHint">${annualSelectedMonth?'Chạm lại tháng đang chọn để xem cả năm':'Chạm một tháng để xem chi tiết'}</p></div><section id="annualBreakdown" class="annualBreakdown" aria-live="polite"></section><div class="annualMonthList ${visibleMonths.length?'':'hidden'}"><h3>Các tháng trong năm</h3>${visibleMonths.map(item=>`<button type="button" data-month-detail="${item.month}"><span class="annualMonthName">${escapeHtml(monthName(item.month))}</span><strong>${fmt(item.expense)} <span aria-hidden="true">›</span></strong></button>`).join('')}</div>`;
  $('annualContent').querySelectorAll('[data-annual-month]').forEach(button=>button.addEventListener('click',()=>{
   const month=Number(button.dataset.annualMonth);annualSelectedMonth=annualSelectedMonth===month?null:month;drawAnnualOverview();
  }));
@@ -1556,6 +1558,7 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
 
