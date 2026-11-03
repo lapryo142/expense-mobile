@@ -192,12 +192,14 @@ html:has(#addOverlay.open){overflow-y:hidden;overscroll-behavior:none}
 @media(max-width:360px){.appBrand{font-size:14px;top:0}.annualMonthLabel{font-size:10px}}
 
 /* Compact ledger dates and aligned sentence-case metric labels. */
-.historyFlat{margin-bottom:0}.historyFlat .tx{min-height:0;padding:7px 0}.txDate{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
+.historyFlat{margin-bottom:0}.historyFlat .tx{min-height:56px;padding:10px 0}.txDate{font-size:12px;color:var(--muted);line-height:1.3;margin-top:2px}
 .card,.statBox{min-width:0}.summarygrid .card{padding:12px}.card .k,.statLabel{font-size:12px!important;font-weight:500}.card .k,.balance small,.statLabel{white-space:nowrap;text-transform:none;letter-spacing:0;font-weight:600;overflow:hidden;text-overflow:ellipsis}
 .annualBar{-webkit-tap-highlight-color:transparent;appearance:none;box-shadow:none;outline:none;touch-action:manipulation;user-select:none}.annualBar:active{background:transparent;box-shadow:none}.annualBarTrack{height:165px;flex:0 0 165px;overflow:hidden}.annualBarFill{flex:none;max-height:165px}.annualBar:focus-visible{outline:2px solid var(--text)}
 .annualMonthBack{border:0;background:transparent;color:var(--text);padding:8px 0 14px;font-size:15px;text-align:left}
 @media(max-width:360px){.summarygrid .card,.statBox{padding:10px}.card .k,.statLabel{font-size:10px!important}}
 .historyFlat .txMeta{display:flex;align-items:center;flex-wrap:nowrap;gap:5px;min-width:0;margin-top:2px}.historyFlat .txCategory{display:block;flex:0 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.historyFlat .txDate{flex:none;margin:0;white-space:nowrap;font-size:12px}.historyFlat .txDate:after{content:'·';margin-left:5px}.historyFlat .txMoney .txBadge{display:block;margin-top:2px}
+html:has(#addOverlay.open),body:has(#addOverlay.open){overscroll-behavior-x:none}
+#addOverlay .quick{overscroll-behavior-x:contain}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -719,7 +721,7 @@ function openCategoryDetails(name,expenses,periodLabel,{push=true}={}){
     document.querySelector('#categoryOverlay .categoryPanel').scrollTop=0;
     $('categoryBack').focus({preventScroll:true});
 }
-let overviewMode='month',annualYear=currentYear,annualRows=null,annualSelectedMonth=null,annualDrilldownMonth=null,monthlyDetailRequest=0;
+let overviewMode='month',annualYear=currentYear,annualRows=null,annualSelectedMonth=null,annualDrilldownMonth=null,annualDrilldownScrollTop=0,monthlyDetailRequest=0;
 function syncOverviewMode(){
  document.querySelector('#summaryOverlay .summaryPanel').classList.toggle('yearMode',overviewMode==='year');
  $('annualMonthBack').classList.toggle('hidden',overviewMode!=='month'||!annualDrilldownMonth);
@@ -742,7 +744,7 @@ function drawAnnualOverview(){
   const month=Number(button.dataset.annualMonth);annualSelectedMonth=annualSelectedMonth===month?null:month;drawAnnualOverview();
  }));
  $('annualContent').querySelectorAll('[data-month-detail]').forEach(button=>button.addEventListener('click',()=>{
-  annualDrilldownMonth=Number(button.dataset.monthDetail);overviewMode='month';renderMonthlyOverview();document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0;
+  annualDrilldownScrollTop=document.querySelector('#summaryOverlay .summaryPanel').scrollTop;annualDrilldownMonth=Number(button.dataset.monthDetail);overviewMode='month';renderMonthlyOverview();document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0;
  }));
  drawAnnualBreakdown();
 }
@@ -762,12 +764,15 @@ async function renderAnnualOverview(){
  const requestedYear=annualYear;$('annualContent').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
  try{const rows=await readBalanceRows('transactions');if(overviewMode!=='year'||annualYear!==requestedYear)return;annualRows=rows;drawAnnualOverview()}catch(error){$('annualContent').textContent='Chưa tải được dữ liệu. Anh kéo xuống để thử lại.'}
 }
+async function returnToAnnualOverview(){
+ annualDrilldownMonth=null;overviewMode='year';await renderMonthlyOverview();if(overviewMode==='year')document.querySelector('#summaryOverlay .summaryPanel').scrollTop=annualDrilldownScrollTop;
+}
 function changeAnnualYear(direction){
  const years=[...$('annualYearSelect').options].map(option=>Number(option.value)).sort((a,b)=>a-b),index=years.indexOf(annualYear),next=years[index+direction];if(next){annualYear=next;annualSelectedMonth=null;drawAnnualOverview()}
 }
 (function bindYearAndLanguageControls(){
  document.querySelectorAll('[data-overview-mode]').forEach(button=>button.addEventListener('click',()=>{if(button.dataset.overviewMode==='year'&&overviewMode!=='year'){annualYear=currentYear;annualSelectedMonth=null}annualDrilldownMonth=null;overviewMode=button.dataset.overviewMode;closeCategory();renderMonthlyOverview()}));
- $('annualMonthBack').addEventListener('click',()=>{annualDrilldownMonth=null;overviewMode='year';renderMonthlyOverview();document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0});
+ $('annualMonthBack').addEventListener('click',returnToAnnualOverview);
  $('annualYearSelect').addEventListener('change',()=>{annualYear=Number($('annualYearSelect').value);annualSelectedMonth=null;drawAnnualOverview()});
  $('annualPreviousYear').addEventListener('click',()=>changeAnnualYear(-1));$('annualNextYear').addEventListener('click',()=>changeAnnualYear(1));
  $('languageSelect').value=HappyI18n.getLanguage();$('languageSelect').addEventListener('change',()=>HappyI18n.setLanguage($('languageSelect').value));
@@ -994,7 +999,8 @@ function bindPullToClose(overlayId,panelSelector){
   };
   const close=()=>{overlay.classList.remove('open');reset()};
   panel.addEventListener('touchstart',event=>{
-    if(panel.scrollTop>0||event.target.closest('.quick,.keypad,input,select,textarea')){reset();return}
+    const monthEdge=overlayId==='summaryOverlay'&&overviewMode==='month'&&annualDrilldownMonth&&event.touches[0].clientX<=28;
+    if(monthEdge||panel.scrollTop>0||event.target.closest('.quick,.keypad,input,select,textarea')){reset();return}
     startY=event.touches[0].clientY;distance=0;panel.classList.add('pullDragging');
   },{passive:true});
   panel.addEventListener('touchmove',event=>{
@@ -1040,11 +1046,11 @@ function updateTabs(){
   for(const id of ['historyTab','addBtn','statsTab']){if(id===active)$(id).setAttribute('aria-current','page');else $(id).removeAttribute('aria-current')}
 }
 for(const id of ['addOverlay','summaryOverlay'])new MutationObserver(()=>{updateTabs();updateEntryViewport()}).observe($(id),{attributes:true,attributeFilter:['class']});
-function bindEdgeBack(overlayId,panelSelector,onBack){
+function bindEdgeBack(overlayId,panelSelector,onBack,{enabled=()=>true}={}){
  const overlay=$(overlayId),panel=overlay.querySelector(panelSelector);let edge=null,settleTimer=null;
  panel.addEventListener('touchstart',event=>{
   if(settleTimer){clearTimeout(settleTimer);settleTimer=null;panel.style.transition='';panel.style.transform=''}
-  const point=event.touches[0];edge=!$('catalogEditorOverlay').classList.contains('open')&&event.touches.length===1&&point.clientX<=28&&!$('editTxOverlay').classList.contains('open')?{x:point.clientX,y:point.clientY,dx:0,drag:false}:null;
+  const point=event.touches[0];edge=enabled()&&overlay.classList.contains('open')&&!$('catalogEditorOverlay').classList.contains('open')&&event.touches.length===1&&point.clientX<=28&&!$('editTxOverlay').classList.contains('open')?{x:point.clientX,y:point.clientY,dx:0,drag:false}:null;
   // Cancel Safari's native edge action; the app owns this one gesture.
   if(edge)event.preventDefault();
  },{passive:false});
@@ -1065,6 +1071,19 @@ function bindEdgeBack(overlayId,panelSelector,onBack){
 }
 bindEdgeBack('categoryOverlay','.categoryPanel',()=>closeCategory());
 bindEdgeBack('settingsOverlay','.settingsPanel',()=>closeSettings());
+bindEdgeBack('summaryOverlay','.summaryPanel',returnToAnnualOverview,{enabled:()=>overviewMode==='month'&&annualDrilldownMonth!==null});
+
+// Prevent the browser's Forward edge gesture while capturing a transaction.
+// Cancel at touchstart, before Safari starts its page snapshot transition.
+let entryRightEdge=false;
+document.addEventListener('touchstart',event=>{
+ entryRightEdge=$('addOverlay').classList.contains('open')&&event.touches.length===1&&event.touches[0].clientX>=innerWidth-24;
+ if(entryRightEdge){event.preventDefault();event.stopPropagation();}
+},{capture:true,passive:false});
+document.addEventListener('touchmove',event=>{
+ if(entryRightEdge){event.preventDefault();event.stopPropagation();}
+},{capture:true,passive:false});
+for(const type of ['touchend','touchcancel'])document.addEventListener(type,event=>{if(entryRightEdge){event.stopPropagation();entryRightEdge=false;}},{capture:true,passive:true});
 
 function updateEntryViewport(){
   const viewport=window.visualViewport;
@@ -1420,5 +1439,6 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
