@@ -559,7 +559,7 @@ async function refresh(){
 }
 function escapeHtml(s){return String(s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]))}
 function historyDateLabel(date){
- const parsed=new Date(date+'T12:00:00');return date==='unknown'||Number.isNaN(parsed.getTime())?HappyI18n.translate('Chưa rõ ngày'):new Intl.DateTimeFormat(HappyI18n.locale(),{day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed);
+ const parsed=new Date(date+'T12:00:00');return date==='unknown'||Number.isNaN(parsed.getTime())?HappyI18n.translate('Chưa rõ ngày'):new Intl.DateTimeFormat(HappyI18n.locale(),{day:'2-digit',month:'2-digit',...(parsed.getFullYear()!==new Date().getFullYear()?{year:'numeric'}:{})}).format(parsed).replace(/-/g,'/');
 }
 function renderHistoryDays(rows){
  $('list').innerHTML='<div class="historyDay historyFlat">'+rows.map(row=>{
@@ -1420,3 +1420,4 @@ async function init(){
 init();
 </script>
 </body></html>
+
