@@ -209,6 +209,12 @@ html:has(#addOverlay.open),body:has(#addOverlay.open){overscroll-behavior-x:none
 .searchSummary{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:10px;flex-shrink:0}.searchSummary>div{padding:12px;background:var(--card);border-radius:14px;min-width:0}.searchSummary span{display:block;font-size:13px;color:var(--muted)}.searchSummary strong{display:block;font-size:23px;font-weight:750;margin-top:5px;overflow-wrap:anywhere;line-height:1.25}
 .searchResultList{overflow-y:auto;overscroll-behavior:contain;min-height:0;flex:1}.searchResultRow{display:grid;grid-template-columns:32px minmax(0,1fr) auto;align-items:center;gap:9px;width:100%;border:0;border-bottom:1px solid var(--line);background:transparent;color:var(--text);padding:12px 0;text-align:left;font:inherit}.searchResultRow .txIcon{width:32px;height:32px;font-size:19px;background:color-mix(in srgb,var(--tx-color) 15%,var(--bg))}.searchResultName{font-size:16px;font-weight:700;line-height:1.35;overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.searchResultMeta{display:flex;gap:5px;align-items:center;font-size:12px;color:var(--muted);margin-top:4px;min-width:0}.searchResultMeta time{flex:none;white-space:nowrap}.searchResultMeta [data-category-label]{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}.searchResultAmount{font-size:var(--amount-font,15px);font-weight:750;white-space:nowrap;text-align:right}.searchResultAmount.inc{color:var(--green)}.searchStatus{padding:20px 10px;text-align:center;color:var(--muted);font-size:14px;line-height:1.6}.searchStatus button{display:block;margin:12px auto;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);padding:9px 16px;font:inherit}
 @media(max-width:360px){.searchPanel{padding-left:16px;padding-right:16px;gap:12px}.searchSummary strong{font-size:20px}.searchResultName{font-size:15px}.searchDateRange{gap:6px}.searchDateRange input{padding:8px 4px;font-size:16px}}
+
+/* Keep only overflowing results scrollable while the search sheet is open. */
+html:has(#searchOverlay.open){overflow:hidden;overscroll-behavior:none}
+body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left:0;width:100%;overflow:hidden;overscroll-behavior:none}
+#searchOverlay{overflow:hidden;overscroll-behavior:none}.searchPanel{overscroll-behavior:none}.searchResultList{overscroll-behavior:none;touch-action:pan-y}
+#searchOpen{-webkit-tap-highlight-color:transparent}#searchOpen:focus:not(:focus-visible){outline:none;box-shadow:none}#searchOpen:focus-visible{outline:2px solid var(--muted);outline-offset:2px;box-shadow:none}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -591,10 +597,11 @@ function renderHistoryDays(rows){
  }).join('')+'</div>';if(!rows.length)$('list').innerHTML='<div class="empty">Chưa có giao dịch</div>';
 }
 
-let searchRows=[],searchOwner=null,searchRequest=0,searchLoading=false,searchFailed=false,searchViewPeriod=null;
+let searchRows=[],searchOwner=null,searchRequest=0,searchLoading=false,searchFailed=false,searchViewPeriod=null,searchSavedScrollY=0;
 function searchIsOpen(){return $('searchOverlay').classList.contains('open')}
-function resetTransactionSearch(){searchRequest++;searchRows=[];searchOwner=null;searchLoading=false;searchFailed=false;searchViewPeriod=null;$('transactionSearch').value='';$('searchPeriod').value='all';$('searchFrom').value='';$('searchTo').value='';$('searchResults').replaceChildren();$('searchOverlay').classList.remove('open')}
-function closeTransactionSearch(){searchRequest++;$('transactionSearch').blur();$('searchOverlay').classList.remove('open');$('searchOpen').focus({preventScroll:true})}
+function resetTransactionSearch(){searchRequest++;searchRows=[];searchOwner=null;searchLoading=false;searchFailed=false;searchViewPeriod=null;$('transactionSearch').value='';$('searchPeriod').value='all';$('searchFrom').value='';$('searchTo').value='';$('searchResults').replaceChildren();const wasOpen=searchIsOpen();$('searchOverlay').classList.remove('open');if(wasOpen)unlockSearchScroll()}
+function unlockSearchScroll(){document.documentElement.style.removeProperty('--search-page-top');window.scrollTo(0,searchSavedScrollY)}
+function closeTransactionSearch({restoreFocus=false}={}){searchRequest++;if(document.activeElement?.closest('#searchOverlay'))document.activeElement.blur();$('searchOverlay').classList.remove('open');unlockSearchScroll();if(restoreFocus)$('searchOpen').focus({preventScroll:true})}
 function buildSearchPeriods(){
  const selected=$('searchPeriod').value||'all',years=[...new Set(searchRows.map(row=>Number(row.year)))].filter(Number.isInteger).sort((a,b)=>b-a);
  $('searchPeriod').innerHTML='<option value="all">Tất cả thời gian</option><option value="month">Tháng đang xem</option>'+years.map(year=>`<option value="year:${year}">Năm ${year}</option>`).join('')+'<option value="custom">Khoảng ngày</option>';
@@ -630,14 +637,27 @@ async function loadTransactionSearch(){
  try{const rows=await readBalanceRows('transactions');if(request!==searchRequest||user?.id!==owner||!searchIsOpen())return;searchRows=rows;searchLoading=false;buildSearchPeriods();renderTransactionSearch()}
  catch(error){if(request!==searchRequest||user?.id!==owner||!searchIsOpen())return;searchLoading=false;searchFailed=true;renderTransactionSearch()}
 }
-$('searchOpen').addEventListener('click',()=>{searchViewPeriod={year:currentYear,month:current};$('searchOverlay').classList.add('open');$('transactionSearch').focus();loadTransactionSearch()});
-$('searchBack').addEventListener('click',closeTransactionSearch);
+$('searchOpen').addEventListener('click',()=>{searchSavedScrollY=window.scrollY;document.documentElement.style.setProperty('--search-page-top',-searchSavedScrollY+'px');searchViewPeriod={year:currentYear,month:current};$('searchOverlay').classList.add('open');$('transactionSearch').focus();loadTransactionSearch()});
+$('searchBack').addEventListener('click',event=>closeTransactionSearch({restoreFocus:event.detail===0}));
 $('searchClear').addEventListener('click',()=>{$('transactionSearch').value='';renderTransactionSearch();$('transactionSearch').focus()});
 $('transactionSearch').addEventListener('input',()=>{renderTransactionSearch();$('searchResults').scrollTop=0});
 $('transactionSearch').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();$('transactionSearch').blur()}});
 for(const id of ['searchPeriod','searchFrom','searchTo'])$(id).addEventListener('change',()=>{renderTransactionSearch();$('searchResults').scrollTop=0});
-$('searchOverlay').addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('editTxOverlay').classList.contains('open'))closeTransactionSearch()});
+$('searchOverlay').addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('editTxOverlay').classList.contains('open'))closeTransactionSearch({restoreFocus:true})});
 window.addEventListener('happy-language-change',()=>{if(searchIsOpen()){buildSearchPeriods();renderTransactionSearch()}});
+let searchTouch=null;
+const searchPanel=document.querySelector('#searchOverlay .searchPanel');
+searchPanel.addEventListener('touchstart',event=>{searchTouch=event.touches.length===1?{x:event.touches[0].clientX,y:event.touches[0].clientY,lastY:event.touches[0].clientY}:null},{passive:true});
+searchPanel.addEventListener('touchmove',event=>{
+ if(!searchTouch||event.touches.length!==1)return;
+ const point=event.touches[0],dx=point.clientX-searchTouch.x,dy=point.clientY-searchTouch.y,deltaY=point.clientY-searchTouch.lastY;searchTouch.lastY=point.clientY;
+ if(Math.abs(dy)<=Math.abs(dx))return;
+ const list=event.target.closest('.searchResultList'),max=list?list.scrollHeight-list.clientHeight:0;
+ const canScroll=max>1&&((deltaY<0&&list.scrollTop<max-1)||(deltaY>0&&list.scrollTop>0));
+ if(!canScroll&&event.cancelable)event.preventDefault();
+},{passive:false});
+for(const type of ['touchend','touchcancel'])searchPanel.addEventListener(type,()=>{searchTouch=null},{passive:true});
+
 
 function bindTransactionLongPress(rows){
  const byId=new Map((rows||[]).map(row=>[String(row.id),row]));let opened=null;
@@ -1511,6 +1531,7 @@ async function init(){
 init();
 </script>
 </body></html>
+
 
 
 

@@ -338,6 +338,23 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.evaluate(()=>fixture.failRead=true);await p.locator('#searchOpen').click();await p.locator('#searchRetry').waitFor({state:'visible'});assert.equal(await p.locator('#searchSummary').isVisible(),false);await p.evaluate(()=>fixture.failRead=false);await p.locator('#searchRetry').click();await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='1');assert.deepEqual(e,[]);await p.close();
   }
 
+
+  // Search must not scroll or rubber-band the ledger behind short results.
+  {
+   const {page:p,errors:e}=await boot(browser);
+   await p.evaluate(()=>fixture.rows.push({id:'scroll-shoe',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-10',description:'Giày dép',expense:1200000,income:0,source:'sheet'}));
+   const previousY=await p.evaluate(()=>{window.scrollTo(0,160);const y=window.scrollY;document.getElementById('searchOpen').click();return y});
+   await p.locator('#transactionSearch').fill('giay');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='1');
+   for(const [width,height] of [[320,568],[390,430],[390,844]]){
+    await p.setViewportSize({width,height});assert.equal(await p.locator('#searchResults').evaluate(el=>el.scrollHeight<=el.clientHeight+1),true,'Short results must fit without a scrollbar');assert.equal(await p.locator('.searchPanel').evaluate(el=>el.scrollHeight<=el.clientHeight+1),true);
+    const prevented=await p.locator('#searchResults').evaluate(el=>{el.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target:el,clientX:160,clientY:350})]}));const move=new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target:el,clientX:162,clientY:440})]});el.dispatchEvent(move);el.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}));return move.defaultPrevented});assert.equal(prevented,true,'A vertical pull over short results must not expose the ledger');assert.equal(await p.evaluate(()=>window.scrollY),0);assert.equal(await p.locator('.searchPanel').evaluate(el=>el.style.transform),'');
+   }
+   await p.setViewportSize({width:390,height:844});await p.screenshot({path:'/tmp/happy-search-scroll-locked.png'});
+   await p.locator('.searchPanel').evaluate(el=>{const send=(type,x,y)=>el.dispatchEvent(new TouchEvent(type,{bubbles:true,cancelable:true,touches:type==='touchend'?[]:[new Touch({identifier:2,target:el,clientX:x,clientY:y})]}));send('touchstart',3,180);send('touchmove',150,182);send('touchend',150,182)});await p.locator('#searchOverlay').waitFor({state:'hidden'});assert.equal(await p.evaluate(()=>window.scrollY),previousY);assert.equal(await p.locator('#searchOpen').evaluate(el=>el===document.activeElement),false);await p.screenshot({path:'/tmp/happy-search-back-no-halo.png'});
+   await p.locator('#searchOpen').click();await p.locator('#transactionSearch').press('Escape');assert.equal(await p.locator('#searchOpen').evaluate(el=>el===document.activeElement),true);assert.equal(await p.locator('#searchOpen').evaluate(el=>getComputedStyle(el).outlineWidth),'2px');
+   await p.evaluate(()=>fixture.rows=Array.from({length:80},(_,i)=>({id:'scroll-'+i,user_id:'fixture',year:2025,month:3,txn_date:'2025-03-10',description:'Giày dép '+i,expense:1000,income:0,source:'sheet'})));await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('giay');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='80');assert.equal(await p.locator('#searchResults').evaluate(el=>el.scrollHeight>el.clientHeight),true);const resultBox=await p.locator('#searchResults').boundingBox();await p.mouse.move(resultBox.x+resultBox.width/2,resultBox.y+Math.min(80,resultBox.height/2));await p.mouse.wheel(0,350);await p.waitForFunction(()=>document.getElementById('searchResults').scrollTop>0);assert.equal(await p.evaluate(()=>window.scrollY),0);assert.deepEqual(e,[]);await p.close();
+  }
+
   // Editing selects the amount immediately, and delegates native keyboards to OS inputs.
   {
    const {page:p,errors:e}=await boot(browser);await p.locator('.tx[data-tx-id="2"]').click();
@@ -361,6 +378,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   console.log(engine.name()+': PASS — entry, double-save, income, errors, edit, drilldown, projection, paginated CSV, deep link/login, rollover, 320–430px layouts');await browser.close();
  }
 })().catch(e=>{console.error(e);process.exit(1)});
+
 
 
 
