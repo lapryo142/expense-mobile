@@ -35,7 +35,7 @@
   if(!result){
    const patterns=[
     [/^Tháng (\d+) · (\d{4})$/,'Month $1 · $2'],[/^Tháng (\d+)$/,'Month $1'],[/^Đến (.+)$/,'As of $1'],[/^Ngày (.+)$/,'Date $1'],
-    [/^Chi giảm (\d+)%$/,'Spending down $1%'],[/^Chi tăng (\d+)%$/,'Spending up $1%'],[/^SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY (\d+)$/,'VS LAST MONTH · THROUGH DAY $1'],
+    [/^Chi giảm (\d+)%$/,'Spending down $1%'],[/^Chi tăng (\d+)%$/,'Spending up $1%'],[/^So với tháng trước · cùng kỳ ngày (\d+)$/,'Vs last month · through day $1'],
     [/^Cùng kỳ đến ngày (.+)$/,'Same period through $1'],[/^(\d+) giao dịch · Tháng (\d+)\/(\d+)$/,'$1 entries · Month $2/$3'],
     [/^(.+)\/ngày bình quân · nếu giữ mức chi hiện tại$/,'$1/day average · at the current pace'],[/^(.+)\/ngày bình quân$/,'$1/day average'],
     [/^(\d{2}\/\d{2}) · Chạm để phân loại$/,'$1 · Tap to categorize'],[/^Màu (\d+)$/,'Color $1'],[/^T(\d+)$/,'M$1']

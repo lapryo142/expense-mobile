@@ -843,7 +843,7 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
     <div class="statBox"><div class="statLabel">Chi trung bình/ngày</div><div class="statValue">${fmt(Math.round(currentAsOfTotals.expense/Math.max(1,dayCount)))}</div></div>
     <div class="statBox sideStat"><div class="statLabel">Khoản chi lớn nhất</div><div class="statValue">${largest?fmt(largest.expense):'—'}</div><div class="statNote">${largest?escapeHtml(largest.description):'Chưa có khoản chi'}</div></div>
     <div class="statBox payLaterOverview"><div class="statLabel">Mua trả sau</div><div class="statValue">${fmt(payLaterExpense)}</div><div class="statNote">Đã tính vào tổng chi · chưa trừ số ngân hàng</div></div>
-    <div class="statBox wide"><div class="statLabel">SO VỚI THÁNG TRƯỚC · CÙNG KỲ NGÀY ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
+    <div class="statBox wide"><div class="statLabel">So với tháng trước · cùng kỳ ngày ${comparisonDay}</div><div class="statValue ${trendClass}" style="font-size:15px">${trendText}</div>${comparisonTable}</div>
   </div>`;
   const grid=$('overviewStats').querySelector('.statGrid'),cards=[...grid.children];
   const details=document.createElement('div');details.className='statGrid';
