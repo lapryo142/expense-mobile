@@ -240,6 +240,8 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 #overviewDetails .comparisonAmount.trendGood,#overviewDetails .comparisonTrend.trendGood{color:var(--stats-accent)}
 #overviewDetails .comparisonAmount.trendBad,#overviewDetails .comparisonTrend.trendBad{color:var(--red)}
 .historyFlat .txName,.historyFlat .txAmt,.searchResultName,.searchResultAmount,#categoryResult .categoryTxName,#categoryResult .categoryTxAmount{font-weight:650}
+.themeSelect{min-height:42px;max-width:58%;font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text)}
+.txAmt.inc,.searchResultAmount.inc{color:var(--stats-accent)}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -370,7 +372,7 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 
 <div id="settingsOverlay" class="overlay" role="region" aria-label="Cài đặt">
  <div class="panel settingsPanel"><div class="settingsHeader"><button id="settingsBack" type="button" class="categoryBack" aria-label="Quay lại"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Cài đặt</h2><span></span></div>
- <div class="settingsRow"><div><strong>Giao diện</strong><div id="themeName" class="statNote">Tối</div></div><button type="button" class="themeToggle" aria-label="Đổi giao diện"></button></div>
+ <div class="settingsRow"><div><strong><label for="themeSelect">Giao diện</label></strong><div id="themeName" class="statNote">Tối</div></div><select id="themeSelect" class="themeSelect" aria-label="Giao diện"><option value="system">Theo hệ thống</option><option value="dark">Tối</option><option value="light">Sáng</option></select></div>
  <div class="settingsRow"><div><strong>Ẩn số nhạy cảm</strong><div class="statNote">Số dư và thu nhập trên thiết bị này</div></div><button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button></div>
  <div class="settingsRow"><label for="languageSelect"><strong>Ngôn ngữ</strong></label><select id="languageSelect" aria-label="Ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
  <section class="settingsCatalog"><h3>DANH MỤC</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section>
@@ -1152,7 +1154,7 @@ function closeCategory({fromHistory=false}={}){
 window.addEventListener('popstate',event=>{if(event.state?.hmCategory&&user&&categoryNavigation)categoryNavigation(event.state.hmCategory,{push:false});else closeCategory({fromHistory:true})});
 $('categoryBack').addEventListener('click',()=>{closeCategory();const first=$('categoryChart').querySelector('[data-chart-category]');first?.focus({preventScroll:true})});
 function closeSettings(){$('settingsOverlay').classList.remove('open');closeCatalogEditor();if(catalogDirty&&user){catalogDirty=false;refresh();if($('summaryOverlay').classList.contains('open'))renderMonthlyOverview()}}
-document.querySelectorAll('.settingsOpen').forEach(button=>button.addEventListener('click',()=>{renderCatalogList();$('settingsOverlay').classList.add('open')}));
+document.querySelectorAll('.settingsOpen').forEach(button=>button.addEventListener('click',()=>{renderCatalogList();$('settingsOverlay').classList.add('open');document.querySelector('.settingsPanel').scrollTo({top:0,behavior:'instant'})}));
 $('settingsBack').addEventListener('click',closeSettings);
 function showHistory(){closeSettings();closeCategory();addPull.close();summaryPull.close()}
 $('historyTab').addEventListener('click',showHistory);
@@ -1542,20 +1544,26 @@ $('editTxAmount').addEventListener('input',()=>{const input=$('editTxAmount'),po
 for(const id of ['saveEditTx','closeEditTx'])$(id).addEventListener('pointerdown',event=>{if([$('editTxName'),$('editTxAmount')].includes(document.activeElement))event.preventDefault()});
 
 
-function applyTheme(theme){
-  const light=theme==='light';$('themeName').textContent=light?'Sáng':'Tối';document.documentElement.dataset.theme=light?'light':'dark';
+const systemTheme=matchMedia('(prefers-color-scheme: dark)');
+let themePreference='dark';
+function applyTheme(preference){
+  themePreference=['system','dark','light'].includes(preference)?preference:'dark';
+  const light=themePreference==='system'?!systemTheme.matches:themePreference==='light';
+  $('themeName').textContent=themePreference==='system'?'Theo hệ thống':light?'Sáng':'Tối';
+  $('themeSelect').value=themePreference;
+  document.documentElement.dataset.theme=light?'light':'dark';
+  document.documentElement.dataset.themePreference=themePreference;
   document.querySelector('meta[name="theme-color"]').content=light?'#f7f7f3':'#080808';
-  const label=light?'Chuyển sang giao diện tối':'Chuyển sang giao diện sáng';
-  document.querySelectorAll('.themeToggle').forEach(button=>{
-    button.setAttribute('aria-label',label);button.title=label;button.setAttribute('aria-pressed',String(light));
-    button.innerHTML=light?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8.7 8.7 0 0 1 8.6 4a8.8 8.8 0 1 0 11.4 11.4Z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>';
-  });
+}
+function saveThemePreference(preference){
+  applyTheme(preference);try{localStorage.setItem('happy_money_theme',themePreference)}catch{}
 }
 let savedTheme='dark';try{savedTheme=localStorage.getItem('happy_money_theme')||'dark'}catch{}
 applyTheme(savedTheme);
-document.querySelectorAll('.themeToggle').forEach(button=>button.addEventListener('click',()=>{
-  const theme=document.documentElement.dataset.theme==='light'?'dark':'light';applyTheme(theme);try{localStorage.setItem('happy_money_theme',theme)}catch{}
-}));
+const followSystemTheme=()=>{if(themePreference==='system')applyTheme('system')};
+if(systemTheme.addEventListener)systemTheme.addEventListener('change',followSystemTheme);
+else systemTheme.addListener(followSystemTheme);
+$('themeSelect').addEventListener('change',event=>saveThemePreference(event.target.value));
 async function init(){
   updatePrivacyButton();
   updatePasskeyUI();
