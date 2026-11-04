@@ -390,10 +390,10 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 <li>Mở <b>Phím tắt</b> → dấu <b>+</b>, đặt tên <b>Ghi chi tiêu Happy Money</b>.</li>
 <li>Thêm <b>Văn bản / Text</b>, dán mã kết nối và đặt biến là <b>Mã kết nối</b>.</li>
 <li>Thêm <b>Yêu cầu đầu vào / Ask for Input</b>: loại <b>Số / Number</b>, câu hỏi <b>Anh đã chi bao nhiêu?</b>. Đặt biến kết quả là <b>Số tiền</b>. Nhập số nguyên đồng, ví dụ 220000.</li>
-<li>Thêm <b>Lấy nội dung của URL / Get Contents of URL</b>, dán đường dẫn kết nối ở trên. Chọn <b>POST</b>; Headers: <b>Authorization</b> = <b>Bearer </b> rồi chèn biến <b>Mã kết nối</b> (có khoảng trắng sau Bearer). Request Body: <b>JSON</b>, trường văn bản <b>action</b> = <b>categories</b>.</li>
+<li>Thêm <b>Lấy nội dung của URL / Get Contents of URL</b>, dán đường dẫn kết nối ở trên. Chọn <b>POST</b>; Headers: <b>Authorization</b> = <b>Bearer </b> rồi chèn biến <b>Mã kết nối</b> (có khoảng trắng sau Bearer). Request Body: <b>JSON</b>, trường văn bản <b>action</b> = <b>categories</b>. Sau đó thêm <b>Đặt biến / Set Variable</b>, tên <b>Phản hồi danh mục</b>, giá trị là kết quả URL này.</li>
 <li>Thêm <b>Lấy giá trị từ từ điển / Get Dictionary Value</b>, khóa <b>categories</b> từ kết quả URL; rồi <b>Chọn từ danh sách / Choose from List</b>, lời nhắc <b>Chọn danh mục</b>, tắt chọn nhiều. Đặt biến kết quả là <b>Danh mục</b>.</li>
 <li>Thêm <b>Yêu cầu đầu vào / Ask for Input</b>: loại <b>Văn bản / Text</b>, câu hỏi <b>Ghi chú (có thể để trống)</b>. Đặt biến kết quả là <b>Ghi chú</b>.</li>
-<li>Thêm <b>Tạo UUID / Generate UUID</b>. Đặt biến là <b>Mã yêu cầu</b>.</li>
+<li>Thêm <b>Lấy giá trị từ từ điển / Get Dictionary Value</b>, khóa <b>request_id</b>, đầu vào là biến <b>Phản hồi danh mục</b> ở bước 4. Đặt biến kết quả là <b>Mã yêu cầu</b>.</li>
 <li>Thêm <b>Lấy nội dung của URL</b> lần hai, cùng đường dẫn và Header như bước 4. <b>POST → JSON</b> gồm: <b>action</b> (Text) = <b>expense</b>; <b>amount</b> (Number) = biến Số tiền; <b>category</b> (Text) = biến Danh mục; <b>note</b> (Text) = biến Ghi chú; <b>request_id</b> (Text) = biến Mã yêu cầu.</li>
 <li>Lấy giá trị <b>message</b> từ kết quả URL và thêm <b>Hiển thị thông báo / Show Notification</b> với giá trị đó. Chỉ thông báo “Đã lưu giao dịch.” mới là lưu thành công; nếu lỗi, giữ cùng Mã yêu cầu khi gửi lại.</li>
 <li>Chạy thử phím tắt, cho phép kết nối khi iPhone hỏi. Sau đó vào <b>Cài đặt → Trợ năng → Cảm ứng → Chạm vào mặt sau → Chạm hai lần</b>, chọn <b>Ghi chi tiêu Happy Money</b>. iPhone có thể yêu cầu mở khóa.</li>

@@ -20,7 +20,7 @@ export async function handleShortcut(req,deps){
   const connection=await deps.lookup(hash);
   if(!connection)return reply(401,{ok:false,message:'Kết nối đã hết hạn hoặc bị thu hồi.'});
   const categories=categoriesFor(await deps.metadata(connection.user_id));
-  if(input.action==='categories')return reply(200,{ok:true,categories:categories.map(item=>item.label)});
+  if(input.action==='categories')return reply(200,{ok:true,categories:categories.map(item=>item.label),request_id:crypto.randomUUID()});
   const amount=typeof input.amount==='number'?input.amount:typeof input.amount==='string'&&/^\d+$/.test(input.amount)?Number(input.amount):NaN;
   const category=categories.find(item=>item.label===input.category||item.name===input.category);
   if(!Number.isSafeInteger(amount)||amount<=0||amount>1000000000000||!category||typeof input.note!=='string'||input.note.length>500||typeof input.request_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.request_id)){

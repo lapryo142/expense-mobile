@@ -6,7 +6,7 @@ const deps={lookup:async()=>revoked?null:{user_id:'owner'},metadata:async(owner)
 const call=(body,auth='Bearer '+token)=>handleShortcut(new Request('https://fixture.test',{method:'POST',headers:{Authorization:auth},body:JSON.stringify(body)}),deps);
 assert.equal((await call({action:'categories'},'')).status,401);
 assert.equal((await call({action:'delete'})).status,400);
-const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày']);
+const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
 const expense={action:'expense',amount:220000,category:'🍜 Ăn uống',note:'Bữa trưa',request_id};
 assert.equal((await call(expense)).status,200);assert.equal(inserts.length,1);assert.equal(inserts[0].p_category,'Ăn uống');assert.equal(inserts[0].p_amount,220000);assert.equal(inserts[0].p_hash.length,64);assert.equal(JSON.stringify(inserts).includes(token),false);
 for(const change of [{amount:0},{amount:-1},{amount:1.5},{amount:'1e6'},{amount:'220.000'},{category:'Ẩn'},{category:'other owner category'},{note:'x'.repeat(501)},{request_id:'bad'}])assert.equal((await call({...expense,...change})).status,400);
