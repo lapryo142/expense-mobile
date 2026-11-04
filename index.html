@@ -143,7 +143,7 @@ html[data-theme="light"] #editTxOverlay{background:rgba(20,25,15,.35)}html[data-
 /* Tappy-style category card and add/edit sheet. */
 #settingsOverlay .settingsHeader{position:sticky;top:calc(-18px - env(safe-area-inset-top));padding-top:calc(18px + env(safe-area-inset-top));padding-bottom:16px;background:var(--bg);z-index:2;margin-top:calc(-18px - env(safe-area-inset-top));margin-bottom:25px;border-bottom:1px solid var(--line)}
 .settingsCatalog h3{font-size:12px;letter-spacing:1.4px;color:var(--muted);font-weight:750;margin:0 0 8px}.settingsCatalog .catalogHint{font-size:13px;margin:0 0 12px;line-height:1.5}#catalogStatus{min-height:0;font-size:12px;margin:0 0 10px}#catalogStatus:empty{display:none}.catalogCard{border-radius:19px;background:#111;overflow:hidden}.catalogRow{grid-template-columns:minmax(0,1fr) 38px 42px;gap:0;min-height:61px;padding:0 10px 0 12px;background:transparent;border-bottom:1px solid #292929}.catalogEdit{display:flex;align-items:center;gap:11px;text-align:left;min-width:0;padding:11px 0;border:0;background:transparent;color:var(--text);min-height:61px}.catalogEmoji{display:grid;place-items:center;flex:0 0 28px;width:28px;height:34px;border:0;background:transparent;font-size:23px}.catalogName{font-size:16px;font-weight:650;line-height:1.4}.catalogDelete{border:0;background:transparent;color:#ff453a;font-size:27px;min-height:44px;padding:0}.catalogHandle{font-size:25px;line-height:1;min-height:44px;padding:0;user-select:none;-webkit-user-select:none}.catalogAdd{width:100%;min-height:58px;border:0;background:transparent;color:var(--text);font-size:17px;font-weight:700;padding:15px}.catalogRow.dragging{background:#262626;opacity:.85}.catalogEdit:focus-visible,.catalogHandle:focus-visible,.catalogDelete:focus-visible{outline:2px solid var(--text);outline-offset:-3px;border-radius:9px}
-#catalogEditorOverlay{z-index:180;background:rgba(0,0,0,.6);height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto;align-items:flex-end;padding:0}.catalogEditorPanel{position:relative;width:100%;max-width:460px;max-height:calc(100% - max(14px,env(safe-area-inset-top)));margin:0 auto;background:#1c1c1e;border-radius:25px 25px 0 0;padding:33px 20px calc(27px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;color:var(--text);box-sizing:border-box}.catalogSheetHandle{position:absolute;top:0;left:calc(50% - 35px);width:70px;height:26px;touch-action:none}.catalogSheetHandle:after{content:'';position:absolute;left:15px;top:10px;width:40px;height:5px;border-radius:9px;background:#606064}.catalogSheetClose{position:absolute;top:24px;right:12px;width:40px;height:40px;border:0;background:transparent;color:var(--muted);font-size:25px}.catalogEditorPanel h2{font-size:24px;font-weight:800;margin:0 35px 22px 0;line-height:1.3}.catalogEditorFields{display:grid;grid-template-columns:56px minmax(0,1fr);gap:13px;margin-bottom:19px}.catalogEditorPanel label,.catalogColors legend{display:block;font-size:12px;font-weight:750;letter-spacing:1.1px;color:var(--muted);margin-bottom:9px}.catalogEditorPanel input{min-width:0;max-width:100%;box-sizing:border-box}#categoryEmojiButton{width:56px;height:51px;font-size:29px;text-align:center;color:var(--text);caret-color:var(--muted);background:#111;border:2px solid var(--text);border-radius:15px;padding:0}#newCategoryName{width:100%;height:51px;background:#111;border:0;border-radius:15px;color:var(--text);font-size:17px;font-weight:400;padding:0 15px}#newCategoryName::placeholder{color:var(--muted)}.catalogColors{border:0;padding:0;margin:0 0 21px;min-width:0}.categoryColorChoices{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px 10px;padding-top:2px}.categoryColorChoices button{background:var(--swatch);border:0;padding:0;border-radius:50%;width:100%;aspect-ratio:1;max-width:34px;justify-self:center;box-shadow:0 0 0 0 var(--text)}.categoryColorChoices button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--text)}#saveCatalogCategory{width:100%;min-height:54px;border-radius:17px;background:#fff;color:#000;font-size:18px;font-weight:800;border:0}#saveCatalogCategory:disabled{opacity:.4}.catalogEditorPanel #catalogEditorError{font-size:13px;color:#ff8e87;margin:0 0 12px}.catalogEditorPanel #emojiPicker{margin:0 0 19px}.catalogEditorPanel .emojiPresets{grid-template-columns:repeat(6,minmax(0,1fr))}.catalogEditorPanel .customEmojiLine{grid-template-columns:minmax(0,1fr) auto}.catalogEditorPanel .customEmojiLine input{width:100%;font-size:22px;background:#111}.catalogEditorPanel .customEmojiLine button{font-size:14px}.catalogEditorPanel .emojiPresets button{min-height:39px;padding:3px}
+#catalogEditorOverlay{z-index:180;background:rgba(0,0,0,.6);height:var(--entry-height,100dvh);top:var(--entry-top,0px);bottom:auto;align-items:flex-end;padding:0}.catalogEditorPanel{position:relative;width:100%;max-width:460px;max-height:calc(100% - max(14px,env(safe-area-inset-top)));margin:0 auto;background:#1c1c1e;border-radius:25px 25px 0 0;padding:33px 20px calc(27px + env(safe-area-inset-bottom));overflow-y:auto;overscroll-behavior:contain;touch-action:pan-y;color:var(--text);box-sizing:border-box}.catalogSheetHandle{position:absolute;top:0;left:calc(50% - 35px);width:70px;height:26px;touch-action:none}.catalogSheetHandle:after{content:'';position:absolute;left:15px;top:10px;width:40px;height:5px;border-radius:9px;background:#606064}.catalogSheetClose{position:absolute;top:24px;right:12px;width:40px;height:40px;border:0;background:transparent;color:var(--muted);font-size:25px}.catalogEditorPanel h2{font-size:24px;font-weight:800;margin:0 35px 22px 0;line-height:1.3}.catalogEditorFields{display:grid;grid-template-columns:56px minmax(0,1fr);gap:13px;margin-bottom:19px}.catalogEditorPanel label,.catalogColors legend{display:block;font-size:12px;font-weight:750;letter-spacing:1.1px;color:var(--muted);margin-bottom:9px}.catalogEditorPanel input{min-width:0;max-width:100%;box-sizing:border-box}#categoryEmojiButton{width:56px;height:51px;font-size:29px;text-align:center;color:var(--text);caret-color:transparent;-webkit-touch-callout:none;background:#111;border:2px solid var(--text);border-radius:15px;padding:0}#newCategoryName{width:100%;height:51px;background:#111;border:0;border-radius:15px;color:var(--text);font-size:17px;font-weight:400;padding:0 15px}#newCategoryName::placeholder{color:var(--muted)}.catalogColors{border:0;padding:0;margin:0 0 21px;min-width:0}.categoryColorChoices{display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:12px 10px;padding-top:2px}.categoryColorChoices button{background:var(--swatch);border:0;padding:0;border-radius:50%;width:100%;aspect-ratio:1;max-width:34px;justify-self:center;box-shadow:0 0 0 0 var(--text)}.categoryColorChoices button[aria-pressed="true"]{box-shadow:0 0 0 3px var(--text)}#saveCatalogCategory{width:100%;min-height:54px;border-radius:17px;background:#fff;color:#000;font-size:18px;font-weight:800;border:0}#saveCatalogCategory:disabled{opacity:.4}.catalogEditorPanel #catalogEditorError{font-size:13px;color:#ff8e87;margin:0 0 12px}.catalogEditorPanel #emojiPicker{margin:0 0 19px}.catalogEditorPanel .emojiPresets{grid-template-columns:repeat(6,minmax(0,1fr))}.catalogEditorPanel .customEmojiLine{grid-template-columns:minmax(0,1fr) auto}.catalogEditorPanel .customEmojiLine input{width:100%;font-size:22px;background:#111}.catalogEditorPanel .customEmojiLine button{font-size:14px}.catalogEditorPanel .emojiPresets button{min-height:39px;padding:3px}
 #quickExpense button.selected{border-color:var(--cat-color,#ff626b);color:var(--cat-color,#ff626b);background:color-mix(in srgb,var(--cat-color,#ff626b) 13%,var(--bg))}
 html[data-theme="light"] .catalogCard{background:#f2f2f4}html[data-theme="light"] .catalogRow{border-color:#dedee2}html[data-theme="light"] .catalogRow.dragging{background:#e3e3e8}html[data-theme="light"] .catalogEditorPanel{background:#f2f2f4}html[data-theme="light"] #categoryEmojiButton,html[data-theme="light"] #newCategoryName,html[data-theme="light"] .catalogEditorPanel .customEmojiLine input{background:#fff}html[data-theme="light"] #saveCatalogCategory{background:#171717;color:white}
 /* Pinned history total, full-height swipe actions and viewport-sized entry. */
@@ -240,7 +240,7 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 #overviewDetails .comparisonAmount.trendGood,#overviewDetails .comparisonTrend.trendGood{color:var(--stats-accent)}
 #overviewDetails .comparisonAmount.trendBad,#overviewDetails .comparisonTrend.trendBad{color:var(--red)}
 .historyFlat .txName,.historyFlat .txAmt,.searchResultName,.searchResultAmount,#categoryResult .categoryTxName,#categoryResult .categoryTxAmount{font-weight:650}
-.themeSelect{min-height:42px;max-width:58%;font:inherit;font-size:16px;padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text)}
+.themeButtons{display:flex;gap:8px}.themeIcon{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);padding:10px;touch-action:manipulation}.themeIcon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.themeIcon[aria-pressed="true"]{color:var(--text);border-color:var(--text);background:var(--bg)}.themeIcon:focus-visible{outline:2px solid var(--stats-accent);outline-offset:3px}
 .txAmt.inc,.searchResultAmount.inc{color:var(--stats-accent)}
 </style></head>
 <body>
@@ -372,7 +372,7 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 
 <div id="settingsOverlay" class="overlay" role="region" aria-label="Cài đặt">
  <div class="panel settingsPanel"><div class="settingsHeader"><button id="settingsBack" type="button" class="categoryBack" aria-label="Quay lại"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5-7 7 7 7"/></svg></button><h2>Cài đặt</h2><span></span></div>
- <div class="settingsRow"><div><strong><label for="themeSelect">Giao diện</label></strong><div id="themeName" class="statNote">Tối</div></div><select id="themeSelect" class="themeSelect" aria-label="Giao diện"><option value="system">Theo hệ thống</option><option value="dark">Tối</option><option value="light">Sáng</option></select></div>
+ <div class="settingsRow"><div><strong>Giao diện</strong><div id="themeName" class="statNote">Tối</div></div><div class="themeButtons" role="group" aria-label="Giao diện"><button id="themeManual" class="themeIcon" type="button" aria-label="Đổi giao diện"></button><button id="themeSystem" class="themeIcon" type="button" aria-label="Theo hệ thống"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button></div></div>
  <div class="settingsRow"><div><strong>Ẩn số nhạy cảm</strong><div class="statNote">Số dư và thu nhập trên thiết bị này</div></div><button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button></div>
  <div class="settingsRow"><label for="languageSelect"><strong>Ngôn ngữ</strong></label><select id="languageSelect" aria-label="Ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
  <section class="settingsCatalog"><h3>DANH MỤC</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section>
@@ -544,7 +544,7 @@ function updatePrivacyButton(){
 }
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
-function showAuth(){resetTransactionSearch();document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
+function showAuth(){overviewLedger=null;annualRows=null;monthlyDetailRequest++;resetTransactionSearch();document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
 function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
 const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
 const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
@@ -560,12 +560,19 @@ function renderMonths(){
 }
 const balanceOptions=()=>({categoryFor,isPayLater,normalizeDate:normalizedIsoDate});
 let activeBalanceLedger=null,refreshSequence=0,statusPeriod=null,savingStatus=false;
+let overviewLedger=null;
+function cachedOverviewLedger(year,month){
+ const cached=overviewLedger;
+ return cached&&cached.owner===user?.id&&cached.day===todayIso()&&cached.balances.get(year,month)?cached:null;
+}
 const periodAsOf=(year,month)=>{const now=new Date();return year===now.getFullYear()&&month===now.getMonth()+1?now.getDate():HappyBalances.lastDay(year,month)};
 async function readBalanceRows(table){
  const rows=[];for(let offset=0;;offset+=500){const {data,error}=await sb.from(table).select('*').eq('user_id',user.id).order('id',{ascending:true}).range(offset,offset+499);if(error)throw error;if(!data?.length)break;rows.push(...data);if(data.length<500)break}return [...new Map(rows.map(row=>[row.id||`${row.year}-${row.month}`,row])).values()];
 }
 async function loadBalanceLedger(year=currentYear,month=current,retry=true){
+ const owner=user?.id;
  const [rows,statuses]=await Promise.all([readBalanceRows('transactions'),readBalanceRows('monthly_status')]);
+ if(owner!==user?.id)throw new Error('Phiên đăng nhập đã thay đổi.');
  for(const status of statuses){
   if(HappyBalances.key(status.year,status.month)>HappyBalances.key(year,month))continue;
   const monthly=rows.filter(row=>row.year===status.year&&row.month===status.month),checkpoint=HappyBalances.checkpointFor(status,monthly,balanceOptions());
@@ -575,7 +582,7 @@ async function loadBalanceLedger(year=currentYear,month=current,retry=true){
   if(!data){if(retry)return loadBalanceLedger(year,month,false);throw new Error('Số dư vừa được cập nhật ở nơi khác. Anh thử lại nhé.')}
   status.balance_checkpoint=checkpoint;
  }
- const balances=HappyBalances.build(rows,statuses,{...balanceOptions(),year,month});activeBalanceLedger=balances;return {rows,statuses,balances};
+ const balances=HappyBalances.build(rows,statuses,{...balanceOptions(),year,month});activeBalanceLedger=balances;const loaded={rows,statuses,balances,owner,day:todayIso()};if(owner===user?.id)overviewLedger=loaded;return loaded;
 }
 async function refresh(){
   const sequence=++refreshSequence,year=currentYear,month=current;let loaded;
@@ -779,7 +786,7 @@ async function openStatusEdit(key){
   }catch(error){alert('Chưa tải được số dư. '+error.message)}
 }
 function openAdd(){
-  $('addOverlay').classList.add('open');$('amount').value='';$('amount').style.width='1ch';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('addOverlay').classList.remove('noteMode');updateEntryDateButtons();updateSaveAvailability();updateNoteWidth();$('amount').focus()
+  document.activeElement?.blur();$('amount').value='';$('amount').style.width='1ch';$('desc').value='';categoryManuallySelected=false;fillCategorySelect('category','Chưa phân loại','expense');setType('expense');setPaymentMethod('bank');$('date').value=todayIso();document.querySelectorAll('.quick button.selected').forEach(button=>button.classList.remove('selected'));$('entryError').textContent='';$('addOverlay').classList.remove('noteMode');updateEntryDateButtons();updateSaveAvailability();$('addOverlay').classList.add('open');document.querySelector('#addOverlay .formPanel').scrollTop=0;updateTabs();updateEntryViewport()
 }
 function setPaymentMethod(method){
   paymentMethod=method;$('payLaterToggle').setAttribute('aria-pressed',String(method==='pay_later'));
@@ -879,6 +886,7 @@ function drawAnnualBreakdown(){
 
 }
 async function renderAnnualOverview(){
+ if(overviewLedger?.owner===user?.id&&overviewLedger.day===todayIso()){annualRows=overviewLedger.rows;drawAnnualOverview();return}
  const requestedYear=annualYear;$('annualContent').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
  try{const rows=await readBalanceRows('transactions');if(overviewMode!=='year'||annualYear!==requestedYear)return;annualRows=rows;drawAnnualOverview()}catch(error){$('annualContent').textContent='Chưa tải được dữ liệu. Anh kéo xuống để thử lại.'}
 }
@@ -905,11 +913,14 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
   const currentYear=reportYear,current=reportMonth,request=++monthlyDetailRequest;
   const requestedYear=currentYear,requestedMonth=current;
   $('overviewMonth').textContent=current+' · '+currentYear;
-  $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
-  $('topSpending').innerHTML='<div class="overviewLoading">Đang tải…</div>';
-  $('categoryChart').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
+  const cached=cachedOverviewLedger(currentYear,current);
+  if(!cached){
+   $('overviewStats').innerHTML='<div class="overviewLoading">Đang tính thống kê…</div>';
+   $('topSpending').innerHTML='<div class="overviewLoading">Đang tải…</div>';
+   $('categoryChart').innerHTML='<div class="overviewLoading">Đang tải biểu đồ…</div>';
+  }
   const previous=shiftPeriod(currentYear,current,-1),previousMonth=previous.month;
-  let loaded;try{loaded=await loadBalanceLedger(requestedYear,requestedMonth)}catch(error){$('overviewStats').textContent='Chưa tải được số dư. Anh kéo xuống để thử lại.';return}
+  let loaded=cached;try{if(!loaded)loaded=await loadBalanceLedger(requestedYear,requestedMonth)}catch(error){$('overviewStats').textContent='Chưa tải được số dư. Anh kéo xuống để thử lại.';return}
   if(request!==monthlyDetailRequest||overviewMode!=='month')return;
   if(annualDrilldownMonth)annualRows=loaded.rows;
   const rows=loaded.rows.filter(row=>row.year===currentYear&&row.month===current&&!isDeletedTransaction(row)),status=loaded.statuses.find(row=>row.year===currentYear&&row.month===current),currentTotals=monthTotals(rows,status);
@@ -1463,14 +1474,14 @@ $('catalogEditorOverlay').addEventListener('keydown',event=>{
  if(event.key==='Tab'){const controls=[...document.querySelectorAll('.catalogEditorPanel button:not(:disabled),.catalogEditorPanel input:not([type="hidden"])')].filter(el=>el.getClientRects().length);const first=controls[0],last=controls.at(-1);if(event.shiftKey&&(document.activeElement===first||document.activeElement===event.currentTarget.querySelector('form'))){event.preventDefault();last?.focus()}else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first?.focus()}}
 });
 // Use an ordinary editable field so the system keyboard (including every installed emoji) is available.
-$('categoryEmojiButton').addEventListener('focus',event=>event.target.select());
+$('categoryEmojiButton').addEventListener('focus',event=>{const input=event.target;input.setSelectionRange(input.value.length,input.value.length)});
 function readCategoryEmoji(){
  const input=$('categoryEmojiButton');let value=input.value.trim();
  if(typeof Intl.Segmenter==='function'){
   const parts=[...new Intl.Segmenter(undefined,{granularity:'grapheme'}).segment(value)].map(part=>part.segment);
   if(parts.length>1&&parts.every(validEmoji))value=parts.at(-1);
  }
- if(validEmoji(value)){setDraftEmoji(value);input.select()}
+ if(validEmoji(value)){setDraftEmoji(value);input.setSelectionRange(value.length,value.length)}
  else{$('newCategoryEmoji').value='';$('catalogEditorError').textContent=value?'Anh chọn một emoji nhé.':'';updateCatalogSave()}
 }
 $('categoryEmojiButton').addEventListener('input',event=>{if(!event.isComposing)readCategoryEmoji()});
@@ -1550,7 +1561,10 @@ function applyTheme(preference){
   themePreference=['system','dark','light'].includes(preference)?preference:'dark';
   const light=themePreference==='system'?!systemTheme.matches:themePreference==='light';
   $('themeName').textContent=themePreference==='system'?'Theo hệ thống':light?'Sáng':'Tối';
-  $('themeSelect').value=themePreference;
+  $('themeSystem').setAttribute('aria-pressed',String(themePreference==='system'));
+  $('themeManual').setAttribute('aria-pressed',String(themePreference!=='system'));
+  $('themeManual').setAttribute('aria-label',light?'Chuyển sang giao diện tối':'Chuyển sang giao diện sáng');
+  $('themeManual').innerHTML=light?'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15.4A8.7 8.7 0 0 1 8.6 4a8.8 8.8 0 1 0 11.4 11.4Z"/></svg>':'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>';
   document.documentElement.dataset.theme=light?'light':'dark';
   document.documentElement.dataset.themePreference=themePreference;
   document.querySelector('meta[name="theme-color"]').content=light?'#f7f7f3':'#080808';
@@ -1563,7 +1577,8 @@ applyTheme(savedTheme);
 const followSystemTheme=()=>{if(themePreference==='system')applyTheme('system')};
 if(systemTheme.addEventListener)systemTheme.addEventListener('change',followSystemTheme);
 else systemTheme.addListener(followSystemTheme);
-$('themeSelect').addEventListener('change',event=>saveThemePreference(event.target.value));
+$('themeManual').addEventListener('click',()=>saveThemePreference(document.documentElement.dataset.theme==='light'?'dark':'light'));
+$('themeSystem').addEventListener('click',()=>saveThemePreference('system'));
 async function init(){
   updatePrivacyButton();
   updatePasskeyUI();

@@ -65,7 +65,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
  for(const engine of [chromium,webkit]){
   let browser;try{browser=await engine.launch({headless:true,...(engine===chromium&&process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})})}catch(e){if(engine===webkit){console.log('WebKit unavailable:',e.message.split('\n')[0]);continue}throw e}
   const {page,errors}=await boot(browser);
-  await page.locator('#addBtn').click();assert.equal(await page.locator('#amount').evaluate(e=>e===document.activeElement),true);
+  await page.locator('#addBtn').click();assert.equal(await page.locator('#amount').evaluate(e=>e===document.activeElement),false);
   assert.equal(await page.locator('#saveTx').isVisible(),true);assert.equal(await page.locator('#saveTx').isEnabled(),false);
   for(const key of ['5','0','0','0','0'])await page.locator(`#keypad [data-key="${key}"]`).click();await page.locator('#keypad [data-key="backspace"]').click();await page.locator('#keypad [data-key="0"]').click();assert.equal(await page.locator('#amount').inputValue(),'50.000');
   await page.locator('#quickExpense [data-category="Ăn uống"]').click();await page.locator('#yesterdayBtn').click();
@@ -111,7 +111,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
 
    const chip=await p.locator('#quickExpense button').first().boundingBox();assert.ok(chip.height>=44);
    if(engine===chromium){const cdp=await p.context().newCDPSession(p);const box=await p.locator('#quickExpense').boundingBox();const y=box.y+box.height/2;await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x:300,y}]});for(const x of [260,210,160,110,60])await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x,y}]});await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});await p.waitForFunction(()=>document.getElementById('quickExpense').scrollLeft>30);assert.equal(await p.locator('#addOverlay').isVisible(),true)}
-   await p.locator('#historyTab').click();await p.locator('#app .settingsOpen').click();await p.locator('#themeSelect').selectOption('light');await p.locator('#settingsBack').click();await p.locator('#addBtn').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');
+   await p.locator('#historyTab').click();await p.locator('#app .settingsOpen').click();await p.locator('#themeManual').click();await p.locator('#settingsBack').click();await p.locator('#addBtn').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');
    await p.screenshot({path:'/tmp/happy-light-entry.png'});await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.equal(await p.locator('.comparisonTable').isVisible(),true);assert.match(await p.locator('#overviewDetails').innerText(),/cùng kỳ/);await p.screenshot({path:'/tmp/happy-light-stats.png'});
    // Capture the requested detail area in both themes and phone widths for visual review.
    for(const theme of ['dark','light'])for(const width of [320,390]){
@@ -121,7 +121,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    }
    await p.setViewportSize({width:390,height:844});await p.evaluate(()=>document.documentElement.dataset.theme='light');
 
-   await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');assert.equal(await p.locator('meta[name="theme-color"]').getAttribute('content'),'#f7f7f3');await p.locator('#app .settingsOpen').click();await p.locator('#themeSelect').selectOption('dark');assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'dark');await p.close();
+   await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');assert.equal(await p.locator('meta[name="theme-color"]').getAttribute('content'),'#f7f7f3');await p.locator('#app .settingsOpen').click();await p.locator('#themeManual').click();assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'dark');await p.close();
   }
   // Revised capture: dedicated dates, pay-later toggle, note keyboard mode, haptics and category pages.
   {
@@ -147,7 +147,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const {page:p,errors:e}=await boot(browser);
    assert.equal(await p.locator('#refreshBtn').isVisible(),false);assert.equal(await p.locator('#app .themeToggle').count(),0);
    assert.equal(await p.evaluate(()=>Boolean(document.getElementById('list').compareDocumentPosition(document.querySelector('.historySummary'))&Node.DOCUMENT_POSITION_FOLLOWING)),true);
-   await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay').waitFor({state:'visible'});assert.equal(await p.locator('#exportBtn').isVisible(),true);assert.equal(await p.locator('#enablePasskeyBtn').isVisible(),true);assert.equal(await p.locator('#privacyBtn').isVisible(),true);assert.equal(await p.locator('#themeSelect').isVisible(),true);await p.screenshot({path:'/tmp/happy-settings.png'});await p.locator('#settingsBack').click();
+   await p.locator('#app .settingsOpen').click();await p.locator('#settingsOverlay').waitFor({state:'visible'});assert.equal(await p.locator('#exportBtn').isVisible(),true);assert.equal(await p.locator('#enablePasskeyBtn').isVisible(),true);assert.equal(await p.locator('#privacyBtn').isVisible(),true);assert.equal(await p.locator('#themeManual').isVisible(),true);await p.screenshot({path:'/tmp/happy-settings.png'});await p.locator('#settingsBack').click();
    await p.locator('#addBtn').click();await p.locator('#amount').fill('100000');await p.locator('#quickExpense [data-category="Ăn uống"]').click();await p.locator('#desc').fill('Gửi Ba');assert.equal(await p.locator('#keypad').isVisible(),false);assert.equal(await p.locator('#amount').isVisible(),true);assert.equal(await p.locator('#quickExpense').isVisible(),true);assert.equal(await p.locator('#todayBtn').isVisible(),true);assert.equal(await p.locator('#desc').evaluate(e=>getComputedStyle(e).borderRadius),'0px');assert.equal(await p.locator('#desc').evaluate(e=>getComputedStyle(e).backgroundColor),'rgba(0, 0, 0, 0)');await p.setViewportSize({width:390,height:430});await p.screenshot({path:'/tmp/happy-inline-note.png'});await p.locator('#amount').focus();await p.setViewportSize({width:390,height:844});await p.locator('#statsTab').click();
    await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.equal(await p.locator('#closeSummary').isVisible(),false);assert.equal(await p.locator('#summaryOverlay #exportBtn').count(),0);assert.ok(await p.locator('.paceSummary').evaluate(e=>e.getBoundingClientRect().height)<70);await p.locator('#summaryOverlay .settingsOpen').click();await p.locator('#settingsBack').click();
    await p.locator('[data-chart-category="Tennis"]').click();assert.equal(await p.locator('#categoryPageTitle').innerText(),'Tennis');assert.equal((await p.locator('#categoryResult').innerText()).includes('so sánh'),false);assert.equal(await p.locator('#bottom').isVisible(),false);
@@ -162,7 +162,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.locator('#app .settingsOpen').click();await p.locator('.catalogRow').first().waitFor({state:'visible'});const initial=await p.locator('.catalogName').allTextContents();assert.equal(initial.length,11);
    await p.locator('#addCategoryBtn').click();assert.equal(await p.locator('#saveCatalogCategory').isEnabled(),false);await p.locator('#newCategoryName').fill('Cà phê');await p.locator('#categoryEmojiButton').fill('☕');await p.locator('#categoryColorChoices [data-color="#48c6bc"]').click();await p.screenshot({path:'/tmp/happy-add-category.png'});await p.locator('#saveCatalogCategory').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');
    let record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));const custom=record.items.find(x=>x.name==='Cà phê');assert.ok(custom?.id);assert.equal(record.items.length,12);
-   await p.locator(`[data-edit-id="${custom.id}"]`).click();for(const emoji of ['👨‍👩‍👧‍👦','👩🏽‍💻','🇻🇳','1️⃣','🦦']){await p.locator('#categoryEmojiButton').fill(emoji);assert.equal(await p.locator('#newCategoryEmoji').inputValue(),emoji);assert.equal(await p.locator('#saveCatalogCategory').isEnabled(),true)}await p.locator('#categoryEmojiButton').fill('🦦🌈');assert.equal(await p.locator('#categoryEmojiButton').inputValue(),'🌈');await p.locator('#categoryEmojiButton').focus();assert.equal(await p.locator('#categoryEmojiButton').evaluate(el=>el.selectionEnd-el.selectionStart),2);await p.screenshot({path:'/tmp/happy-edit-category.png'});await p.locator('#saveCatalogCategory').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');
+   await p.locator(`[data-edit-id="${custom.id}"]`).click();for(const emoji of ['👨‍👩‍👧‍👦','👩🏽‍💻','🇻🇳','1️⃣','🦦']){await p.locator('#categoryEmojiButton').fill(emoji);assert.equal(await p.locator('#newCategoryEmoji').inputValue(),emoji);assert.equal(await p.locator('#saveCatalogCategory').isEnabled(),true)}await p.locator('#categoryEmojiButton').fill('🦦🌈');assert.equal(await p.locator('#categoryEmojiButton').inputValue(),'🌈');await p.locator('#categoryEmojiButton').focus();assert.equal(await p.locator('#categoryEmojiButton').evaluate(el=>el.selectionEnd-el.selectionStart),0);await p.screenshot({path:'/tmp/happy-edit-category.png'});await p.locator('#saveCatalogCategory').click();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');
    await p.locator(`[data-drag-id="${custom.id}"]`).press('ArrowUp');await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));assert.equal(record.items.at(-2).name,'Cà phê');assert.equal(record.items.at(-2).emoji,'🌈');
    await p.locator('.settingsPanel').evaluate(el=>el.scrollTop=0);const firstName=record.items[0].name;const handle=await p.locator('[data-drag-id="default-0"]').boundingBox(),third=await p.locator('.catalogRow').nth(2).boundingBox();await p.mouse.move(handle.x+handle.width/2,handle.y+handle.height/2);await p.mouse.down();await p.mouse.move(handle.x+handle.width/2,third.y+third.height-3,{steps:6});await p.mouse.up();await p.waitForFunction(()=>document.getElementById('catalogStatus').textContent==='Đã lưu danh mục.');record=await p.evaluate(()=>JSON.parse(localStorage.getItem('happy_money_category_catalog_fixture')));assert.equal(record.items[2].name,firstName);
    const order=record.items.map(x=>x.name);await p.screenshot({path:'/tmp/happy-category-manager.png'});await p.locator('#settingsBack').click();await p.reload();await p.locator('#app').waitFor({state:'visible'});
@@ -173,22 +173,44 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const swipe=async(selector)=>{await p.locator(selector).evaluate(target=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:5,clientY:280})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:145,clientY:285})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))})};
    await p.locator('#summaryOverlay .settingsOpen').click();assert.equal(await p.locator('#catalogList').isVisible(),true);await swipe('.settingsPanel');await p.locator('#settingsOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);assert.equal(await p.locator('#app').evaluate(el=>getComputedStyle(el).visibility),'hidden');assert.deepEqual(e,[]);await p.close();
   }
+  // Switching tabs uses the loaded ledger without another network read or loading placeholders.
+  {
+   const {page:p,errors:e}=await boot(browser);await p.waitForFunction(()=>document.getElementById('historyTotal').textContent.includes('300.000'));
+   const reads=await p.evaluate(()=>fixture.reads.length);await p.evaluate(()=>fixture.fail=true);
+   for(let i=0;i<3;i++){
+    await p.locator('#statsTab').click();assert.match(await p.locator('#overviewStats').innerText(),/300.000/);
+    assert.equal(await p.locator('#overviewStats .overviewLoading').count(),0);
+    await p.locator('[data-overview-mode="year"]').click();assert.match(await p.locator('.annualTotal strong').innerText(),/370.000/);
+    await p.locator('[data-overview-mode="month"]').click();
+    await p.locator('#addBtn').click();
+    assert.equal(await p.locator('#summaryOverlay').isVisible(),false);
+    assert.equal(await p.locator('#addOverlay').isVisible(),true);
+    const before=await p.locator('#saveTx').boundingBox();await p.waitForTimeout(220);const after=await p.locator('#saveTx').boundingBox();
+    assert.equal(Math.round(before.y),Math.round(after.y));assert.equal(await p.locator('#addOverlay .formPanel').evaluate(el=>el.scrollTop),0);
+    await p.locator('#historyTab').click();
+   }
+   assert.equal(await p.evaluate(()=>fixture.reads.length),reads);
+   await p.evaluate(async()=>{fixture.fail=false;fixture.rows.push({id:'cache-new',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'New expense',expense:12000,income:0,source:'app'});await refresh()});
+   await p.locator('#statsTab').click();assert.match(await p.locator('#overviewStats').innerText(),/312.000/);
+   await p.clock.setFixedTime(new Date('2026-10-29T10:00:00+07:00'));const oldReads=await p.evaluate(()=>fixture.reads.length);await p.evaluate(()=>renderMonthlyOverview());assert.ok(await p.evaluate(()=>fixture.reads.length)>oldReads);
+   assert.deepEqual(e,[]);await p.close();
+  }
   // Follow device appearance live and after reload; explicit modes stay fixed.
   {
    const {page:p,errors:e}=await boot(browser);await p.emulateMedia({colorScheme:'light'});
-   await p.locator('#app .settingsOpen').click();await p.locator('#themeSelect').selectOption('system');
+   await p.locator('#app .settingsOpen').click();await p.locator('#themeSystem').click();
    assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'light');
    await p.emulateMedia({colorScheme:'dark'});await p.waitForFunction(()=>document.documentElement.dataset.theme==='dark');
    assert.equal(await p.evaluate(()=>localStorage.getItem('happy_money_theme')),'system');
    await p.reload();await p.locator('#app').waitFor({state:'visible'});assert.equal(await p.evaluate(()=>document.documentElement.dataset.themePreference),'system');
    await p.emulateMedia({colorScheme:'light'});await p.waitForFunction(()=>document.documentElement.dataset.theme==='light');
-   await p.locator('#app .settingsOpen').click();assert.equal(await p.locator('#themeSelect').inputValue(),'system');
-   await p.locator('#themeSelect').selectOption('dark');await p.emulateMedia({colorScheme:'dark'});await p.emulateMedia({colorScheme:'light'});
+   await p.locator('#app .settingsOpen').click();assert.equal(await p.locator('#themeSystem').getAttribute('aria-pressed'),'true');
+   await p.locator('#themeManual').click();await p.emulateMedia({colorScheme:'dark'});await p.emulateMedia({colorScheme:'light'});
    assert.equal(await p.evaluate(()=>document.documentElement.dataset.theme),'dark');
    await p.locator('.settingsPanel').evaluate(el=>el.scrollTop=600);assert.ok(await p.locator('.settingsPanel').evaluate(el=>el.scrollTop)>0);
    await p.locator('#settingsBack').click();await p.locator('#app .settingsOpen').click();assert.equal(await p.locator('.settingsPanel').evaluate(el=>el.scrollTop),0);
    await p.locator('#settingsBack').click();await p.locator('#statsTab').click();await p.locator('#summaryOverlay .settingsOpen').click();assert.equal(await p.locator('.settingsPanel').evaluate(el=>el.scrollTop),0);
-   await p.locator('#themeSelect').selectOption('system');await p.screenshot({path:'/tmp/happy-system-theme.png'});await p.locator('#settingsBack').click();await p.locator('#historyTab').click();
+   await p.locator('#themeSystem').click();await p.screenshot({path:'/tmp/happy-system-theme.png'});await p.locator('#settingsBack').click();await p.locator('#historyTab').click();
    for(const theme of ['light','dark']){
     await p.evaluate(theme=>applyTheme(theme),theme);
     assert.equal(await p.locator('.txAmt.inc').first().evaluate(el=>getComputedStyle(el).color),await p.locator('#historyTotal').evaluate(el=>getComputedStyle(el).color));
@@ -219,7 +241,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.locator('.tx[data-tx-id="2"]').click();assert.equal(await p.locator('#editTxCategory').inputValue(),'Thể thao');assert.equal(await p.locator('#editCategoryChips [data-edit-category="Thể thao"]').count(),1);await p.locator('#closeEditTx').click();
    // Native-keyboard-sized viewport and both themes keep the sheet inside the screen.
    await openSettings();await p.locator('#addCategoryBtn').click();await p.locator('#newCategoryName').fill('Thử bố cục');await p.locator('#categoryEmojiButton').fill('abc');assert.equal(await p.locator('#saveCatalogCategory').isEnabled(),false);assert.match(await p.locator('#catalogEditorError').innerText(),/emoji/);await p.locator('#categoryEmojiButton').fill('🍔');await p.locator('#newCategoryName').focus();await p.setViewportSize({width:320,height:430});await p.locator('#saveCatalogCategory').scrollIntoViewIfNeeded();assert.equal(await p.locator('.catalogEditorPanel').evaluate(el=>el.scrollWidth<=el.clientWidth),true);assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:'/tmp/happy-category-keyboard.png'});await p.keyboard.press('Escape');
-   await p.setViewportSize({width:390,height:844});await p.locator('#themeSelect').selectOption('light');await p.locator('#addCategoryBtn').click();await p.screenshot({path:'/tmp/happy-category-light.png'});await p.keyboard.press('Escape');assert.deepEqual(e,[]);await p.close();
+   await p.setViewportSize({width:390,height:844});await p.locator('#themeManual').click();await p.locator('#addCategoryBtn').click();await p.screenshot({path:'/tmp/happy-category-light.png'});await p.keyboard.press('Escape');assert.deepEqual(e,[]);await p.close();
   }
   // Long-distance drag scrolls the Settings list; fallback edits/removals remain usable.
   {
@@ -312,7 +334,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   // Centered note/caret, compact keyboard controls, safe-area space and settings order.
   {
    const {page:p,errors:e}=await boot(browser);await p.locator('#app .settingsOpen').click();
-   const order=await p.locator('.settingsPanel').evaluate(el=>[el.querySelector('#themeSelect').closest('.settingsRow'),el.querySelector('#privacyBtn').closest('.settingsRow'),el.querySelector('.settingsCatalog')].map(el=>el.getBoundingClientRect().top));assert.ok(order[0]<order[1]&&order[1]<order[2]);await p.screenshot({path:'/tmp/happy-settings-preferences-first.png'});await p.locator('#settingsBack').click();
+   const order=await p.locator('.settingsPanel').evaluate(el=>[el.querySelector('#themeManual').closest('.settingsRow'),el.querySelector('#privacyBtn').closest('.settingsRow'),el.querySelector('.settingsCatalog')].map(el=>el.getBoundingClientRect().top));assert.ok(order[0]<order[1]&&order[1]<order[2]);await p.screenshot({path:'/tmp/happy-settings-preferences-first.png'});await p.locator('#settingsBack').click();
    await p.locator('#addBtn').click();const toggle=await p.locator('#addOverlay .toggle').boundingBox(),panel=await p.locator('#addOverlay .formPanel').boundingBox();assert.ok(Math.abs(toggle.x+toggle.width/2-panel.x-panel.width/2)<=1);
    const payment=await p.locator('#paymentField').boundingBox(),keypad=await p.locator('#keypad').boundingBox(),note=await p.locator('.noteField').boundingBox();assert.ok(payment.y+payment.height<=keypad.y);assert.ok(Math.abs(payment.x+payment.width-keypad.x-keypad.width)<=1);assert.ok(keypad.y-note.y-note.height<=45);
    await p.locator('#desc').focus();const centered=async()=>{const input=await p.locator('#desc').boundingBox(),field=await p.locator('.noteField').boundingBox();assert.ok(Math.abs(input.x+input.width/2-field.x-field.width/2)<=1)};await centered();assert.equal(await p.locator('#desc').evaluate(el=>el.selectionStart),0);assert.equal(await p.locator('#desc').evaluate(el=>el.tagName),'INPUT');assert.equal(await p.locator('#desc').inputValue(),'');await p.screenshot({path:'/tmp/happy-note-centered-empty.png'});
@@ -402,7 +424,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    for(const theme of ['dark','light']){
     await p.evaluate(theme=>document.documentElement.dataset.theme=theme,theme);const accent=await p.locator('.paceSummary strong').evaluate(el=>getComputedStyle(el).color);assert.equal(await p.locator('.comparisonAmount.trendGood').first().evaluate(el=>getComputedStyle(el).color),accent);const bad=await p.locator('.comparisonAmount.trendBad').first().evaluate(el=>getComputedStyle(el).color);assert.notEqual(bad,accent);await p.locator('#overviewDetails').evaluate(el=>{const panel=el.closest('.summaryPanel');panel.scrollTop+=el.getBoundingClientRect().top-panel.getBoundingClientRect().top-16});await p.screenshot({path:`/tmp/happy-privacy-comparison-${theme}.png`});
    }
-   await p.evaluate(async()=>{fixture.rows=[{id:'equal-now',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-10',description:'Expense',expense:100000,income:0,source:'app'},{id:'equal-before',user_id:'fixture',year:2026,month:9,txn_date:'2026-09-10',description:'Expense',expense:100000,income:0,source:'app'}];await renderMonthlyOverview()});assert.equal(await p.locator('.comparisonTrend').innerText(),'Chi không đổi');assert.equal(await p.locator('.comparisonTrend').evaluate(el=>el.classList.contains('trendGood')||el.classList.contains('trendBad')),false);assert.deepEqual(e,[]);await p.close();
+   await p.evaluate(async()=>{fixture.rows=[{id:'equal-now',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-10',description:'Expense',expense:100000,income:0,source:'app'},{id:'equal-before',user_id:'fixture',year:2026,month:9,txn_date:'2026-09-10',description:'Expense',expense:100000,income:0,source:'app'}];await refresh();await renderMonthlyOverview()});assert.equal(await p.locator('.comparisonTrend').innerText(),'Chi không đổi');assert.equal(await p.locator('.comparisonTrend').evaluate(el=>el.classList.contains('trendGood')||el.classList.contains('trendBad')),false);assert.deepEqual(e,[]);await p.close();
   }
 
   // Editing selects the amount immediately, and delegates native keyboards to OS inputs.
