@@ -17,7 +17,7 @@ jobs:
       - name: Install pinned browser test runtime
         run: |
           npm install --prefix /tmp/happy-ci --no-audit --no-fund playwright@1.62.1
-          /tmp/happy-ci/node_modules/.bin/playwright install --with-deps chromium
+          /tmp/happy-ci/node_modules/.bin/playwright install --with-deps chromium webkit
       - name: Check JavaScript syntax
         run: |
           node -e "new Function(require('fs').readFileSync('index.html','utf8').split('<script>')[1].split('</script>')[0])"
@@ -27,6 +27,7 @@ jobs:
       - name: Test balances and browser flows against fixtures
         env:
           NODE_PATH: /tmp/happy-ci/node_modules
+          REQUIRE_WEBKIT: '1'
         run: |
           node tests/shortcut-api.test.mjs
           node tests/balance-engine.cjs

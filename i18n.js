@@ -53,6 +53,7 @@
   if(result)result=result.replace(/Các giao dịch đã ghi vẫn được giữ nguyên\.$/,'Recorded transactions will be kept.').replace(/Anh kiểm tra kết nối rồi thử lại nhé\.$/,'Please check your connection and try again.');
   return result?raw.replace(text,result):raw;
  }
+ Object.assign(dictionary,{'Nhập bằng Back Tap / Siri':'Back Tap / Siri entry','Đang bật':'On','Đã tắt':'Off','Đang cập nhật…':'Updating…','Chưa có kết nối hoạt động':'No active connection','Chưa đổi được. Anh thử lại nhé.':'Could not update. Please try again.','—: chưa đủ dữ liệu tại ngày so sánh.':'—: insufficient data for the comparison date.','Chưa đủ dữ liệu để so sánh cùng kỳ':'Insufficient data for a same-period comparison','Chưa kiểm tra được kết nối. Mở lại Cài đặt để thử lại.':'Could not check the connection. Reopen Settings to retry.'});
  const doc=root.document;
  let apply=()=>{};
  function setLanguage(value){

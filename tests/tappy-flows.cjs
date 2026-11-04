@@ -65,7 +65,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
 }
 (async()=>{
  for(const engine of [chromium,webkit]){
-  let browser;try{browser=await engine.launch({headless:true,...(engine===chromium&&process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})})}catch(e){if(engine===webkit){console.log('WebKit unavailable:',e.message.split('\n')[0]);continue}throw e}
+  let browser;try{browser=await engine.launch({headless:true,...(engine===chromium&&process.env.CHROMIUM_EXECUTABLE_PATH?{executablePath:process.env.CHROMIUM_EXECUTABLE_PATH,args:['--no-sandbox','--disable-dev-shm-usage']}: {})})}catch(e){if(engine===webkit&&!process.env.REQUIRE_WEBKIT){console.log('WebKit unavailable:',e.message.split('\n')[0]);continue}throw e}
   const {page,errors}=await boot(browser);
   await page.locator('#addBtn').click();assert.equal(await page.locator('#amount').evaluate(e=>e===document.activeElement),false);
   assert.equal(await page.locator('#saveTx').isVisible(),true);assert.equal(await page.locator('#saveTx').isEnabled(),false);
@@ -442,6 +442,27 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.evaluate(()=>fixture.rows=Array.from({length:80},(_,i)=>({id:'scroll-'+i,user_id:'fixture',year:2025,month:3,txn_date:'2025-03-10',description:'Giày dép '+i,expense:1000,income:0,source:'sheet'})));await p.locator('#searchOpen').click();await p.locator('#transactionSearch').fill('giay');await p.waitForFunction(()=>document.getElementById('searchCount').textContent==='80');assert.equal(await p.locator('#searchResults').evaluate(el=>el.scrollHeight>el.clientHeight),true);const resultBox=await p.locator('#searchResults').boundingBox();await p.mouse.move(resultBox.x+resultBox.width/2,resultBox.y+Math.min(80,resultBox.height/2));await p.mouse.wheel(0,350);await p.waitForFunction(()=>document.getElementById('searchResults').scrollTop>0);assert.equal(await p.evaluate(()=>window.scrollY),0);assert.deepEqual(e,[]);await p.close();
   }
 
+
+  // Imported rows without a day belong in full-month totals, but cannot establish same-day spending.
+  {
+   const {page:p,errors:e}=await boot(browser);
+   await p.evaluate(async()=>{
+    fixture.rows.push({id:'archive-undated',user_id:'fixture',year:2025,month:3,txn_date:null,description:'Giày cũ',expense:1000000,income:0,source:'sheet'});
+    fixture.rows.push({id:'archive-dated',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-03',description:'Giày mới',expense:200000,income:0,source:'sheet'});
+    currentYear=2025;current=3;await refresh();
+   });
+   assert.match(await p.locator('#historyTotal').innerText(),/1.200.000/);
+   assert.match(await p.locator('#dailyExpense').innerText(),/38.710/);
+   await p.locator('#statsTab').click();await p.waitForFunction(()=>document.getElementById('overviewStats').textContent.includes('1.200.000'));
+   assert.match(await p.locator('#categoryChart').innerText(),/1.200.000/);
+   await p.locator('#categoryChart [data-chart-category="Mua sắm"]').click();
+   assert.equal(await p.locator('.categoryTxRow').count(),2);assert.match(await p.locator('.categoryTxList').innerText(),/Chưa rõ ngày/);
+   await p.locator('#categoryBack').click();
+   const partial=await p.evaluate(()=>expenseThroughDay(fixture.rows.filter(r=>r.month===3&&r.year===2025),4));
+   assert.equal(partial,null);
+   await p.screenshot({path:'/tmp/happy-archive-full-month.png'});
+   assert.deepEqual(e,[]);await p.close();
+  }
 
   // Privacy masks income and balances, while spending and pay-later remain readable.
   {
