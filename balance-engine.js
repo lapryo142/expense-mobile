@@ -90,7 +90,8 @@
       // unlogged spending between those dates is not present in transaction effects.
       const comparisonAt = day => {
         const value = at(day);
-        const known = kind => !checkpoint[kind] || checkpoint[kind].date <= value.date;
+        const unknownMovements = value.date < ctx.end && ctx.active.some(row => !ctx.opening(row) && !ctx.normalizeDate(row.txn_date,row.month) && (number(row.income) || number(row.expense)));
+        const known = kind => !unknownMovements && (!checkpoint[kind] || checkpoint[kind].date <= value.date);
         const remaining = known('book') ? value.remaining : null;
         const bank = known('bank') ? value.bank : null;
         return {...value, remaining, bank, foodDifference: remaining === null || bank === null ? null : remaining - bank};

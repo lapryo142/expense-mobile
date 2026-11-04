@@ -60,3 +60,8 @@ for(const key of ['opening','bank','savings','remaining'])assert.equal(withArchi
  assert.equal(zeroComparison.comparisonAt(4).bank,0);
  assert.equal(zeroComparison.comparisonAt(3).bank,null);
  console.log('Comparison dates: PASS — no invented historical balances, same-day zero preserved');
+
+const undatedComparison=B.build([{id:'unknown-day',year:2026,month:3,txn_date:null,expense:205000,income:0,description:'Expense'}],[{year:2026,month:3,start_balance:1000000}],{year:2026,month:3}).get(2026,3);
+assert.equal(undatedComparison.comparisonAt(4).remaining,null);
+assert.equal(undatedComparison.comparisonAt(4).bank,null);
+assert.equal(undatedComparison.comparisonAt(31).remaining,795000);
