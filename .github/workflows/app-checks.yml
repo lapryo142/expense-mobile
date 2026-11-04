@@ -28,6 +28,7 @@ jobs:
         env:
           NODE_PATH: /tmp/happy-ci/node_modules
         run: |
+          node tests/shortcut-api.test.mjs
           node tests/balance-engine.cjs
           node tests/annual-i18n.cjs
           node tests/tappy-flows.cjs

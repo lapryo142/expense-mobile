@@ -5,7 +5,7 @@ const fs=require('node:fs');
 const assert=require('node:assert/strict');
 const html=fs.readFileSync(require('node:path').join(__dirname,'../index.html'),'utf8');
 const mock=String.raw`
-window.fixture={inserts:[],reads:[],statuses:[],fail:false,delay:0,session:true,rows:[
+window.fixture={connections:[],inserts:[],reads:[],statuses:[],fail:false,delay:0,session:true,rows:[
 {id:'1',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'Cà phê',expense:50000,income:0,source:'app'},
 {id:'2',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-21',description:'Tennis',expense:250000,income:0,source:'app'},
 {id:'3',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-21',description:'Lương',expense:0,income:24000000,source:'app'},
@@ -32,8 +32,10 @@ window.supabase={createClient:()=>({auth:{
 },from(table){
  const state={table,filters:[],start:0,end:Infinity,op:'select',one:false};
  const query={select(){return query},eq(k,v){state.filters.push(r=>r[k]===v);return query},gte(k,v){state.filters.push(r=>r[k]>=v);return query},lt(k,v){state.filters.push(r=>r[k]<v);return query},order(){return query},range(a,b){state.start=a;state.end=b;return query},maybeSingle(){state.one=true;return query},single(){state.one=true;return query},
- insert(payload){state.op='insert';state.payload=payload;return query},update(payload){state.op='update';state.payload=payload;return query},
+ upsert(payload){state.op='upsert';state.payload=payload;return query},delete(){state.op='delete';return query},insert(payload){state.op='insert';state.payload=payload;return query},update(payload){state.op='update';state.payload=payload;return query},
  then(resolve,reject){return (async()=>{
+ if(table==='shortcut_connections'&&state.op==='upsert'){if(fixture.fail)return {error:{message:'Fixture network error'}};fixture.connections=[structuredClone(state.payload)];return {data:null,error:null}}
+ if(table==='shortcut_connections'&&state.op==='delete'){fixture.connections=fixture.connections.filter(row=>!state.filters.every(fn=>fn(row)));return {data:null,error:null}}
  if(state.op==='insert'){
   fixture.inserts.push(state.payload);await new Promise(r=>setTimeout(r,fixture.delay));
   if(fixture.fail)return {data:null,error:{message:'Fixture network error'}};
@@ -42,7 +44,7 @@ window.supabase={createClient:()=>({auth:{
  if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=fixture.rows.filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
  if(fixture.failRead&&table==='transactions')return {data:null,error:{message:'Fixture read error'}};
  fixture.reads.push({table,start:state.start,end:state.end});
- let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
+ let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:table==='shortcut_connections'?fixture.connections:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
  return {data:state.one?(rows[0]||null):rows,error:null};
  })().then(resolve,reject)}
  };return query;
@@ -172,6 +174,21 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    await p.locator('#statsTab').click();await p.waitForFunction(()=>document.querySelector('.comparisonTable'));assert.match(await p.locator('#overviewStats').innerText(),/Chi trung bình/);assert.equal((await p.locator('#overviewStats').innerText()).includes('CÒN LẠI THEO SỔ'),false);assert.equal(await p.locator('.payLaterOverview').evaluate(el=>el.classList.contains('wide')),false);
    const swipe=async(selector)=>{await p.locator(selector).evaluate(target=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:5,clientY:280})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:145,clientY:285})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))})};
    await p.locator('#summaryOverlay .settingsOpen').click();assert.equal(await p.locator('#catalogList').isVisible(),true);await swipe('.settingsPanel');await p.locator('#settingsOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);assert.equal(await p.locator('#app').evaluate(el=>getComputedStyle(el).visibility),'hidden');assert.deepEqual(e,[]);await p.close();
+  }
+  // Back Tap setup stores only a hash, rotates/revokes connections, and clears the one-time key on close.
+  {
+   const {page:p,errors:e}=await boot(browser);await p.locator('#app .settingsOpen').click();await p.locator('#backTapSetup>summary').click();
+   await p.locator('#createShortcutConnection').click();await p.locator('#shortcutSecretBox').waitFor({state:'visible'});
+   const token=await p.locator('#shortcutSecret').inputValue();assert.match(token,/^hm_[a-f0-9]{64}$/);
+   const stored=await p.evaluate(()=>fixture.connections[0]);assert.equal(stored.user_id,'fixture');assert.equal(stored.token_hash.length,64);assert.equal(JSON.stringify(stored).includes(token),false);
+   await p.locator('#createShortcutConnection').click();await p.waitForFunction(old=>document.getElementById('shortcutSecret').value&&document.getElementById('shortcutSecret').value!==old,token);
+   await p.screenshot({path:'/tmp/happy-back-tap-setup.png',mask:[p.locator('#shortcutSecret')]});
+   await p.locator('#settingsBack').click();assert.equal(await p.locator('#shortcutSecret').inputValue(),'');
+   await p.locator('#app .settingsOpen').click();await p.locator('#revokeShortcutConnection').click();await p.waitForFunction(()=>fixture.connections.length===0);
+   await p.locator('#settingsBack').click();await p.evaluate(async()=>{fixture.rows.push({id:'shortcut-entry',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'Shortcuts note',category_name:'Tennis',expense:220000,income:0,source:'app'});await refresh()});
+   assert.equal(await p.locator('[data-tx-id="shortcut-entry"] .txCategory').innerText(),'Tennis');
+   await p.locator('#statsTab').click();assert.match(await p.locator('#overviewStats').innerText(),/520.000/);
+   assert.deepEqual(e,[]);await p.close();
   }
   // Every entry to Statistics starts at the selected ledger month, even after viewing another year's month.
   {
