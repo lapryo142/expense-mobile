@@ -173,6 +173,16 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const swipe=async(selector)=>{await p.locator(selector).evaluate(target=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:5,clientY:280})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:145,clientY:285})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))})};
    await p.locator('#summaryOverlay .settingsOpen').click();assert.equal(await p.locator('#catalogList').isVisible(),true);await swipe('.settingsPanel');await p.locator('#settingsOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);assert.equal(await p.locator('#app').evaluate(el=>getComputedStyle(el).visibility),'hidden');assert.deepEqual(e,[]);await p.close();
   }
+  // Every entry to Statistics starts at the selected ledger month, even after viewing another year's month.
+  {
+   const {page:p,errors:e}=await boot(browser);await p.waitForFunction(()=>document.getElementById('historyTotal').textContent.includes('300.000'));
+   await p.locator('#statsTab').click();await p.locator('[data-overview-mode="year"]').click();await p.locator('#historyTab').click();await p.locator('#statsTab').click();
+   assert.equal(await p.locator('[data-overview-mode="month"]').getAttribute('aria-pressed'),'true');assert.match(await p.locator('#overviewMonth').innerText(),/10 · 2026/);
+   await p.locator('[data-overview-mode="year"]').click();await p.locator('.annualMonthList [data-month-detail="9"]').click();assert.match(await p.locator('#overviewMonth').innerText(),/9 · 2026/);
+   await p.locator('#addBtn').click();await p.locator('#statsTab').click();assert.match(await p.locator('#overviewMonth').innerText(),/10 · 2026/);
+   assert.equal(await p.locator('#annualMonthBack').isVisible(),false);assert.equal(await p.locator('.summaryPanel').evaluate(el=>el.scrollTop),0);
+   assert.deepEqual(e,[]);await p.close();
+  }
   // Switching tabs uses the loaded ledger without another network read or loading placeholders.
   {
    const {page:p,errors:e}=await boot(browser);await p.waitForFunction(()=>document.getElementById('historyTotal').textContent.includes('300.000'));

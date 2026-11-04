@@ -1312,7 +1312,7 @@ $('saveTx').addEventListener('click',async()=>{
     else $('entryError').textContent='Chưa lưu được giao dịch. '+(error.message||'Anh kiểm tra kết nối rồi thử lại nhé.');
   }finally{savingTransaction=false;updateSaveAvailability();button.textContent='Lưu giao dịch'}
 });
-$('summaryBtn').addEventListener('click',async()=>{closeCategory();addPull.close();summaryPull.reset();$('summaryOverlay').classList.add('open');await renderMonthlyOverview()});
+$('summaryBtn').addEventListener('click',async()=>{closeCategory();addPull.close();summaryPull.reset();overviewMode='month';annualDrilldownMonth=null;annualSelectedMonth=null;$('summaryOverlay').classList.add('open');document.querySelector('#summaryOverlay .summaryPanel').scrollTop=0;await renderMonthlyOverview()});
 $('closeSummary').addEventListener('click',()=>summaryPull.close());
 $('summaryOverlay').addEventListener('click',e=>{if(e.target===$('summaryOverlay'))summaryPull.close()});
 bindStatusLongPress();
