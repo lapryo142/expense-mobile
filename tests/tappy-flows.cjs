@@ -41,7 +41,7 @@ window.supabase={createClient:()=>({auth:{
   if(fixture.fail)return {data:null,error:{message:'Fixture network error'}};
   const row={created_at:new Date().toISOString(),...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
  }
- if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=(table==='shortcut_connections'?fixture.connections:fixture.rows).filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
+ if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=(table==='shortcut_connections'?fixture.connections:fixture.rows).filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:state.one?(matched[0]||null):matched,error:null}}
  if(fixture.failRead&&table==='transactions')return {data:null,error:{message:'Fixture read error'}};
  fixture.reads.push({table,start:state.start,end:state.end});
  let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:table==='shortcut_connections'?fixture.connections:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
@@ -188,7 +188,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'false');
    await p.evaluate(()=>fixture.fail=true);await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>document.getElementById('shortcutStatus').textContent.includes('Chưa đổi'));
    assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'false');
-   await p.evaluate(()=>fixture.fail=false);await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>fixture.connections[0].enabled===true);
+   await p.evaluate(()=>fixture.fail=false);await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>fixture.connections[0].enabled===true);assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'true');
    await p.locator('#shortcutToggle').scrollIntoViewIfNeeded();await p.screenshot({path:'/tmp/happy-back-tap-setup.png'});
    await p.locator('#settingsBack').click();await p.evaluate(async()=>{fixture.rows.push({id:'shortcut-entry',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'Shortcuts note',category_name:'Tennis',expense:220000,income:0,source:'app'});await refresh()});
    assert.equal(await p.locator('[data-tx-id="shortcut-entry"] .txCategory').innerText(),'Tennis');
