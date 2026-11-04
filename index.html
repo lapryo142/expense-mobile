@@ -234,11 +234,11 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 @media(max-width:360px){#overviewDetails .comparisonAmount{font-size:11px}#overviewDetails .comparisonName{font-size:12px}#overviewDetails .comparisonHead{font-size:11px}#overviewDetails .comparisonArrow{font-size:11px;margin-right:0}#topSpending .topAmount{font-size:14px}}
 
 /* Reserve the projection accent for forecasts and favorable comparisons. */
-:root{--stats-accent:#4bc8bd}html[data-theme="light"]{--stats-accent:#19746b}
+:root{--stats-accent:#4bc8bd;--stats-negative:#e47b86}html[data-theme="light"]{--stats-accent:#19746b;--stats-negative:#ad3f50}
 #bankHero,#historyTotal{color:var(--stats-accent)}
 #summaryOverlay .paceSummary strong{color:var(--stats-accent)}
 #overviewDetails .comparisonAmount.trendGood,#overviewDetails .comparisonTrend.trendGood{color:var(--stats-accent)}
-#overviewDetails .comparisonAmount.trendBad,#overviewDetails .comparisonTrend.trendBad{color:var(--red)}
+#overviewDetails .comparisonAmount.trendBad,#overviewDetails .comparisonTrend.trendBad{color:var(--stats-negative)}
 .historyFlat .txName,.historyFlat .txAmt,.searchResultName,.searchResultAmount,#categoryResult .categoryTxName,#categoryResult .categoryTxAmount{font-weight:650}
 .themeButtons{display:flex;gap:8px}.themeIcon{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);padding:10px;touch-action:manipulation}.themeIcon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.themeIcon[aria-pressed="true"]{color:var(--text);border-color:var(--text);background:var(--bg)}.themeIcon:focus-visible{outline:2px solid var(--stats-accent);outline-offset:3px}
 .txAmt.inc,.searchResultAmount.inc{color:var(--stats-accent)}
