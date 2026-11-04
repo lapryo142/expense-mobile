@@ -9,8 +9,10 @@ const reply=(status,data)=>new Response(JSON.stringify(data),{status,headers});
 export async function handleShortcut(req,deps){
  if(req.method==='OPTIONS')return new Response(null,{status:204,headers});
  if(req.method!=='POST')return reply(405,{ok:false,message:'Chỉ hỗ trợ POST.'});
- const token=(req.headers.get('authorization')||'').replace(/^Bearer /,'');
- if(!/^hm_[0-9a-f]{64}$/.test(token))return reply(401,{ok:false,message:'Kết nối không hợp lệ. Tạo lại trong Happy Money.'});
+ const authorization=(req.headers.get('authorization')||'').trim();
+ const match=authorization.match(/^Bearer[ \t]+(.+)$/i);
+ const token=match?match[1].trim():'';
+ if(!/^hm_[0-9a-f]{64}$/.test(token))return reply(401,{ok:false,message:'Mã kết nối gửi lên chưa đúng. Kiểm tra Header Authorization và sao chép nguyên mã từ Happy Money.'});
  try{
   if(Number(req.headers.get('content-length')||0)>4096)return reply(413,{ok:false,message:'Yêu cầu quá dài.'});
   const raw=await req.text();if(raw.length>4096)return reply(413,{ok:false,message:'Yêu cầu quá dài.'});

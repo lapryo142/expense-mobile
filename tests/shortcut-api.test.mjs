@@ -6,6 +6,12 @@ const deps={lookup:async()=>revoked?null:{user_id:'owner'},metadata:async(owner)
 const call=(body,auth='Bearer '+token)=>handleShortcut(new Request('https://fixture.test',{method:'POST',headers:{Authorization:auth},body:JSON.stringify(body)}),deps);
 assert.equal((await call({action:'categories'},'')).status,401);
 assert.equal((await call({action:'delete'})).status,400);
+for(const prefix of ['Bearer  ','bearer ','BEARER\t','  Bearer   ']){
+ assert.equal((await call({action:'categories'},prefix+token+'  ')).status,200);
+}
+for(const malformed of ['Basic '+token,token,'Bearer hm_short','Bearer '+token.slice(0,20)+' '+token.slice(20)]){
+ assert.equal((await call({action:'categories'},malformed)).status,401);
+}
 const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
 const expense={action:'expense',amount:220000,category:'🍜 Ăn uống',note:'Bữa trưa',request_id};
 assert.equal((await call(expense)).status,200);assert.equal(inserts.length,1);assert.equal(inserts[0].p_category,'Ăn uống');assert.equal(inserts[0].p_amount,220000);assert.equal(inserts[0].p_hash.length,64);assert.equal(JSON.stringify(inserts).includes(token),false);
