@@ -447,8 +447,8 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   {
    const {page:p,errors:e}=await boot(browser);
    await p.evaluate(async()=>{
-    fixture.rows.push({id:'archive-undated',user_id:'fixture',year:2025,month:3,txn_date:null,description:'Giày cũ',expense:1000000,income:0,source:'sheet'});
-    fixture.rows.push({id:'archive-dated',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-03',description:'Giày mới',expense:200000,income:0,source:'sheet'});
+    fixture.rows.push({id:'archive-undated',user_id:'fixture',year:2025,month:3,txn_date:null,description:'Giày dép cũ',expense:1000000,income:0,source:'sheet'});
+    fixture.rows.push({id:'archive-dated',user_id:'fixture',year:2025,month:3,txn_date:'2025-03-03',description:'Giày dép mới',expense:200000,income:0,source:'sheet'});
     currentYear=2025;current=3;await refresh();
    });
    assert.match(await p.locator('#historyTotal').innerText(),/1.200.000/);
