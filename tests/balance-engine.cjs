@@ -40,3 +40,23 @@ assert.equal(calc([{...archivedRows[0],expense:150}],[archived],2025,12).closing
 const nextYear={year:2026,month:1,start_balance:500,bank_balance:400,bank_balance_date:'2026-01-31',savings_balance:2500,savings_balance_date:'2026-01-31'};
 const onlyNewYear=calc([],[nextYear],2026,1).closing,withArchive=calc(archivedRows,[archived,nextYear],2026,1).closing;
 for(const key of ['opening','bank','savings','remaining'])assert.equal(withArchive[key],onlyNewYear[key]);
+
+ // Comparison views must not back-project later reconciliation gaps into earlier dates.
+ const comparisonRows=[
+ {id:'sale',year:2026,month:10,txn_date:'2026-10-04',income:2000000,expense:0,description:'Sale'},
+ {id:'early',year:2026,month:10,txn_date:'2026-10-02',income:0,expense:1302000,description:'Early expense'},
+ {id:'late',year:2026,month:10,txn_date:'2026-10-20',income:0,expense:2234000,description:'Late expense'}];
+ const comparisonStatus={year:2026,month:10,start_balance:3225000,bank_balance:1686000,bank_balance_date:'2026-10-29',balance_checkpoint:{bank:{date:'2026-10-29',amount:1686000,basis:1564000}}};
+ const comparison=B.build(comparisonRows,[comparisonStatus],{year:2026,month:10}).get(2026,10);
+ assert.equal(comparison.at(4).bank,820000);
+ assert.equal(comparison.comparisonAt(4).remaining,3923000);
+ assert.equal(comparison.comparisonAt(4).bank,null);
+ assert.equal(comparison.comparisonAt(4).foodDifference,null);
+ assert.equal(comparison.comparisonAt(29).bank,comparison.at(29).bank);
+ assert.equal(comparison.comparisonAt(31).foodDifference,comparison.closing.remaining-comparison.closing.bank);
+ const archiveComparison=B.build(archivedRows,[archived],{year:2025,month:12}).get(2025,12);
+ assert.equal(archiveComparison.comparisonAt(4).remaining,null);
+ const zeroComparison=B.build([],[{year:2026,month:11,bank_balance:0,bank_balance_date:'2026-11-04'}],{year:2026,month:11}).get(2026,11);
+ assert.equal(zeroComparison.comparisonAt(4).bank,0);
+ assert.equal(zeroComparison.comparisonAt(3).bank,null);
+ console.log('Comparison dates: PASS — no invented historical balances, same-day zero preserved');

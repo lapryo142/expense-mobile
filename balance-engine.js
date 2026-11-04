@@ -86,9 +86,18 @@
           checkpoint, status
         };
       };
+      // A later reconciliation cannot establish an earlier real-world bank balance:
+      // unlogged spending between those dates is not present in transaction effects.
+      const comparisonAt = day => {
+        const value = at(day);
+        const known = kind => !checkpoint[kind] || checkpoint[kind].date <= value.date;
+        const remaining = known('book') ? value.remaining : null;
+        const bank = known('bank') ? value.bank : null;
+        return {...value, remaining, bank, foodDifference: remaining === null || bank === null ? null : remaining - bank};
+      };
       const closing = at(lastDay(year, month));
       previousBank = closing.bank; previousSavings = closing.savings;
-      months.set(period, {year, month, status, rows: monthlyRows, checkpoint, at, closing, effects: ctx.effects});
+      months.set(period, {year, month, status, rows: monthlyRows, checkpoint, at, comparisonAt, closing, effects: ctx.effects});
     }
     return {months, get: (year, month) => months.get(key(year, month))};
   }
