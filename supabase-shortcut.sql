@@ -4,6 +4,7 @@ create table public.shortcut_connections (
  created_at timestamptz not null default now(),
  expires_at timestamptz not null default now()+interval '1 year',
  window_started_at timestamptz not null default now(),
+ enabled boolean not null default true,
  window_count integer not null default 0 check(window_count>=0)
 );
 alter table public.shortcut_connections enable row level security;
@@ -30,6 +31,7 @@ declare conn public.shortcut_connections%rowtype; existing public.transactions%r
 begin
  select * into conn from public.shortcut_connections where token_hash=p_hash and expires_at>now() for update;
  if not found then raise exception 'Invalid shortcut connection' using errcode='28000';end if;
+ if not conn.enabled then raise exception 'Shortcut paused' using errcode='28001';end if;
  if p_amount is null or p_amount<=0 or p_amount>1000000000000 or p_category is null or length(p_category)>64 or length(trim(p_category))=0 or length(coalesce(p_note,''))>500 then
   raise exception 'Invalid expense' using errcode='22023';
  end if;

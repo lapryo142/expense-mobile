@@ -21,6 +21,7 @@ export async function handleShortcut(req,deps){
   const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),byte=>byte.toString(16).padStart(2,'0')).join('');
   const connection=await deps.lookup(hash);
   if(!connection)return reply(401,{ok:false,message:'Kết nối đã hết hạn hoặc bị thu hồi.'});
+  if(connection.enabled===false)return reply(403,{ok:false,message:'Back Tap đang tắt. Bật lại trong Cài đặt Happy Money.'});
   const categories=categoriesFor(await deps.metadata(connection.user_id));
   if(input.action==='categories')return reply(200,{ok:true,categories:categories.map(item=>item.label),request_id:crypto.randomUUID()});
   const amount=typeof input.amount==='number'?input.amount:typeof input.amount==='string'&&/^\d+$/.test(input.amount)?Number(input.amount):NaN;
@@ -31,6 +32,7 @@ export async function handleShortcut(req,deps){
   const result=await deps.insert({p_hash:hash,p_request_id:input.request_id,p_amount:amount,p_category:category.name,p_note:input.note.trim()});
   return reply(200,result);
  }catch(error){
+  if(error?.code==='28001')return reply(403,{ok:false,message:'Back Tap đang tắt. Bật lại trong Cài đặt Happy Money.'});
   if(error?.code==='28000')return reply(401,{ok:false,message:'Kết nối đã bị thu hồi.'});
   if(error?.code==='54000')return reply(429,{ok:false,message:'Đã nhập quá nhiều lần. Anh thử lại sau.'});
   if(error?.code==='55000')return reply(409,{ok:false,message:'Mở Happy Money và làm mới số dư trước khi dùng Back Tap.'});

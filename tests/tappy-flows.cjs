@@ -41,7 +41,7 @@ window.supabase={createClient:()=>({auth:{
   if(fixture.fail)return {data:null,error:{message:'Fixture network error'}};
   const row={created_at:new Date().toISOString(),...state.payload,id:String(100+fixture.inserts.length)};fixture.rows.push(row);return {data:row,error:null};
  }
- if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=fixture.rows.filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
+ if(state.op==='update'){if(fixture.fail)return {data:null,error:{message:'Fixture update error'}};const matched=(table==='shortcut_connections'?fixture.connections:fixture.rows).filter(row=>state.filters.every(fn=>fn(row)));matched.forEach(row=>Object.assign(row,state.payload));return {data:matched,error:null}}
  if(fixture.failRead&&table==='transactions')return {data:null,error:{message:'Fixture read error'}};
  fixture.reads.push({table,start:state.start,end:state.end});
  let rows=table==='transactions'?fixture.rows:table==='monthly_status'?fixture.statuses:table==='shortcut_connections'?fixture.connections:[];rows=rows.filter(r=>state.filters.every(fn=>fn(r))).slice(state.start,state.end===Infinity?undefined:state.end+1);
@@ -175,16 +175,21 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    const swipe=async(selector)=>{await p.locator(selector).evaluate(target=>{target.dispatchEvent(new TouchEvent('touchstart',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:5,clientY:280})]}));target.dispatchEvent(new TouchEvent('touchmove',{bubbles:true,cancelable:true,touches:[new Touch({identifier:1,target,clientX:145,clientY:285})]}));target.dispatchEvent(new TouchEvent('touchend',{bubbles:true,touches:[]}))})};
    await p.locator('#summaryOverlay .settingsOpen').click();assert.equal(await p.locator('#catalogList').isVisible(),true);await swipe('.settingsPanel');await p.locator('#settingsOverlay').waitFor({state:'hidden'});assert.equal(await p.locator('#summaryOverlay').isVisible(),true);assert.equal(await p.locator('#app').evaluate(el=>getComputedStyle(el).visibility),'hidden');assert.deepEqual(e,[]);await p.close();
   }
-  // Back Tap setup stores only a hash, rotates/revokes connections, and clears the one-time key on close.
+  // Pausing preserves the connection; reopening and failed updates show the saved state.
   {
-   const {page:p,errors:e}=await boot(browser);await p.locator('#app .settingsOpen').click();await p.locator('#backTapSetup>summary').click();
-   await p.locator('#createShortcutConnection').click();await p.locator('#shortcutSecretBox').waitFor({state:'visible'});
-   const token=await p.locator('#shortcutSecret').inputValue();assert.match(token,/^hm_[a-f0-9]{64}$/);
-   const stored=await p.evaluate(()=>fixture.connections[0]);assert.equal(stored.user_id,'fixture');assert.equal(stored.token_hash.length,64);assert.equal(JSON.stringify(stored).includes(token),false);
-   await p.locator('#createShortcutConnection').click();await p.waitForFunction(old=>document.getElementById('shortcutSecret').value&&document.getElementById('shortcutSecret').value!==old,token);
-   await p.screenshot({path:'/tmp/happy-back-tap-setup.png',mask:[p.locator('#shortcutSecret')]});
-   await p.locator('#settingsBack').click();assert.equal(await p.locator('#shortcutSecret').inputValue(),'');
-   await p.locator('#app .settingsOpen').click();await p.locator('#revokeShortcutConnection').click();await p.waitForFunction(()=>fixture.connections.length===0);
+   const {page:p,errors:e}=await boot(browser);
+   await p.evaluate(()=>fixture.connections=[{user_id:'fixture',token_hash:'a'.repeat(64),expires_at:'2027-10-28T00:00:00Z',enabled:true}]);
+   await p.locator('#app .settingsOpen').click();await p.waitForFunction(()=>document.getElementById('shortcutToggle').getAttribute('aria-checked')==='true');
+   await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>fixture.connections[0].enabled===false);
+   assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'false');
+   assert.equal(await p.evaluate(()=>fixture.connections[0].token_hash),'a'.repeat(64));
+   await p.locator('#settingsBack').click();await p.locator('#app .settingsOpen').click();await p.locator('#shortcutToggle').waitFor({state:'visible'});
+   await p.waitForFunction(()=>!document.getElementById('shortcutToggle').disabled);
+   assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'false');
+   await p.evaluate(()=>fixture.fail=true);await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>document.getElementById('shortcutStatus').textContent.includes('Chưa đổi'));
+   assert.equal(await p.locator('#shortcutToggle').getAttribute('aria-checked'),'false');
+   await p.evaluate(()=>fixture.fail=false);await p.locator('#shortcutToggle').click();await p.waitForFunction(()=>fixture.connections[0].enabled===true);
+   await p.locator('#shortcutToggle').scrollIntoViewIfNeeded();await p.screenshot({path:'/tmp/happy-back-tap-setup.png'});
    await p.locator('#settingsBack').click();await p.evaluate(async()=>{fixture.rows.push({id:'shortcut-entry',user_id:'fixture',year:2026,month:10,txn_date:'2026-10-20',description:'Shortcuts note',category_name:'Tennis',expense:220000,income:0,source:'app'});await refresh()});
    assert.equal(await p.locator('[data-tx-id="shortcut-entry"] .txCategory').innerText(),'Tennis');
    await p.locator('#statsTab').click();assert.match(await p.locator('#overviewStats').innerText(),/520.000/);

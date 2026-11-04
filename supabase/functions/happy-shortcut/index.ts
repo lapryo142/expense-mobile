@@ -6,7 +6,7 @@ async function request(path:string,init:RequestInit={}){
  const data=await response.json();if(!response.ok)throw data;return data;
 }
 Deno.serve((req:Request)=>handleShortcut(req,{
- lookup:async(hash:string)=>(await request('/rest/v1/shortcut_connections?select=user_id&token_hash=eq.'+hash+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())))[0],
+ lookup:async(hash:string)=>(await request('/rest/v1/shortcut_connections?select=user_id,enabled&token_hash=eq.'+hash+'&expires_at=gt.'+encodeURIComponent(new Date().toISOString())))[0],
  metadata:async(owner:string)=>(await request('/auth/v1/admin/users/'+owner)).user_metadata||{},
  insert:async(payload:unknown)=>request('/rest/v1/rpc/log_shortcut_expense',{method:'POST',body:JSON.stringify(payload)})
 }));

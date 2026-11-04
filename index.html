@@ -243,6 +243,22 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
 .themeButtons{display:flex;gap:8px}.themeIcon{width:42px;height:42px;display:grid;place-items:center;border:1px solid var(--line);border-radius:50%;background:transparent;color:var(--muted);padding:10px;touch-action:manipulation}.themeIcon svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}.themeIcon[aria-pressed="true"]{color:var(--text);border-color:var(--text);background:var(--bg)}.themeIcon:focus-visible{outline:2px solid var(--stats-accent);outline-offset:3px}
 .txAmt.inc,.searchResultAmount.inc{color:var(--stats-accent)}
 .shortcutHelp{overflow-wrap:anywhere}.shortcutHelp code{display:block;white-space:normal;user-select:text;-webkit-user-select:text}.shortcutHelp button{font:inherit;font-size:14px;min-height:42px;border:1px solid var(--line);border-radius:11px;padding:9px 12px;background:var(--card);color:var(--text);margin:4px 0}.shortcutActions{display:flex;flex-wrap:wrap;gap:8px}.shortcutSteps{padding-left:20px;line-height:1.6}.shortcutSteps li{margin-bottom:16px}.shortcutHelp input{width:100%;min-width:0;font-size:16px;padding:10px;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:10px}.shortcutHelp label{display:block;font-size:13px;margin-bottom:6px}
+
+/* Settings share the app type scale and neutral text colors. */
+#settingsOverlay .settingsPanel{font-family:inherit}
+#settingsOverlay button,#settingsOverlay select{font-family:inherit}
+#settingsOverlay .settingsRow strong,#settingsOverlay .catalogName,#settingsOverlay .catalogAdd,#settingsOverlay .categoryToggle,#settingsOverlay .exportOptions select{font-size:16px;font-weight:650;line-height:1.4}
+#settingsOverlay .categoryToggle,#settingsOverlay .exportOptions select{color:var(--text)}
+#settingsOverlay .statNote,#settingsOverlay .catalogHint,#settingsOverlay .dangerlink{font-size:var(--font-support);font-weight:400;line-height:1.4}
+#settingsOverlay .statNote,#settingsOverlay .catalogHint{color:var(--muted)}
+#settingsOverlay .sectionTitle,#settingsOverlay .settingsCatalog h3{font-size:var(--font-support);font-weight:650;letter-spacing:.8px}
+.backTapRow{margin-top:24px}
+.settingsSwitch{flex:0 0 46px;width:46px;height:28px;border:0;border-radius:99px;background:var(--line);padding:3px;transition:background .15s}
+.settingsSwitch span{display:block;width:22px;height:22px;border-radius:50%;background:#fff;box-shadow:0 1px 3px #0003;transition:transform .15s}
+.settingsSwitch[aria-checked="true"]{background:var(--stats-accent)}
+.settingsSwitch[aria-checked="true"] span{transform:translateX(18px)}
+.settingsSwitch:disabled{opacity:.5}
+.settingsSwitch:focus-visible{outline:2px solid var(--stats-accent);outline-offset:4px}
 </style></head>
 <body>
 <div id="pullRefresh" class="pullRefresh">↓ Kéo xuống để làm mới</div>
@@ -380,26 +396,7 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
     <div class="overviewSection"><div class="sectionTitle">XUẤT DỮ LIỆU</div><div class="exportOptions"><select id="exportRange" aria-label="Khoảng thời gian xuất CSV"><option value="selected">Tháng đang xem</option><option value="year">Năm đang xem</option><option value="all">Toàn bộ dữ liệu</option></select></div><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải giao dịch và danh mục trong khoảng đã chọn dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Chi tiêu.</div></div>
     <div class="overviewSection"><button id="enablePasskeyBtn" class="categoryToggle" type="button"><span>Bật đăng nhập bằng Face ID / passkey</span><span>›</span></button><div id="passkeySetupStatus" class="statNote" role="status" style="margin-top:7px">Dùng Face ID khi cần đăng nhập lại.</div></div>
-    <details id="backTapSetup" class="shortcutHelp"><summary>Nhập bằng Back Tap / Siri</summary>
-<p>Gõ mặt lưng → số tiền → danh mục → ghi chú → lưu, không mở Happy Money. Khoản chi dùng ngày hôm nay và trừ trong ngân hàng.</p>
-<div class="shortcutActions"><button id="createShortcutConnection" type="button">Tạo mã kết nối</button><button id="revokeShortcutConnection" type="button">Thu hồi kết nối</button></div>
-<p id="shortcutStatus" role="status" aria-live="polite"></p>
-<div id="shortcutSecretBox" class="hidden"><label for="shortcutSecret">Mã dùng trong Phím tắt (hiển thị một lần)</label><input id="shortcutSecret" type="text" readonly autocomplete="off" spellcheck="false" data-user-content><button id="copyShortcutSecret" type="button">Sao chép mã</button><p>Tạo lại mã sẽ ngắt phím tắt cũ. Kết nối có hiệu lực một năm hoặc đến khi anh thu hồi.</p></div>
-<p>Đường dẫn kết nối:</p><code id="shortcutEndpoint" data-user-content></code><button id="copyShortcutEndpoint" type="button">Sao chép đường dẫn</button>
-<ol class="shortcutSteps">
-<li>Mở <b>Phím tắt</b> → dấu <b>+</b>, đặt tên <b>Ghi chi tiêu Happy Money</b>.</li>
-<li>Thêm <b>Văn bản / Text</b>, dán mã kết nối và đặt biến là <b>Mã kết nối</b>.</li>
-<li>Thêm <b>Yêu cầu đầu vào / Ask for Input</b>: loại <b>Số / Number</b>, câu hỏi <b>Anh đã chi bao nhiêu?</b>. Đặt biến kết quả là <b>Số tiền</b>. Nhập số nguyên đồng, ví dụ 220000.</li>
-<li>Thêm <b>Lấy nội dung của URL / Get Contents of URL</b>, dán đường dẫn kết nối ở trên. Chọn <b>POST</b>; Headers: <b>Authorization</b> = <b>Bearer </b> rồi chèn biến <b>Mã kết nối</b> (có khoảng trắng sau Bearer). Request Body: <b>JSON</b>, trường văn bản <b>action</b> = <b>categories</b>. Sau đó thêm <b>Đặt biến / Set Variable</b>, tên <b>Phản hồi danh mục</b>, giá trị là kết quả URL này.</li>
-<li>Thêm <b>Lấy giá trị từ từ điển / Get Dictionary Value</b>, khóa <b>categories</b> từ kết quả URL; rồi <b>Chọn từ danh sách / Choose from List</b>, lời nhắc <b>Chọn danh mục</b>, tắt chọn nhiều. Đặt biến kết quả là <b>Danh mục</b>.</li>
-<li>Thêm <b>Yêu cầu đầu vào / Ask for Input</b>: loại <b>Văn bản / Text</b>, câu hỏi <b>Ghi chú (có thể để trống)</b>. Đặt biến kết quả là <b>Ghi chú</b>.</li>
-<li>Thêm <b>Lấy giá trị từ từ điển / Get Dictionary Value</b>, khóa <b>request_id</b>, đầu vào là biến <b>Phản hồi danh mục</b> ở bước 4. Đặt biến kết quả là <b>Mã yêu cầu</b>.</li>
-<li>Thêm <b>Lấy nội dung của URL</b> lần hai, cùng đường dẫn và Header như bước 4. <b>POST → JSON</b> gồm: <b>action</b> (Text) = <b>expense</b>; <b>amount</b> (Number) = biến Số tiền; <b>category</b> (Text) = biến Danh mục; <b>note</b> (Text) = biến Ghi chú; <b>request_id</b> (Text) = biến Mã yêu cầu.</li>
-<li>Lấy giá trị <b>message</b> từ kết quả URL và thêm <b>Hiển thị thông báo / Show Notification</b> với giá trị đó. Chỉ thông báo “Đã lưu giao dịch.” mới là lưu thành công; nếu lỗi, giữ cùng Mã yêu cầu khi gửi lại.</li>
-<li>Chạy thử phím tắt, cho phép kết nối khi iPhone hỏi. Sau đó vào <b>Cài đặt → Trợ năng → Cảm ứng → Chạm vào mặt sau → Chạm hai lần</b>, chọn <b>Ghi chi tiêu Happy Money</b>. iPhone có thể yêu cầu mở khóa.</li>
-</ol>
-<details><summary>Chỉ mở màn Nhập trong app</summary><p>Phím tắt dùng tác vụ Mở URL với đường dẫn:</p><code id="quickEntryUrl"></code></details>
-</details>
+    <div id="backTapSetup" class="settingsRow backTapRow"><div><strong>Nhập bằng Back Tap / Siri</strong><div id="shortcutStatus" class="statNote" role="status" aria-live="polite"></div></div><button id="shortcutToggle" type="button" class="settingsSwitch" role="switch" aria-label="Nhập bằng Back Tap / Siri" aria-checked="false" disabled><span></span></button></div>
     <button id="logoutBtn" class="dangerlink">Đăng xuất</button>
  </div>
 </div>
@@ -564,7 +561,7 @@ function updatePrivacyButton(){
 }
 
 function rememberEmail(){if($('email').value.trim())localStorage.setItem('expense_login_email',$('email').value.trim())}
-function showAuth(){clearShortcutSecret();overviewLedger=null;annualRows=null;monthlyDetailRequest++;resetTransactionSearch();document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
+function showAuth(){overviewLedger=null;annualRows=null;monthlyDetailRequest++;resetTransactionSearch();document.querySelectorAll('.overlay.open').forEach(el=>el.classList.remove('open'));$('auth').classList.remove('hidden');$('app').classList.add('hidden');$('bottom').classList.add('hidden')}
 function showApp(){$('auth').classList.add('hidden');$('app').classList.remove('hidden');$('bottom').classList.remove('hidden')}
 const periodId=(year,month)=>year+'-'+String(month).padStart(2,'0');
 const shiftPeriod=(year,month,delta)=>{const date=new Date(year,month-1+delta,1);return {year:date.getFullYear(),month:date.getMonth()+1}};
@@ -1184,7 +1181,7 @@ function closeCategory({fromHistory=false}={}){
 }
 window.addEventListener('popstate',event=>{if(event.state?.hmCategory&&user&&categoryNavigation)categoryNavigation(event.state.hmCategory,{push:false});else closeCategory({fromHistory:true})});
 $('categoryBack').addEventListener('click',()=>{closeCategory();const first=$('categoryChart').querySelector('[data-chart-category]');first?.focus({preventScroll:true})});
-function closeSettings(){clearShortcutSecret();$('settingsOverlay').classList.remove('open');closeCatalogEditor();if(catalogDirty&&user){catalogDirty=false;refresh();if($('summaryOverlay').classList.contains('open'))renderMonthlyOverview()}}
+function closeSettings(){$('settingsOverlay').classList.remove('open');closeCatalogEditor();if(catalogDirty&&user){catalogDirty=false;refresh();if($('summaryOverlay').classList.contains('open'))renderMonthlyOverview()}}
 document.querySelectorAll('.settingsOpen').forEach(button=>button.addEventListener('click',()=>{renderCatalogList();readShortcutConnection();$('settingsOverlay').classList.add('open');document.querySelector('.settingsPanel').scrollTo({top:0,behavior:'instant'})}));
 $('settingsBack').addEventListener('click',closeSettings);
 function showHistory(){closeSettings();closeCategory();addPull.close();summaryPull.close()}
@@ -1288,7 +1285,7 @@ bindAmountKeypad('keypad','amount');
 $('todayBtn').addEventListener('click',()=>{$('date').value=todayIso();updateEntryDateButtons()});
 $('yesterdayBtn').addEventListener('click',()=>{$('date').value=yesterdayIso();updateEntryDateButtons()});
 $('date').addEventListener('change',updateEntryDateButtons);
-$('quickEntryUrl').textContent=location.origin+'/?action=add';
+
 document.querySelectorAll('#quickExpense button').forEach(button=>{button.innerHTML=`<span class="categoryEmoji" aria-hidden="true">${CATEGORY_ICONS[button.dataset.category]||''}</span><span class="categoryText">${escapeHtml(button.dataset.category)}</span>`});
 document.querySelectorAll('#addOverlay .quick').forEach(rail=>{
   let origin=null,moved=false,suppressClickUntil=0;
@@ -1600,39 +1597,32 @@ else systemTheme.addListener(followSystemTheme);
 $('themeManual').addEventListener('click',()=>saveThemePreference(document.documentElement.dataset.theme==='light'?'dark':'light'));
 $('themeSystem').addEventListener('click',()=>saveThemePreference('system'));
 
-const shortcutEndpoint=SUPABASE_URL+'/functions/v1/happy-shortcut';
-$('shortcutEndpoint').textContent=shortcutEndpoint;
-function clearShortcutSecret(){$('shortcutSecret').value='';$('shortcutSecretBox').classList.add('hidden')}
+let shortcutConnection=null,shortcutLoading=false;
+function renderShortcutConnection(){
+ const button=$('shortcutToggle'),available=shortcutConnection&&new Date(shortcutConnection.expires_at)>new Date();
+ button.disabled=shortcutLoading||!available;
+ button.setAttribute('aria-checked',String(Boolean(available&&shortcutConnection.enabled!==false)));
+ $('shortcutStatus').textContent=shortcutLoading?'Đang cập nhật…':available?(shortcutConnection.enabled!==false?'Đang bật':'Đã tắt'):'Chưa có kết nối hoạt động';
+}
 async function readShortcutConnection(){
  const owner=user?.id;if(!owner)return;
- try{const {data,error}=await sb.from('shortcut_connections').select('expires_at').eq('user_id',owner).maybeSingle();if(owner!==user?.id)return;
- $('shortcutStatus').textContent=error?'Chưa kiểm tra được kết nối.':data&&new Date(data.expires_at)>new Date()?'Đã có kết nối Back Tap.':'Chưa có kết nối Back Tap.';}catch{if(owner===user?.id)$('shortcutStatus').textContent='Chưa kiểm tra được kết nối.'}
-}
-$('createShortcutConnection').addEventListener('click',async()=>{
- const owner=user?.id,button=$('createShortcutConnection');if(!owner||button.disabled)return;
- button.disabled=true;clearShortcutSecret();$('shortcutStatus').textContent='Đang tạo kết nối…';
+ shortcutConnection=null;shortcutLoading=true;renderShortcutConnection();
  try{
-  // Initialize reconciliation bases before permitting background expense writes.
-  await loadBalanceLedger(currentYear,current);
-  const token='hm_'+Array.from(crypto.getRandomValues(new Uint8Array(32)),byte=>byte.toString(16).padStart(2,'0')).join('');
-  const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(token))),byte=>byte.toString(16).padStart(2,'0')).join('');
-  if(owner!==user?.id)return;
-  const now=new Date(),expires=new Date(now);expires.setFullYear(expires.getFullYear()+1);
-  const {error}=await sb.from('shortcut_connections').upsert({user_id:owner,token_hash:hash,created_at:now.toISOString(),expires_at:expires.toISOString()},{onConflict:'user_id'});
-  if(error)throw error;if(owner!==user?.id||!$('settingsOverlay').classList.contains('open'))return;
-  $('shortcutSecret').value=token;$('shortcutSecretBox').classList.remove('hidden');$('shortcutStatus').textContent='Đã tạo mã. Sao chép vào Phím tắt trước khi đóng Cài đặt.';
- }catch{if(owner===user?.id)$('shortcutStatus').textContent='Chưa tạo được kết nối. Anh thử lại nhé.'}finally{button.disabled=false}
+  const {data,error}=await sb.from('shortcut_connections').select('enabled,expires_at').eq('user_id',owner).maybeSingle();
+  if(owner!==user?.id)return;if(error)throw error;
+  shortcutConnection=data;shortcutLoading=false;renderShortcutConnection();
+ }catch{if(owner===user?.id){shortcutLoading=false;renderShortcutConnection();$('shortcutStatus').textContent='Chưa kiểm tra được kết nối. Mở lại Cài đặt để thử lại.'}}
+}
+$('shortcutToggle').addEventListener('click',async()=>{
+ const owner=user?.id;if(!owner||shortcutLoading||$('shortcutToggle').disabled)return;
+ const enabled=shortcutConnection.enabled===false;
+ shortcutLoading=true;renderShortcutConnection();
+ try{
+  const {data,error}=await sb.from('shortcut_connections').update({enabled}).eq('user_id',owner).select('enabled,expires_at').maybeSingle();
+  if(owner!==user?.id)return;if(error||!data)throw error||new Error('Missing connection');
+  shortcutConnection=data;shortcutLoading=false;renderShortcutConnection();
+ }catch{if(owner===user?.id){shortcutLoading=false;renderShortcutConnection();$('shortcutStatus').textContent='Chưa đổi được. Anh thử lại nhé.'}}
 });
-$('revokeShortcutConnection').addEventListener('click',async()=>{
- const owner=user?.id,button=$('revokeShortcutConnection');if(!owner||button.disabled)return;
- button.disabled=true;
- try{const {error}=await sb.from('shortcut_connections').delete().eq('user_id',owner);if(error)throw error;
- if(owner===user?.id){clearShortcutSecret();$('shortcutStatus').textContent='Đã thu hồi kết nối Back Tap.'}}
- catch{if(owner===user?.id)$('shortcutStatus').textContent='Chưa thu hồi được kết nối. Anh thử lại nhé.'}finally{button.disabled=false}
-});
-async function copyShortcutValue(value){try{await navigator.clipboard.writeText(value);$('shortcutStatus').textContent='Đã sao chép.'}catch{$('shortcutStatus').textContent='Anh nhấn giữ nội dung để sao chép.'}}
-$('copyShortcutSecret').addEventListener('click',()=>{if($('shortcutSecret').value)copyShortcutValue($('shortcutSecret').value)});
-$('copyShortcutEndpoint').addEventListener('click',()=>copyShortcutValue(shortcutEndpoint));
 let shortcutResumeRefresh=false;
 document.addEventListener('visibilitychange',async()=>{
  if(document.hidden||!user||shortcutResumeRefresh)return;shortcutResumeRefresh=true;
