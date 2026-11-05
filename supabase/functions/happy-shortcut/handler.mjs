@@ -22,18 +22,18 @@ export async function handleShortcut(req,deps){
   const connection=await deps.lookup(hash);
   if(!connection)return reply(401,{ok:false,message:'Kết nối đã hết hạn hoặc bị thu hồi.'});
   if(connection.enabled===false)return reply(403,{ok:false,message:'Back Tap đang tắt. Bật lại trong Cài đặt Happy Money.'});
-  const incomeCategories=[{name:'Thu nhập',label:'💰 Thu nhập'},{name:'Rút tiết kiệm',label:'🏦 Rút tiết kiệm'},{name:'Số dư đầu tháng',label:'📒 Số dư đầu tháng'}];
+  const incomeCategories=[{name:'Thu nhập',label:'💼 Lương'},{name:'Rút tiết kiệm',label:'🏦 Rút tiết kiệm'},{name:'Thu nhập',label:'💰 Khác'}];
   const requestedType=input.type===undefined?null:['Thu','income'].includes(input.type)?'income':['Chi','expense'].includes(input.type)?'expense':null;
   if(input.type!==undefined&&!requestedType)return reply(400,{ok:false,message:'Chọn loại giao dịch Chi hoặc Thu.'});
   const expenses=categoriesFor(await deps.metadata(connection.user_id)).filter(item=>!incomeCategories.some(income=>income.name===item.name));
   const categories=requestedType==='income'?incomeCategories:requestedType==='expense'?expenses:[...expenses,...incomeCategories];
   if(input.action==='categories')return reply(200,{ok:true,categories:categories.map(item=>item.label),request_id:crypto.randomUUID()});
   const amount=typeof input.amount==='number'?input.amount:typeof input.amount==='string'&&/^\d+$/.test(input.amount)?Number(input.amount):NaN;
-  const category=categories.find(item=>item.label===input.category||item.name===input.category);
+  const category=categories.find(item=>item.label===input.category||item.name===input.category)||(requestedType!=='expense'&&input.category==='💰 Thu nhập'?{name:'Thu nhập'}:null);
   if(!Number.isSafeInteger(amount)||amount<=0||amount>1000000000000||!category||typeof input.note!=='string'||input.note.length>500||typeof input.request_id!=='string'||!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(input.request_id)){
    return reply(400,{ok:false,message:'Kiểm tra số tiền, danh mục, ghi chú và mã yêu cầu.'});
   }
-  const result=await deps.insert({p_hash:hash,p_request_id:input.request_id,p_amount:amount,p_category:category.name,p_note:input.note.trim()});
+  const result=await deps.insert({p_hash:hash,p_request_id:input.request_id,p_amount:amount,p_category:category.name,p_note:input.note.trim()||(input.category==='💼 Lương'?'Lương':'')});
   return reply(200,result);
  }catch(error){
   if(error?.code==='28001')return reply(403,{ok:false,message:'Back Tap đang tắt. Bật lại trong Cài đặt Happy Money.'});

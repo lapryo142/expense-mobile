@@ -12,7 +12,7 @@ for(const prefix of ['Bearer  ','bearer ','BEARER\t','  Bearer   ']){
 for(const malformed of ['Basic '+token,token,'Bearer hm_short','Bearer '+token.slice(0,20)+' '+token.slice(20)]){
  assert.equal((await call({action:'categories'},malformed)).status,401);
 }
-const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày','💰 Thu nhập','🏦 Rút tiết kiệm','📒 Số dư đầu tháng']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
+const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày','💼 Lương','🏦 Rút tiết kiệm','💰 Khác']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
 const expense={action:'expense',amount:220000,category:'🍜 Ăn uống',note:'Bữa trưa',request_id};
 assert.equal((await call(expense)).status,200);assert.equal(inserts.length,1);assert.equal(inserts[0].p_category,'Ăn uống');assert.equal(inserts[0].p_amount,220000);assert.equal(inserts[0].p_hash.length,64);assert.equal(JSON.stringify(inserts).includes(token),false);
 for(const change of [{amount:0},{amount:-1},{amount:1.5},{amount:'1e6'},{amount:'220.000'},{category:'Ẩn'},{category:'other owner category'},{note:'x'.repeat(501)},{request_id:'bad'}])assert.equal((await call({...expense,...change})).status,400);
@@ -26,15 +26,17 @@ assert.equal(inserts.at(-1).p_category,'Thu nhập');assert.equal(inserts.at(-1)
 assert.equal((await call({...expense,category:'Thu nhập',note:''})).status,200);
 assert.equal(inserts.at(-1).p_category,'Thu nhập');
 enabled=false;assert.equal((await call({...expense,category:'💰 Thu nhập'})).status,403);enabled=true;
-assert.deepEqual((await (await call({action:'categories',type:'Thu'})).json()).categories,['💰 Thu nhập','🏦 Rút tiết kiệm','📒 Số dư đầu tháng']);
+assert.deepEqual((await (await call({action:'categories',type:'Thu'})).json()).categories,['💼 Lương','🏦 Rút tiết kiệm','💰 Khác']);
 assert.deepEqual((await (await call({action:'categories',type:'Chi'})).json()).categories,['🍜 Ăn uống','👟 Giày']);
 assert.equal((await call({action:'categories',type:'bad'})).status,400);
 assert.equal((await call({...expense,type:'Thu'})).status,400);
 assert.equal((await call({...expense,type:'Chi',category:'💰 Thu nhập'})).status,400);
-for(const category of ['💰 Thu nhập','🏦 Rút tiết kiệm','📒 Số dư đầu tháng']){
+for(const category of ['💼 Lương','🏦 Rút tiết kiệm','💰 Khác']){
  assert.equal((await call({...expense,type:'Thu',category,note:''})).status,200);
- assert.equal(inserts.at(-1).p_category,category.slice(category.indexOf(' ')+1));
+ assert.equal(inserts.at(-1).p_category,category==='🏦 Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập');
+ assert.equal(inserts.at(-1).p_note,category==='💼 Lương'?'Lương':'');
 }
+assert.equal((await call({...expense,type:'Thu',category:'📒 Số dư đầu tháng'})).status,400);
 for(const code of ['28001','28000','54000','55000','unexpected']){
  const response=await handleShortcut(new Request('https://fixture.test',{method:'POST',headers:{Authorization:'Bearer '+token},body:JSON.stringify(expense)}),{...deps,lookup:async()=>({user_id:'owner'}),insert:async()=>{throw {code}}});
  assert.equal(response.status,{'28001':403,'28000':401,'54000':429,'55000':409,unexpected:503}[code]);
