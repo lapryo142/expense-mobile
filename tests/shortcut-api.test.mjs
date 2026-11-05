@@ -12,7 +12,7 @@ for(const prefix of ['Bearer  ','bearer ','BEARER\t','  Bearer   ']){
 for(const malformed of ['Basic '+token,token,'Bearer hm_short','Bearer '+token.slice(0,20)+' '+token.slice(20)]){
  assert.equal((await call({action:'categories'},malformed)).status,401);
 }
-const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
+const categories=await (await call({action:'categories'})).json();assert.deepEqual(categories.categories,['🍜 Ăn uống','👟 Giày','💰 Thu nhập']);assert.match(categories.request_id,/^[0-9a-f-]{36}$/);
 const expense={action:'expense',amount:220000,category:'🍜 Ăn uống',note:'Bữa trưa',request_id};
 assert.equal((await call(expense)).status,200);assert.equal(inserts.length,1);assert.equal(inserts[0].p_category,'Ăn uống');assert.equal(inserts[0].p_amount,220000);assert.equal(inserts[0].p_hash.length,64);assert.equal(JSON.stringify(inserts).includes(token),false);
 for(const change of [{amount:0},{amount:-1},{amount:1.5},{amount:'1e6'},{amount:'220.000'},{category:'Ẩn'},{category:'other owner category'},{note:'x'.repeat(501)},{request_id:'bad'}])assert.equal((await call({...expense,...change})).status,400);
@@ -20,6 +20,12 @@ assert.equal((await call({...expense,amount:'220000',note:''})).status,200);
 enabled=false;assert.equal((await call(expense)).status,403);assert.equal((await call({action:'categories'})).status,403);assert.equal(inserts.length,2);enabled=true;
 revoked=true;assert.equal((await call(expense)).status,401);assert.equal(inserts.length,2);
 assert.equal(categoriesFor({}).length,11);
+revoked=false;
+assert.equal((await call({...expense,category:'💰 Thu nhập',amount:'1000000',note:'Lương'})).status,200);
+assert.equal(inserts.at(-1).p_category,'Thu nhập');assert.equal(inserts.at(-1).p_amount,1000000);assert.equal(inserts.at(-1).p_note,'Lương');
+assert.equal((await call({...expense,category:'Thu nhập',note:''})).status,200);
+assert.equal(inserts.at(-1).p_category,'Thu nhập');
+enabled=false;assert.equal((await call({...expense,category:'💰 Thu nhập'})).status,403);enabled=true;
 for(const code of ['28001','28000','54000','55000','unexpected']){
  const response=await handleShortcut(new Request('https://fixture.test',{method:'POST',headers:{Authorization:'Bearer '+token},body:JSON.stringify(expense)}),{...deps,lookup:async()=>({user_id:'owner'}),insert:async()=>{throw {code}}});
  assert.equal(response.status,{'28001':403,'28000':401,'54000':429,'55000':409,unexpected:503}[code]);
