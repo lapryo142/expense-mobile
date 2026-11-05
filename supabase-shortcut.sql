@@ -56,7 +56,7 @@ begin
   end loop;
  end loop;
  insert into public.transactions(user_id,year,month,txn_date,description,income,expense,source,payment_method,source_key,category_name)
- values(conn.user_id,extract(year from today),extract(month from today),today,coalesce(nullif(trim(p_note),''),p_category),case when p_category='Thu nhập' then p_amount else 0 end,case when p_category='Thu nhập' then 0 else p_amount end,'app','bank','app-shortcut-'||p_request_id,p_category) returning id into row_id;
+ values(conn.user_id,extract(year from today),extract(month from today),today,coalesce(nullif(trim(p_note),''),p_category),case when p_category in ('Thu nhập','Rút tiết kiệm','Số dư đầu tháng') then p_amount else 0 end,case when p_category in ('Thu nhập','Rút tiết kiệm','Số dư đầu tháng') then 0 else p_amount end,'app','bank','app-shortcut-'||p_request_id,p_category) returning id into row_id;
  return jsonb_build_object('ok',true,'id',row_id,'message','Đã lưu giao dịch.');
 end $$;
 revoke all on function public.log_shortcut_expense(text,uuid,bigint,text,text) from public,anon,authenticated;
