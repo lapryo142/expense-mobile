@@ -53,6 +53,17 @@ window.supabase={createClient:()=>({auth:{
 async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:00',session=true,url='https://happy.test/'}={}){
  const page=await browser.newPage({viewport:{width,height},isMobile:true,hasTouch:true,timezoneId:'Asia/Ho_Chi_Minh',acceptDownloads:true});
  await page.clock.setFixedTime(new Date(date));
+ // WebKit exposes Touch but forbids constructing it. Use equivalent synthetic
+ // event objects for gesture-handler tests; real touch input remains browser-owned.
+ await page.addInitScript(()=>{
+  try{new Touch({identifier:0,target:document})}catch{
+   window.Touch=class Touch{constructor(init){Object.assign(this,init)}};
+   window.TouchEvent=class TouchEvent extends Event{
+    constructor(type,init={}){super(type,init);for(const name of ['touches','changedTouches','targetTouches'])Object.defineProperty(this,name,{value:init[name]||[]})}
+   };
+  }
+ });
+
  const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.dismiss());
  await page.route('**/*',async route=>{
   if(route.request().url().includes('cdn.jsdelivr.net'))return route.fulfill({contentType:'text/javascript',body:mock.replace('session:true','session:'+session)});
