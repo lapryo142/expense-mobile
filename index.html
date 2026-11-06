@@ -392,7 +392,7 @@ body:has(#searchOverlay.open){position:fixed;top:var(--search-page-top,0px);left
  <div class="settingsRow"><div><strong>Giao diện</strong><div id="themeName" class="statNote">Tối</div></div><div class="themeButtons" role="group" aria-label="Giao diện"><button id="themeManual" class="themeIcon" type="button" aria-label="Đổi giao diện"></button><button id="themeSystem" class="themeIcon" type="button" aria-label="Theo hệ thống"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></button></div></div>
  <div class="settingsRow"><div><strong>Ẩn số nhạy cảm</strong><div class="statNote">Số dư và thu nhập trên thiết bị này</div></div><button id="privacyBtn" class="headerBtn privacyBtn" aria-label="Ẩn số nhạy cảm" title="Ẩn số nhạy cảm"></button></div>
  <div class="settingsRow"><label for="languageSelect"><strong>Ngôn ngữ</strong></label><select id="languageSelect" aria-label="Ngôn ngữ"><option value="vi">Tiếng Việt</option><option value="en">English</option></select></div>
- <section class="settingsCatalog"><h3>DANH MỤC</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section>
+ <section class="settingsCatalog"><h3>DANH MỤC CHI</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="catalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="catalogList"></div><button id="addCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục</button></div></section><section class="settingsCatalog"><h3>DANH MỤC THU</h3><p class="catalogHint">Chạm danh mục để sửa, kéo để sắp xếp.</p><div id="incomeCatalogStatus" class="statNote" role="status" aria-live="polite"></div><div class="catalogCard"><div id="incomeCatalogList"></div><button id="addIncomeCategoryBtn" class="catalogAdd" type="button">+ Thêm danh mục thu</button></div></section>
     <div class="overviewSection"><div class="sectionTitle">XUẤT DỮ LIỆU</div><div class="exportOptions"><select id="exportRange" aria-label="Khoảng thời gian xuất CSV"><option value="selected">Tháng đang xem</option><option value="year">Năm đang xem</option><option value="all">Toàn bộ dữ liệu</option></select></div><button id="exportBtn" class="categoryToggle" type="button"><span>Xuất bản sao dữ liệu</span><span>↓</span></button><div class="statNote" style="margin-top:7px">Tải giao dịch và danh mục trong khoảng đã chọn dưới dạng CSV.</div></div>
     <div class="overviewSection"><div class="statNote">Các số ngân hàng, tiết kiệm và gửi vợ được chỉnh trực tiếp ở màn hình Chi tiêu.</div></div>
     <div class="overviewSection"><button id="enablePasskeyBtn" class="categoryToggle" type="button"><span>Bật đăng nhập bằng Face ID / passkey</span><span>›</span></button><div id="passkeySetupStatus" class="statNote" role="status" style="margin-top:7px">Dùng Face ID khi cần đăng nhập lại.</div></div>
@@ -485,7 +485,7 @@ const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart
 const appNow=new Date();let user=null,current=appNow.getMonth()+1,currentYear=appNow.getFullYear(),entryType='expense',paymentMethod='bank',currentStatus=null,editingTx=null;
 let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
 const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Dịch vụ số','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
-const INCOME_CATEGORIES=['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'];
+const INCOME_CATEGORIES=['Lương','Rút tiết kiệm','Khác'];
 const CATEGORY_NAMES=[...INCOME_CATEGORIES,...EXPENSE_CATEGORIES];
 const DEFAULT_EXPENSE_CATEGORIES=[...EXPENSE_CATEGORIES];
 const normalizeText=value=>String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/đ/g,'d');
@@ -510,16 +510,19 @@ function guessCategory(description){
 }
 const categoryStorageKey=()=>`happy_money_categories_${user?.id||'guest'}`;
 function getCategoryOverrides(){try{return JSON.parse(localStorage.getItem(categoryStorageKey())||'{}')}catch{return {}}}
-async function hydrateCategoryOverrides(){await hydrateCatalog();const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
+async function hydrateCategoryOverrides(){await hydrateCatalog();await hydrateIncomeCatalog();const remote=user?.user_metadata?.happy_money_categories,local=getCategoryOverrides();if(remote&&typeof remote==='object'){localStorage.setItem(categoryStorageKey(),JSON.stringify({...local,...remote}));return}if(Object.keys(local).length){const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:local}});if(!error&&data?.user)user=data.user}}
 async function saveCategoryOverride(rowId,category){const values=getCategoryOverrides();values[String(rowId)]=category;localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
 async function deleteCategoryOverride(rowId){const values=getCategoryOverrides();delete values[String(rowId)];localStorage.setItem(categoryStorageKey(),JSON.stringify(values));const {data,error}=await sb.auth.updateUser({data:{happy_money_categories:values}});if(!error&&data?.user)user=data.user}
 const fallbackCategoryName=()=>catalogRecord.items.find(item=>item.id==='default-10')?.name||'Chưa phân loại';
 function resolveCategoryName(name,{activeOnly=false}={}){
- if(INCOME_CATEGORIES.includes(name))return name;
+ const income=incomeCatalogRecord.items.find(item=>item.name===name||item.aliases.includes(name));if(income)return activeOnly&&income.archived?activeIncomeCatalog()[0]?.name||'Khác':income.name;
+ if(name==='Số dư đầu tháng')return name;
+ if(name==='Thu nhập')return incomeCatalogRecord.items.find(item=>item.id==='income-other')?.name||'Khác';
  const item=catalogRecord.items.find(item=>item.name===name||item.aliases?.includes(name));
  return item&&(!activeOnly||!item.archived)?item.name:activeOnly?fallbackCategoryName():name;
 }
 function categoryFor(row){
+ if(Number(row?.income||0)>0)return incomeCategoryFor(row);
  const guessed=guessCategory(row?.description);let override=getCategoryOverrides()[String(row?.id)]||row?.category_name;
  if(override==='Công cụ & dịch vụ số')override='Dịch vụ số';
  if(override==='Chuyển tiền nội bộ'||(resolveCategoryName(override)===fallbackCategoryName()&&resolveCategoryName(guessed,{activeOnly:true})!==fallbackCategoryName()))override=null;
@@ -528,8 +531,20 @@ function categoryFor(row){
  if(Number(row?.income||0)>0&&!INCOME_CATEGORIES.includes(guessed))return 'Thu nhập';
  return resolveCategoryName(guessed);
 }
-const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(categoryFor(row));
-const isOpeningBalance=row=>categoryFor(row)==='Số dư đầu tháng';
+function incomeCategoryFor(row){
+ const raw=getCategoryOverrides()[String(row?.id)]||row?.category_name,guess=guessCategory(row?.description);
+ if(raw==='Số dư đầu tháng'||(!raw&&guess==='Số dư đầu tháng'))return 'Số dư đầu tháng';
+ const explicit=raw&&raw!=='Thu nhập'?incomeCatalogRecord.items.find(item=>item.name===raw||item.aliases.includes(raw)):null;
+ if(explicit)return explicit.name;
+ const kind=guess==='Rút tiết kiệm'?'savings':/^luong(?:\s|$)/.test(normalizeText(row?.description))?'salary':'other';
+ return incomeCatalogRecord.items.find(item=>item.id==='income-'+kind)?.name||activeIncomeCatalog()[0]?.name||'Khác';
+}
+function accountingCategoryFor(row){
+ const name=categoryFor(row),item=incomeCatalogRecord.items.find(item=>item.name===name||item.aliases.includes(name));
+ return item?.kind==='savings'?'Rút tiết kiệm':item?.kind==='opening'?'Số dư đầu tháng':name;
+}
+const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(accountingCategoryFor(row));
+const isOpeningBalance=row=>accountingCategoryFor(row)==='Số dư đầu tháng';
 const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻'};
 const CATEGORY_COLORS={'Ăn uống':'#ff626b','Di chuyển & xe':'#48c6bc','Nhà cửa & hóa đơn':'#b8a1df','Tennis':'#ff626b','Mua sắm':'#f6dd65','Gia đình & quà tặng':'#5a9fea','Sunny & sức khỏe':'#9bce81','Giải trí & sách':'#d29cd2','Tiền mặt & lặt vặt':'#a7b4ca','Dịch vụ số':'#e2af78','Chưa phân loại':'#9aa2af'};
 let categoryNavigation=null;
@@ -548,7 +563,7 @@ function updateEntryDateButtons(){
 }
 function syncQuickCategory(){document.querySelectorAll('#quickExpense button').forEach(button=>{const selected=entryType==='expense'&&button.dataset.category===$('category').value;button.classList.toggle('selected',selected);button.setAttribute('aria-pressed',String(selected))})}
 
-function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;selected=resolveCategoryName(selected,{activeOnly:id!=='editTxCategory'});const names=mode==='income'?INCOME_CATEGORIES:[...EXPENSE_CATEGORIES,...(selected&&!EXPENSE_CATEGORIES.includes(selected)&&(id==='editTxCategory'||selected===fallbackCategoryName())?[selected]:[])];select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}" data-category-label="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
+function fillCategorySelect(id,selected='Chưa phân loại',mode='expense'){const select=$(id);if(!select)return;selected=resolveCategoryName(selected,{activeOnly:id!=='editTxCategory'});const names=mode==='income'?[...INCOME_CATEGORIES,...(id==='editTxCategory'&&selected&&!INCOME_CATEGORIES.includes(selected)?[selected]:[])]:[...EXPENSE_CATEGORIES,...(selected&&!EXPENSE_CATEGORIES.includes(selected)&&(id==='editTxCategory'||selected===fallbackCategoryName())?[selected]:[])];select.innerHTML=names.map(name=>`<option value="${escapeHtml(name)}" data-category-label="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');select.value=names.includes(selected)?selected:names[0]}
 const privateFmt=value=>privacyHidden?'••••••':fmt(value);
 const transactionFmt=row=>Number(row.income||0)>0?privateFmt(row.income):fmt(row.expense);
 function updatePrivacyButton(){
@@ -575,7 +590,7 @@ function renderMonths(){
   $('periodMenu').innerHTML=options.map(item=>`<button type="button" class="periodOption ${item.year===currentYear&&item.month===current?'active':''}" data-year="${item.year}" data-month="${item.month}">Tháng ${item.month} · ${item.year}</button>`).join('');
   $('periodMenu').querySelectorAll('.periodOption').forEach(button=>button.onclick=()=>{currentYear=Number(button.dataset.year);current=Number(button.dataset.month);$('periodMenu').classList.remove('open');renderMonths();refresh()});
 }
-const balanceOptions=()=>({categoryFor,isPayLater,normalizeDate:normalizedIsoDate});
+const balanceOptions=()=>({categoryFor:accountingCategoryFor,isPayLater,normalizeDate:normalizedIsoDate});
 let activeBalanceLedger=null,refreshSequence=0,statusPeriod=null,savingStatus=false;
 let overviewLedger=null;
 function cachedOverviewLedger(year,month){
@@ -727,7 +742,7 @@ function bindTransactionLongPress(rows){
   const reset=()=>settle(0);item.addEventListener('transitionend',event=>{if(event.propertyName==='transform')finish()});
   wrapper.querySelector('.txSwipeEdit').onclick=()=>{reset();openTransactionEdit(row)};
   wrapper.querySelector('.txSwipeDelete').onclick=()=>{reset();deleteTransaction(row)};
-  item.addEventListener('click',event=>{if(performance.now()<blockClickUntil){event.preventDefault();return}if(offset){reset();return}if(!$('editTxOverlay').classList.contains('open'))openTransactionEdit(row)});
+  item.addEventListener('click',event=>{event.preventDefault();if(performance.now()<blockClickUntil)return;if(offset)reset()});
   item.addEventListener('keydown',event=>{if(event.key==='Escape')reset();else if(event.key==='Enter'||event.key===' '){event.preventDefault();openTransactionEdit(row)}});
   item.addEventListener('touchstart',event=>{
    if(event.touches.length!==1)return;if(opened&&opened!==reset)opened();flush();
@@ -813,7 +828,7 @@ function setPaymentMethod(method){
 function setType(type){
   entryType=type;document.querySelector('label[for="amount"]').textContent=type==='income'?'Anh đã thu bao nhiêu?':'Anh đã chi bao nhiêu?';
   $('expenseType').classList.toggle('active',type==='expense');$('incomeType').classList.toggle('active',type==='income');
-  $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?'Thu nhập':guessCategory($('desc').value),type);syncQuickCategory();
+  $('quickExpense').classList.toggle('hide',type==='income');$('quickIncome').classList.toggle('show',type==='income');$('paymentField').classList.toggle('hidden',type==='income');categoryManuallySelected=false;fillCategorySelect('category',type==='income'?INCOME_CATEGORIES[0]:guessCategory($('desc').value),type);syncQuickCategory();
 }
 function updateSaveAvailability(){const amount=cleanMoney('amount');$('saveTx').disabled=savingTransaction||!Number.isSafeInteger(amount)||amount<=0}
 function cleanMoney(id){return Number(($(id).value||'').replace(/\D/g,''))||0}
@@ -875,7 +890,7 @@ function drawAnnualOverview(){
  const years=[...new Set([new Date().getFullYear(),annualYear,...annualRows.map(row=>Number(row.year)).filter(year=>year>=1900&&year<=9999)])].sort((a,b)=>a-b);
  $('annualYearSelect').innerHTML=[...years].reverse().map(year=>`<option value="${year}" ${year===annualYear?'selected':''}>${year}</option>`).join('');
  const index=years.indexOf(annualYear);$('annualPreviousYear').disabled=index===0;$('annualNextYear').disabled=index===years.length-1;
- const data=HappyAnnual.summarize(annualRows,annualYear,{categoryFor}),locale=HappyI18n.locale();
+ const data=HappyAnnual.summarize(annualRows,annualYear,{categoryFor:accountingCategoryFor}),locale=HappyI18n.locale();
  const today=new Date(),lastVisibleMonth=annualYear<today.getFullYear()?12:annualYear===today.getFullYear()?today.getMonth()+1:0;
  const visibleMonths=data.months.filter(item=>item.month<=lastVisibleMonth).reverse();
  const monthName=month=>new Intl.DateTimeFormat(locale,{month:'long'}).format(new Date(annualYear,month-1,1));
@@ -1306,9 +1321,15 @@ $('addOverlay').addEventListener('click',e=>{if(e.target===$('addOverlay'))addPu
 $('expenseType').addEventListener('click',()=>setType('expense'));$('incomeType').addEventListener('click',()=>setType('income'));
 document.querySelectorAll('[data-payment]').forEach(button=>button.addEventListener('click',()=>setPaymentMethod(button.dataset.payment)));
 $('category').addEventListener('change',()=>{categoryManuallySelected=true;syncQuickCategory();$('amount').focus()});
-$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(INCOME_CATEGORIES.includes(guessed)?guessed:'Thu nhập'):resolveCategoryName(guessed,{activeOnly:true});syncQuickCategory()});
+$('desc').addEventListener('input',()=>{if(categoryManuallySelected)return;const guessed=guessCategory($('desc').value);$('category').value=entryType==='income'?(categoryManuallySelected?$('category').value:incomeCategoryFor({income:1,description:$('desc').value})):resolveCategoryName(guessed,{activeOnly:true});syncQuickCategory()});
 $('quickExpense').addEventListener('click',event=>{const button=event.target.closest('button[data-category]');if(!button)return;document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');categoryManuallySelected=true;$('category').value=button.dataset.category;syncQuickCategory();$('amount').focus()});
-document.querySelectorAll('#quickIncome button').forEach(button=>button.addEventListener('click',()=>{document.querySelectorAll('.quick button.selected').forEach(item=>item.classList.remove('selected'));button.classList.add('selected');$('desc').value=button.dataset.name||'';updateNoteWidth();categoryManuallySelected=true;$('category').value=button.dataset.name==='Rút tiết kiệm'?'Rút tiết kiệm':'Thu nhập';(button.dataset.name?$('amount'):$('desc')).focus()}));
+$('quickIncome').addEventListener('click',event=>{
+ const button=event.target.closest('[data-income-category]');if(!button)return;
+ const item=incomeCatalogRecord.items.find(item=>item.id===button.dataset.incomeCategory);if(!item)return;
+ document.querySelectorAll('.quick button.selected').forEach(value=>value.classList.remove('selected'));button.classList.add('selected');
+ $('category').value=item.name;categoryManuallySelected=true;
+ $('desc').value=item.id==='income-other'?'':item.name;updateNoteWidth();(item.id==='income-other'?$('desc'):$('amount')).focus();
+});
 $('saveTx').addEventListener('click',async()=>{
   if(savingTransaction)return;
   const amount=cleanMoney('amount'),category=$('category').value,date=$('date').value;
@@ -1323,7 +1344,7 @@ $('saveTx').addEventListener('click',async()=>{
     await loadBalanceLedger(Number(date.slice(0,4)),Number(date.slice(5,7)));
     const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
     const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
-    const payload={user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
+    const payload={category_name:category,user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
     const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error)throw error;
     saved=true;
     if(inserted?.id)await saveCategoryOverride(inserted.id,category);
@@ -1361,7 +1382,7 @@ $('saveEditTx').addEventListener('click',async()=>{
   const keepUndated=!date&&!normalizedIsoDate(editingTx.txn_date,editingTx.month);
   if(!name||!Number.isSafeInteger(amount)||amount<=0||(!date&&!keepUndated)){alert('Anh kiểm tra nội dung, số tiền và ngày giao dịch nhé.');return}
   const transactionId=editingTx.id,isIncome=Number(editingTx.income||0)>0,method=isIncome?null:$('editTxPayment').value,category=$('editTxCategory').value;
-  const payload={description:name,txn_date:keepUndated?null:date,year:keepUndated?Number(editingTx.year):Number(date.slice(0,4)),month:keepUndated?Number(editingTx.month):Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:'app_edited',payment_method:method,updated_at:new Date().toISOString()};
+  const payload={category_name:category,description:name,txn_date:keepUndated?null:date,year:keepUndated?Number(editingTx.year):Number(date.slice(0,4)),month:keepUndated?Number(editingTx.month):Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:'app_edited',payment_method:method,updated_at:new Date().toISOString()};
   editSaving=true;$('saveEditTx').disabled=true;$('deleteEditTx').disabled=true;$('saveEditTx').textContent='Đang lưu…';
   try{
    await loadBalanceLedger(Math.max(currentYear,payload.year),12);
@@ -1410,6 +1431,55 @@ $('exportBtn').addEventListener('click',async()=>{
 });
 $('logoutBtn').addEventListener('click',async()=>{await sb.auth.signOut();user=null;passwordFormOpen=false;updatePasskeyUI();showAuth()});
 
+
+const DEFAULT_INCOME_CATALOG=[
+ {id:'income-salary',name:'Lương',emoji:'💼',color:'#48c6bc',kind:'income',aliases:[],archived:false},
+ {id:'income-savings',name:'Rút tiết kiệm',emoji:'🏦',color:'#a58af5',kind:'savings',aliases:[],archived:false},
+ {id:'income-other',name:'Khác',emoji:'💰',color:'#5a9fea',kind:'income',aliases:['Thu nhập'],archived:false}
+];
+let incomeCatalogRecord={version:1,updated_at:0,items:DEFAULT_INCOME_CATALOG.map(item=>({...item,aliases:[...item.aliases]}))},incomeCatalogQueue=Promise.resolve(),catalogEditorMode='expense';
+const incomeCatalogKey=()=>`happy_money_income_catalog_${user?.id||'guest'}`;
+const activeIncomeCatalog=()=>incomeCatalogRecord.items.filter(item=>!item.archived);
+function normalizeIncomeCatalog(value){
+ const source=Array.isArray(value?.items)?value.items:DEFAULT_INCOME_CATALOG,items=[],names=new Set(),ids=new Set();
+ for(const raw of source.slice(0,100)){
+  const name=String(raw?.name||'').trim().slice(0,64),id=String(raw?.id||'').slice(0,100);
+  if(!id||!name||ids.has(id)||names.has(normalizeText(name))||name==='Số dư đầu tháng')continue;
+  const original=DEFAULT_INCOME_CATALOG.find(item=>item.id===id);ids.add(id);names.add(normalizeText(name));
+  items.push({id,name,emoji:validEmoji(raw.emoji)?raw.emoji:'💰',color:/^#[0-9a-f]{6}$/i.test(raw.color)?raw.color:'#48c6bc',kind:original?.kind||'income',aliases:[...new Set([...(Array.isArray(raw.aliases)?raw.aliases:[]),...(original&&original.name!==name?[original.name]:[]),...(original?.aliases||[])])].filter(x=>typeof x==='string'&&x!==name&&x.length<=64),archived:!!raw.archived});
+ }
+ if(!items.some(item=>!item.archived))items.push({...DEFAULT_INCOME_CATALOG[2],id:'income-fallback',name:'Thu khác',aliases:[]});
+ return {version:1,updated_at:Number(value?.updated_at)||0,items};
+}
+function applyIncomeCatalog(value){
+ incomeCatalogRecord=normalizeIncomeCatalog(value);INCOME_CATEGORIES.splice(0,INCOME_CATEGORIES.length,...activeIncomeCatalog().map(item=>item.name));
+ CATEGORY_NAMES.splice(0,CATEGORY_NAMES.length,...INCOME_CATEGORIES,'Số dư đầu tháng',...catalogRecord.items.map(item=>item.name));
+ for(const item of incomeCatalogRecord.items){CATEGORY_ICONS[item.name]=item.emoji;CATEGORY_COLORS[item.name]=item.color}
+ const selected=$('category').value;
+ $('quickIncome').innerHTML=activeIncomeCatalog().map(item=>`<button type="button" data-income-category="${escapeHtml(item.id)}" data-name="${escapeHtml(item.name)}" style="--cat-color:${item.color}"><span class="categoryEmoji" aria-hidden="true">${escapeHtml(item.emoji)}</span><span class="categoryText" data-category-label="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span></button>`).join('');
+ if(entryType==='income')fillCategorySelect('category',selected,'income');
+}
+async function hydrateIncomeCatalog(){
+ let local=null;try{local=JSON.parse(localStorage.getItem(incomeCatalogKey())||'null')}catch{}
+ const remote=user?.user_metadata?.happy_money_income_catalog;
+ const chosen=local&&Number(local.updated_at)>Number(remote?.updated_at||0)?local:remote||local;
+ applyIncomeCatalog(chosen);try{localStorage.setItem(incomeCatalogKey(),JSON.stringify(incomeCatalogRecord))}catch{}
+ if(local&&Number(local.updated_at)>Number(remote?.updated_at||0))await persistIncomeCatalog(incomeCatalogRecord.items);
+}
+function persistIncomeCatalog(items){
+ const owner=user?.id,record=normalizeIncomeCatalog({items,updated_at:Math.max(Date.now(),incomeCatalogRecord.updated_at+1)});
+ applyIncomeCatalog(record);catalogDirty=true;try{localStorage.setItem(incomeCatalogKey(),JSON.stringify(record))}catch{}
+ renderCatalogList();$('incomeCatalogStatus').textContent='Đang lưu…';
+ incomeCatalogQueue=incomeCatalogQueue.catch(()=>{}).then(async()=>{
+  try{
+   if(!owner||owner!==user?.id)throw Error('Session changed');
+   const {data,error}=await sb.auth.updateUser({data:{happy_money_income_catalog:record}});if(error)throw error;
+   if(owner!==user?.id)return;if(data?.user)user=data.user;
+   if(incomeCatalogRecord.updated_at===record.updated_at)$('incomeCatalogStatus').textContent='Đã lưu danh mục.';
+  }catch{if(owner===user?.id&&incomeCatalogRecord.updated_at===record.updated_at)$('incomeCatalogStatus').textContent='Đã lưu trên máy; chưa đồng bộ được. Sẽ thử lại khi mở app.'}
+ });return incomeCatalogQueue;
+}
+
 const DEFAULT_CATALOG=DEFAULT_EXPENSE_CATEGORIES.map((name,index)=>({id:'default-'+index,name,emoji:CATEGORY_ICONS[name]||'🏷️',color:CATEGORY_COLORS[name]||'#9aa2af',aliases:[],archived:false}));
 let catalogRecord={version:1,updated_at:0,items:DEFAULT_CATALOG.map(item=>({...item}))},catalogQueue=Promise.resolve(),editingCatalogId=null,catalogDraftColor='#ff626b',catalogDirty=false,catalogReturnFocus=null;
 const catalogKey=()=>`happy_money_category_catalog_${user?.id||'guest'}`;
@@ -1421,7 +1491,7 @@ function normalizeCatalog(value){
  const source=Array.isArray(value?.items)?value.items:[],items=[],names=new Set(),ids=new Set();
  source.slice(0,100).forEach(item=>{
   const name=String(item?.name||'').trim().slice(0,64),id=String(item?.id||'').slice(0,100);
-  if(!name||!id||names.has(normalizeText(name))||ids.has(id)||INCOME_CATEGORIES.includes(name))return;
+  if(!name||!id||names.has(normalizeText(name))||ids.has(id)||['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'].includes(name))return;
   const original=DEFAULT_CATALOG.find(defaultItem=>defaultItem.id===id);
   names.add(normalizeText(name));ids.add(id);
   const aliases=[...new Set([...(Array.isArray(item.aliases)?item.aliases:[]),...(original&&original.name!==name?[original.name]:[])])].filter(alias=>typeof alias==='string'&&alias!==name&&alias.length<=64).slice(0,100);
@@ -1465,6 +1535,7 @@ function persistCatalog(items){
  });return catalogQueue;
 }
 function renderCatalogList(){
+ $('incomeCatalogList').innerHTML=activeIncomeCatalog().map(item=>`<div class="catalogRow" data-category-id="${escapeHtml(item.id)}"><button type="button" class="catalogEdit" data-edit-id="${escapeHtml(item.id)}" aria-label="Sửa danh mục ${escapeHtml(item.name)}"><span class="catalogEmoji">${escapeHtml(item.emoji)}</span><span class="catalogName" data-category-label="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span></button><button type="button" class="catalogDelete" data-delete-category="${escapeHtml(item.id)}" aria-label="Xóa danh mục ${escapeHtml(item.name)}">×</button><button type="button" class="catalogHandle" data-drag-id="${escapeHtml(item.id)}" aria-label="Kéo để sắp xếp ${escapeHtml(item.name)}">≡</button></div>`).join('');
  $('catalogList').innerHTML=activeCatalog().map(item=>`<div class="catalogRow" data-category-id="${escapeHtml(item.id)}"><button type="button" class="catalogEdit" data-edit-id="${escapeHtml(item.id)}" aria-label="Sửa danh mục ${escapeHtml(item.name)}"><span class="catalogEmoji" aria-hidden="true">${escapeHtml(item.emoji)}</span><span class="catalogName" data-category-label="${escapeHtml(item.name)}">${escapeHtml(item.name)}</span></button><button type="button" class="catalogDelete" data-delete-category="${escapeHtml(item.id)}" aria-label="Xóa danh mục ${escapeHtml(item.name)}">×</button><button type="button" class="catalogHandle" data-drag-id="${escapeHtml(item.id)}" aria-label="Kéo để sắp xếp ${escapeHtml(item.name)}" aria-keyshortcuts="ArrowUp ArrowDown">≡</button></div>`).join('');
 }
 const CATEGORY_PALETTE=['#ff626b','#48c6bc','#ffe665','#a58af5','#ff7910','#40d879','#5a9fea','#94a3b8','#ee6fbd','#ce40e8','#a5e52c','#00a878','#e71546','#b85c00','#6961ee','#ffa726'];
@@ -1478,8 +1549,9 @@ function setDraftEmoji(emoji){
 function updateCatalogSave(){
  const name=$('newCategoryName').value.trim();$('saveCatalogCategory').disabled=!name||name.length>64||!validEmoji($('newCategoryEmoji').value);
 }
-function openCatalogEditor(id=null){
- const item=catalogRecord.items.find(item=>item.id===id&&!item.archived);editingCatalogId=item?.id||null;catalogReturnFocus=document.activeElement;
+function openCatalogEditor(id=null,mode='expense'){
+ catalogEditorMode=mode;
+ const item=(mode==='income'?incomeCatalogRecord:catalogRecord).items.find(item=>item.id===id&&!item.archived);editingCatalogId=item?.id||null;catalogReturnFocus=document.activeElement;
  $('catalogEditorTitle').textContent=item?'Sửa danh mục':'Thêm danh mục';$('saveCatalogCategory').textContent=item?'Lưu thay đổi':'Lưu danh mục';
  $('newCategoryName').value=item?.name||'';$('newCategoryName').readOnly=false;catalogDraftColor=item?.color||CATEGORY_PALETTE[0];setDraftEmoji(item?.emoji||'🍔');renderCatalogColors();$('catalogEditorError').textContent='';$('catalogEditorOverlay').classList.add('open');document.querySelector('.settingsPanel').inert=true;document.querySelector('.catalogEditorPanel').scrollTop=0;document.querySelector('.catalogEditorPanel').focus({preventScroll:true});
 }
@@ -1488,6 +1560,7 @@ function closeCatalogEditor(){
  document.activeElement?.blur();$('catalogEditorOverlay').classList.remove('open');document.querySelector('.settingsPanel').inert=false;const target=catalogReturnFocus?.isConnected?catalogReturnFocus:[...document.querySelectorAll('[data-edit-id]')].find(el=>el.dataset.editId===editingCatalogId)||$('addCategoryBtn');if($('settingsOverlay').classList.contains('open'))target.focus({preventScroll:true});
 }
 $('addCategoryBtn').addEventListener('click',()=>openCatalogEditor());
+$('addIncomeCategoryBtn').addEventListener('click',()=>openCatalogEditor(null,'income'));
 $('closeCatalogEditor').addEventListener('click',closeCatalogEditor);
 $('catalogEditorOverlay').addEventListener('click',event=>{if(event.target===$('catalogEditorOverlay'))closeCatalogEditor()});
 $('catalogEditorOverlay').addEventListener('keydown',event=>{
@@ -1511,15 +1584,41 @@ $('categoryEmojiButton').addEventListener('keydown',event=>{if(event.key==='Ente
 $('categoryColorChoices').addEventListener('click',event=>{const button=event.target.closest('[data-color]');if(button){catalogDraftColor=button.dataset.color;renderCatalogColors()}});
 $('newCategoryName').addEventListener('input',()=>{$('catalogEditorError').textContent='';updateCatalogSave()});
 $('addCategoryForm').addEventListener('submit',event=>{
- event.preventDefault();const name=$('newCategoryName').value.trim(),emoji=$('newCategoryEmoji').value.trim(),existing=catalogRecord.items.find(item=>item.id===editingCatalogId)||(!editingCatalogId?catalogRecord.items.find(item=>item.archived&&[item.name,...item.aliases].some(value=>normalizeText(value)===normalizeText(name))):null);
+ event.preventDefault();
+ if(catalogEditorMode==='income'){
+  const name=$('newCategoryName').value.trim(),emoji=$('newCategoryEmoji').value.trim(),existing=incomeCatalogRecord.items.find(item=>item.id===editingCatalogId);
+  if(!name||name.length>64||!validEmoji(emoji))return;
+  if(name==='Số dư đầu tháng'||name==='Thu nhập'||incomeCatalogRecord.items.some(item=>item.id!==existing?.id&&[item.name,...item.aliases].some(x=>normalizeText(x)===normalizeText(name)))||catalogRecord.items.some(item=>[item.name,...item.aliases].some(x=>normalizeText(x)===normalizeText(name)))){$('catalogEditorError').textContent='Danh mục này đã có rồi.';return}
+  if(!existing&&incomeCatalogRecord.items.length>=100){$('catalogEditorError').textContent='Đã đạt tối đa 100 danh mục.';return}
+  const item={...(existing||{}),id:existing?.id||'income-custom-'+crypto.randomUUID(),name,emoji,color:catalogDraftColor,kind:existing?.kind||'income',archived:false,aliases:[...new Set([...(existing?.aliases||[]),...(existing&&existing.name!==name?[existing.name]:[])])].filter(x=>x!==name)};
+  persistIncomeCatalog(existing?incomeCatalogRecord.items.map(value=>value.id===item.id?item:value):[...incomeCatalogRecord.items,item]);closeCatalogEditor();return;
+ }
+ const name=$('newCategoryName').value.trim(),emoji=$('newCategoryEmoji').value.trim(),existing=catalogRecord.items.find(item=>item.id===editingCatalogId)||(!editingCatalogId?catalogRecord.items.find(item=>item.archived&&[item.name,...item.aliases].some(value=>normalizeText(value)===normalizeText(name))):null);
  if(!name||name.length>64||!validEmoji(emoji))return;
  // Historical aliases stay reserved so old transaction assignments cannot be stolen.
- const key=normalizeText(name),duplicate=INCOME_CATEGORIES.some(value=>normalizeText(value)===key)||catalogRecord.items.some(item=>item.id!==existing?.id&&[item.name,...item.aliases].some(value=>normalizeText(value)===key));
+ const key=normalizeText(name),duplicate=['Thu nhập','Rút tiết kiệm','Số dư đầu tháng'].some(value=>normalizeText(value)===key)||catalogRecord.items.some(item=>item.id!==existing?.id&&[item.name,...item.aliases].some(value=>normalizeText(value)===key));
  if(duplicate){$('catalogEditorError').textContent='Danh mục này đã có rồi.';return}
  if(!existing&&catalogRecord.items.length>=100){$('catalogEditorError').textContent='Đã đạt tối đa 100 danh mục.';return}
  const item={...(existing||{}),id:existing?.id||'custom-'+crypto.randomUUID(),name,emoji,color:catalogDraftColor,archived:false,aliases:[...new Set([...(existing?.aliases||[]),...(existing&&existing.name!==name?[existing.name]:[])])].filter(alias=>alias!==name)};
  const items=existing?catalogRecord.items.map(value=>value.id===item.id?item:value):[...catalogRecord.items,item];
  persistCatalog(items);closeCatalogEditor();
+});
+$('incomeCatalogList').addEventListener('click',event=>{
+ if(Date.now()<catalogSuppressClickUntil)return;
+ const remove=event.target.closest('[data-delete-category]');
+ if(remove){
+  const item=incomeCatalogRecord.items.find(item=>item.id===remove.dataset.deleteCategory);if(!item)return;
+  if(activeIncomeCatalog().length<=1){$('incomeCatalogStatus').textContent='Cần giữ ít nhất một danh mục thu.';return}
+  if(confirm(`Xóa danh mục “${item.name}”?\nCác giao dịch đã ghi vẫn được giữ nguyên.`))persistIncomeCatalog(incomeCatalogRecord.items.map(value=>value.id===item.id?{...value,archived:true}:value));
+  return;
+ }
+ const edit=event.target.closest('[data-edit-id]');if(edit)openCatalogEditor(edit.dataset.editId,'income');
+});
+$('incomeCatalogList').addEventListener('keydown',event=>{
+ const handle=event.target.closest('[data-drag-id]');if(!handle||!['ArrowUp','ArrowDown'].includes(event.key))return;
+ event.preventDefault();const items=activeIncomeCatalog(),index=items.findIndex(item=>item.id===handle.dataset.dragId),target=index+(event.key==='ArrowUp'?-1:1);if(target<0||target>=items.length)return;
+ [items[index],items[target]]=[items[target],items[index]];persistIncomeCatalog([...items,...incomeCatalogRecord.items.filter(item=>item.archived)]);
+ $('incomeCatalogList').querySelector(`[data-drag-id="${handle.dataset.dragId}"]`)?.focus({preventScroll:true});
 });
 $('catalogList').addEventListener('click',event=>{
  if(Date.now()<catalogSuppressClickUntil)return;
@@ -1532,32 +1631,34 @@ $('catalogList').addEventListener('keydown',event=>{
 let catalogSuppressClickUntil=0;
 let catalogDrag=null,catalogDragFrame=null;
 function reorderCatalogAt(x,y){
- const dragging=[...$('catalogList').children].find(row=>row.dataset.categoryId===catalogDrag?.id),target=document.elementFromPoint(x,y)?.closest('.catalogRow');
- if(!dragging||!target||target===dragging||!$('catalogList').contains(target))return;
+ const dragging=[...$(catalogDrag?.income?'incomeCatalogList':'catalogList').children].find(row=>row.dataset.categoryId===catalogDrag?.id),target=document.elementFromPoint(x,y)?.closest('.catalogRow');
+ if(!dragging||!target||target===dragging||!$(catalogDrag?.income?'incomeCatalogList':'catalogList').contains(target))return;
  const rect=target.getBoundingClientRect();target.parentElement.insertBefore(dragging,y<rect.y+rect.height/2?target:target.nextSibling);
 }
 function scrollCatalogDrag(){
  if(!catalogDrag?.moved){catalogDragFrame=null;return}
- const panel=document.querySelector('.settingsPanel'),rect=panel.getBoundingClientRect(),header=document.querySelector('#settingsOverlay .settingsHeader').getBoundingClientRect(),list=$('catalogList').getBoundingClientRect();
+ const panel=document.querySelector('.settingsPanel'),rect=panel.getBoundingClientRect(),header=document.querySelector('#settingsOverlay .settingsHeader').getBoundingClientRect(),list=$(catalogDrag?.income?'incomeCatalogList':'catalogList').getBoundingClientRect();
  const bottom=rect.bottom-55,top=Math.max(rect.top+60,header.bottom+35);let delta=0;
  if(catalogDrag.pointerY>bottom&&list.bottom>bottom)delta=Math.min(12,(catalogDrag.pointerY-bottom)/3);
  else if(catalogDrag.pointerY<top&&list.top<top)delta=-Math.min(12,(top-catalogDrag.pointerY)/3);
  if(delta){panel.scrollTop+=delta;reorderCatalogAt(catalogDrag.pointerX,catalogDrag.pointerY)}
  catalogDragFrame=requestAnimationFrame(scrollCatalogDrag);
 }
-$('catalogList').addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-drag-id]');if(!handle)return;event.preventDefault();handle.setPointerCapture(event.pointerId);catalogDrag={id:handle.dataset.dragId,y:event.clientY,pointerX:event.clientX,pointerY:event.clientY,moved:false};handle.closest('.catalogRow').classList.add('dragging')});
-$('catalogList').addEventListener('pointermove',event=>{
+for(const list of [$('catalogList'),$('incomeCatalogList')]){
+list.addEventListener('pointerdown',event=>{const handle=event.target.closest('[data-drag-id]');if(!handle)return;event.preventDefault();handle.setPointerCapture(event.pointerId);catalogDrag={income:list.id==='incomeCatalogList',id:handle.dataset.dragId,y:event.clientY,pointerX:event.clientX,pointerY:event.clientY,moved:false};handle.closest('.catalogRow').classList.add('dragging')});
+list.addEventListener('pointermove',event=>{
  if(!catalogDrag)return;if(Math.abs(event.clientY-catalogDrag.y)<6&&!catalogDrag.moved)return;catalogDrag.moved=true;catalogDrag.pointerX=event.clientX;catalogDrag.pointerY=event.clientY;event.preventDefault();reorderCatalogAt(event.clientX,event.clientY);if(catalogDragFrame===null)catalogDragFrame=requestAnimationFrame(scrollCatalogDrag);
 });
 const finishCatalogDrag=cancel=>{
  if(catalogDragFrame!==null){cancelAnimationFrame(catalogDragFrame);catalogDragFrame=null}if(!catalogDrag)return;
- const moved=catalogDrag.moved;catalogDrag=null;document.querySelectorAll('.catalogRow.dragging').forEach(row=>row.classList.remove('dragging'));
+ const moved=catalogDrag.moved,income=catalogDrag.income;catalogDrag=null;document.querySelectorAll('.catalogRow.dragging').forEach(row=>row.classList.remove('dragging'));
  if(moved)catalogSuppressClickUntil=Date.now()+400;
- if(moved&&!cancel){const byId=new Map(catalogRecord.items.map(item=>[item.id,item]));persistCatalog([...$('catalogList').children].map(row=>byId.get(row.dataset.categoryId)).filter(Boolean).concat(catalogRecord.items.filter(item=>item.archived)))}else if(cancel)renderCatalogList();
+ if(moved&&!cancel){const record=income?incomeCatalogRecord:catalogRecord,byId=new Map(record.items.map(item=>[item.id,item]));(income?persistIncomeCatalog:persistCatalog)([...$(income?'incomeCatalogList':'catalogList').children].map(row=>byId.get(row.dataset.categoryId)).filter(Boolean).concat(record.items.filter(item=>item.archived)))}else if(cancel)renderCatalogList();
 };
-$('catalogList').addEventListener('pointerup',()=>finishCatalogDrag(false));$('catalogList').addEventListener('pointercancel',()=>finishCatalogDrag(true));
+list.addEventListener('pointerup',()=>finishCatalogDrag(false));list.addEventListener('pointercancel',()=>finishCatalogDrag(true));
+}
 function renderEditChips(){
- const selected=$('editTxCategory').value,names=Number(editingTx?.income||0)>0?INCOME_CATEGORIES:[...EXPENSE_CATEGORIES,...(!EXPENSE_CATEGORIES.includes(selected)?[selected]:[])];
+ const selected=$('editTxCategory').value,names=Number(editingTx?.income||0)>0?[...INCOME_CATEGORIES,...(!INCOME_CATEGORIES.includes(selected)?[selected]:[])]:[...EXPENSE_CATEGORIES,...(!EXPENSE_CATEGORIES.includes(selected)?[selected]:[])];
  $('editCategoryChips').innerHTML=names.map(name=>`<button type="button" data-edit-category="${escapeHtml(name)}" class="${name===selected?'selected':''}">${escapeHtml(CATEGORY_ICONS[name]||'↙')} <span data-category-label="${escapeHtml(name)}">${escapeHtml(name)}</span></button>`).join('');
 }
 $('editCategoryChips').addEventListener('click',event=>{const button=event.target.closest('[data-edit-category]');if(!button)return;$('editTxCategory').value=button.dataset.editCategory;renderEditChips()});

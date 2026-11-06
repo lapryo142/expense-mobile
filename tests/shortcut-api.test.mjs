@@ -43,3 +43,6 @@ for(const code of ['28001','28000','54000','55000','unexpected']){
  assert.equal((await response.text()).includes(token),false);
 }
 console.log('Shortcut API authentication, validation, category scoping and errors passed.');
+
+const custom=await handleShortcut(new Request('https://fixture.test',{method:'POST',headers:{Authorization:'Bearer '+token},body:JSON.stringify({...expense,type:'Thu',category:'🎁 Thưởng'})}),{...deps,metadata:async()=>({happy_money_income_catalog:{items:[{id:'income-custom-test',name:'Thưởng',emoji:'🎁',kind:'savings'},{id:'income-savings',name:'Chuyển từ tiết kiệm',emoji:'🏦'},{id:'old',name:'Ẩn',archived:true}]}})});
+assert.equal(custom.status,200);assert.equal(inserts.at(-1).p_category,'Thu nhập');assert.equal(inserts.at(-1).p_display_category,'Thưởng');
