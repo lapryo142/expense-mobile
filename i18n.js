@@ -54,6 +54,7 @@
   return result?raw.replace(text,result):raw;
  }
  Object.assign(dictionary,{'Nhập bằng Back Tap / Siri':'Back Tap / Siri entry','Đang bật':'On','Đã tắt':'Off','Đang cập nhật…':'Updating…','Chưa có kết nối hoạt động':'No active connection','Chưa đổi được. Anh thử lại nhé.':'Could not update. Please try again.','—: chưa đủ dữ liệu tại ngày so sánh.':'—: insufficient data for the comparison date.','Chưa đủ dữ liệu để so sánh cùng kỳ':'Insufficient data for a same-period comparison','Chưa kiểm tra được kết nối. Mở lại Cài đặt để thử lại.':'Could not check the connection. Reopen Settings to retry.'});
+ Object.assign(dictionary,{'DANH MỤC CHI':'EXPENSE CATEGORIES','DANH MỤC THU':'INCOME CATEGORIES','+ Thêm danh mục thu':'+ Add income category','Cần giữ ít nhất một danh mục thu.':'Keep at least one income category.'});
  const doc=root.document;
  let apply=()=>{};
  function setLanguage(value){
