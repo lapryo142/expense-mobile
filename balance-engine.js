@@ -96,9 +96,24 @@
         const bank = known('bank') ? value.bank : null;
         return {...value, remaining, bank, foodDifference: remaining === null || bank === null ? null : remaining - bank};
       };
+      // Prefer the requested day. When an old reconciliation makes it unknowable,
+      // expose a later recorded date explicitly instead of inventing a same-day value.
+      // latestDay prevents a current-month report from displaying a future snapshot.
+      const comparisonSnapshot = (day, latestDay = lastDay(year, month)) => {
+        const requested = comparisonAt(day), complete = value => value.bank !== null && value.foodDifference !== null;
+        if (complete(requested)) return {...requested, usesFallback: false};
+        const limit = iso(year, month, Math.max(1, Math.min(lastDay(year, month), latestDay)));
+        const dates = [...new Set([checkpoint.bank?.date, checkpoint.book?.date, ctx.end])]
+          .filter(date => date && date > requested.date && date <= limit && date.slice(0, 7) === requested.date.slice(0, 7)).sort();
+        for (const date of dates) {
+          const value = comparisonAt(Number(date.slice(8, 10)));
+          if (complete(value)) return {...value, usesFallback: true};
+        }
+        return {...requested, usesFallback: false};
+      };
       const closing = at(lastDay(year, month));
       previousBank = closing.bank; previousSavings = closing.savings;
-      months.set(period, {year, month, status, rows: monthlyRows, checkpoint, at, comparisonAt, closing, effects: ctx.effects});
+      months.set(period, {year, month, status, rows: monthlyRows, checkpoint, at, comparisonAt, comparisonSnapshot, closing, effects: ctx.effects});
     }
     return {months, get: (year, month) => months.get(key(year, month))};
   }

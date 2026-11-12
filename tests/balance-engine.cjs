@@ -65,3 +65,24 @@ const undatedComparison=B.build([{id:'unknown-day',year:2026,month:3,txn_date:nu
 assert.equal(undatedComparison.comparisonAt(4).remaining,null);
 assert.equal(undatedComparison.comparisonAt(4).bank,null);
 assert.equal(undatedComparison.comparisonAt(31).remaining,795000);
+
+// A fallback must show an actual recorded date, without changing strict same-day math.
+const recorded=comparison.comparisonSnapshot(12);
+assert.equal(recorded.date,'2026-10-29');
+assert.equal(recorded.usesFallback,true);
+assert.equal(recorded.bank,comparison.at(29).bank);
+assert.equal(recorded.foodDifference,comparison.at(29).remaining-comparison.at(29).bank);
+assert.equal(comparison.comparisonAt(12).bank,null);
+assert.equal(comparison.comparisonSnapshot(12,12).bank,null,'never use a future current-month snapshot');
+assert.equal(comparison.comparisonSnapshot(29).usesFallback,false);
+assert.equal(zeroComparison.comparisonSnapshot(3).bank,0);
+assert.equal(zeroComparison.comparisonSnapshot(3).date,'2026-11-04');
+assert.equal(zeroComparison.comparisonSnapshot(3,3).bank,null);
+assert.equal(archiveComparison.comparisonSnapshot(4).date,'2025-12-31');
+assert.equal(undatedComparison.comparisonSnapshot(4,12).bank,null);
+assert.equal(undatedComparison.comparisonSnapshot(4).date,'2026-03-31');
+const earlierSnapshot=B.build([], [{year:2026,month:11,start_balance:1000,bank_balance:500,bank_balance_date:'2026-11-07'}],{year:2026,month:11}).get(2026,11);
+assert.equal(earlierSnapshot.comparisonSnapshot(12,12).date,'2026-11-12');
+assert.equal(earlierSnapshot.comparisonSnapshot(12,12).usesFallback,false);
+assert.equal(earlierSnapshot.comparisonSnapshot(12,12).bank,500);
+console.log('Recorded-date fallback: PASS — dated balances, explicit zero, current-month limits, undated archives');
