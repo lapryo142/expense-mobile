@@ -514,8 +514,8 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
      {id:'current-early',user_id:'fixture',year:2026,month:11,txn_date:'2026-11-03',description:'Expense',expense:50000,income:0,source:'app'},
      {id:'current-late',user_id:'fixture',year:2026,month:11,txn_date:'2026-11-09',description:'Expense',expense:30000,income:0,source:'app'}];
     fixture.statuses=[
-     {year:2026,month:10,start_balance:2000000,bank_balance:1200000,bank_balance_date:'2026-10-29',balance_checkpoint:{version:1,bank:{date:'2026-10-29',amount:1200000,basis:-300000}}},
-     {year:2026,month:11,start_balance:1200000,bank_balance:900000,bank_balance_date:'2026-11-07',balance_checkpoint:{version:1,bank:{date:'2026-11-07',amount:900000,basis:-50000}}}];
+     {user_id:'fixture',year:2026,month:10,start_balance:2000000,bank_balance:1200000,bank_balance_date:'2026-10-29',balance_checkpoint:{version:1,bank:{date:'2026-10-29',amount:1200000,basis:-300000}}},
+     {user_id:'fixture',year:2026,month:11,start_balance:1200000,bank_balance:900000,bank_balance_date:'2026-11-07',balance_checkpoint:{version:1,bank:{date:'2026-11-07',amount:900000,basis:-50000}}}];
     currentYear=2026;current=11;await refresh();
    });
    await p.locator('#statsTab').click();await p.locator('.comparisonBalanceDates').waitFor();
