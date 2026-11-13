@@ -504,7 +504,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   }
 
 
-  // Same-day balances stay strict; an explicit recorded-date fallback keeps old snapshots usable.
+  // Comparison uses the latest available earlier balance without date labels.
   {
    const {page:p,errors:e}=await boot(browser,{date:'2026-11-12T14:00:00+07:00'});
    await p.evaluate(async()=>{
@@ -514,19 +514,20 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
      {id:'current-early',user_id:'fixture',year:2026,month:11,txn_date:'2026-11-03',description:'Expense',expense:50000,income:0,source:'app'},
      {id:'current-late',user_id:'fixture',year:2026,month:11,txn_date:'2026-11-09',description:'Expense',expense:30000,income:0,source:'app'}];
     fixture.statuses=[
+     {user_id:'fixture',year:2026,month:9,start_balance:2000000,bank_balance:1500000,bank_balance_date:'2026-09-30'},
      {user_id:'fixture',year:2026,month:10,start_balance:2000000,bank_balance:1200000,bank_balance_date:'2026-10-29',balance_checkpoint:{version:1,bank:{date:'2026-10-29',amount:1200000,basis:-300000}}},
      {user_id:'fixture',year:2026,month:11,start_balance:1200000,bank_balance:900000,bank_balance_date:'2026-11-07',balance_checkpoint:{version:1,bank:{date:'2026-11-07',amount:900000,basis:-50000}}}];
     currentYear=2026;current=11;await refresh();
    });
-   await p.locator('#statsTab').click();await p.locator('.comparisonBalanceDates').waitFor();
-   assert.match(await p.locator('.comparisonBalanceDates').innerText(),/12\/11[\s\S]*29\/10/);
+   await p.locator('#statsTab').click();await p.locator('.comparisonTable').waitFor();
+   assert.equal(await p.locator('.comparisonBalanceDates,.comparisonBalanceNote').count(),0);
    const bank=p.locator('.comparisonRow').filter({hasText:'Trong ngân hàng'}),food=p.locator('.comparisonRow').filter({hasText:'Chênh lệch ăn uống'});
-   assert.match(await bank.innerText(),/870.000[\s\S]*1.200.000/);
+   assert.match(await bank.innerText(),/870.000[\s\S]*1.500.000/);
    assert.match(await food.innerText(),/250.000[\s\S]*500.000/);
-   assert.equal(await bank.locator('.trendGood,.trendBad').count(),0);
-   assert.equal(await food.locator('.trendGood,.trendBad').count(),0);
-   assert.equal((await bank.locator('.comparisonArrow').allTextContents()).join('').trim(),'');
-   assert.match(await p.locator('.comparisonBalanceNote').innerText(),/không phải cùng kỳ/);
+   assert.equal(await bank.locator('.trendBad').count(),1);
+   assert.equal(await food.locator('.trendGood').count(),1);
+   assert.equal((await bank.locator('.comparisonArrow').allTextContents()).join('').trim(),'↓');
+
    assert.equal(await p.locator('#overviewDetails').innerText().then(s=>s.includes('chưa đủ dữ liệu')),false);
    const book=p.locator('.comparisonRow').filter({hasText:'Còn lại theo sổ'});
    assert.match(await book.innerText(),/1.120.000[\s\S]*1.900.000/,'book remains a strict same-day comparison');
@@ -540,7 +541,7 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
    assert.ok((await bank.locator('.comparisonAmount').allTextContents()).every(s=>s.includes('••••••')));
    assert.ok((await food.locator('.comparisonAmount').allTextContents()).every(s=>!s.includes('••••••')));
    await p.clock.setFixedTime(new Date('2026-11-30T14:00:00+07:00'));await p.evaluate(async()=>{await refresh();await renderMonthlyOverview()});
-   assert.equal(await p.locator('.comparisonBalanceDates').count(),0,'return to same-day comparison once both dates have a basis');
+   assert.equal(await p.locator('.comparisonBalanceDates').count(),0,'comparison keeps the same clean table when both dates have a basis');
    assert.deepEqual(e,[]);await p.close();
   }
 

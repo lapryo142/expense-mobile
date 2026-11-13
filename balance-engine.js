@@ -96,17 +96,18 @@
         const bank = known('bank') ? value.bank : null;
         return {...value, remaining, bank, foodDifference: remaining === null || bank === null ? null : remaining - bank};
       };
-      // Prefer the requested day. When an old reconciliation makes it unknowable,
-      // expose a later recorded date explicitly instead of inventing a same-day value.
-      // latestDay prevents a current-month report from displaying a future snapshot.
+      // Carry the closest available balance backward in time; never use a
+      // reconciliation later than the comparison date as historical evidence.
       const comparisonSnapshot = (day, latestDay = lastDay(year, month)) => {
-        const requested = comparisonAt(day), complete = value => value.bank !== null && value.foodDifference !== null;
+        const requested = comparisonAt(Math.min(day, latestDay));
+        const complete = value => value.bank !== null && value.foodDifference !== null;
         if (complete(requested)) return {...requested, usesFallback: false};
-        const limit = iso(year, month, Math.max(1, Math.min(lastDay(year, month), latestDay)));
-        const dates = [...new Set([checkpoint.bank?.date, checkpoint.book?.date, ctx.end])]
-          .filter(date => date && date > requested.date && date <= limit && date.slice(0, 7) === requested.date.slice(0, 7)).sort();
-        for (const date of dates) {
-          const value = comparisonAt(Number(date.slice(8, 10)));
+        // Within a month, availability only improves after reconciliations or
+        // at month end, so if this day is unknown all earlier days are too.
+        for (let priorPeriod = period - 1; priorPeriod >= earliest; priorPeriod--) {
+          const prior = months.get(priorPeriod);
+          if (!prior || (!prior.rows.length && !byPeriod.has(priorPeriod))) continue;
+          const value = prior.comparisonAt(lastDay(prior.year, prior.month));
           if (complete(value)) return {...value, usesFallback: true};
         }
         return {...requested, usesFallback: false};
