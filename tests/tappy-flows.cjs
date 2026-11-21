@@ -93,6 +93,13 @@ async function boot(browser,{width=390,height=844,date='2026-10-28T10:00:00+07:0
   await page.locator('#historyTab').click();await page.locator('#summaryOverlay').waitFor({state:'hidden'});await page.locator('#addBtn').click();assert.equal(await page.locator('#addBtn').getAttribute('aria-current'),'page');await page.locator('#incomeType').click();assert.equal(await page.locator('#quickExpense').isVisible(),false);assert.equal(await page.locator('#quickIncome').isVisible(),true);
   await page.locator('#quickIncome [data-name="Lương"]').click();await page.locator('#amount').fill('24000000');await page.locator('#saveTx').click();await page.locator('#addOverlay').waitFor({state:'hidden'});
   const income=await page.evaluate(()=>fixture.inserts.at(-1));assert.equal(income.income,24000000);assert.equal(income.expense,0);assert.equal(income.payment_method,null);
+  // Deposit aliases update the savings card without counting as monthly spending.
+  await page.locator('#addBtn').click();await page.locator('#desc').fill('Bỏ vào tiết kiệm');
+  assert.equal(await page.locator('#category').inputValue(),'Gửi tiết kiệm');
+  await page.locator('#amount').fill('500000');await page.locator('#saveTx').click();await page.locator('#addOverlay').waitFor({state:'hidden'});
+  const deposit=await page.evaluate(()=>fixture.inserts.at(-1));assert.equal(deposit.category_name,'Gửi tiết kiệm');assert.equal(deposit.expense,500000);assert.equal(deposit.payment_method,'bank');
+  assert.match(await page.locator('#savingsBalance').innerText(),/500\.000/);
+  assert.match(await page.locator('#historyTotal').innerText(),/350\.000/);
   // Failure retains entered data and makes retry possible.
   await page.locator('#addBtn').click();await page.locator('#amount').fill('100000');await page.locator('#quickExpense [data-category="Dịch vụ số"]').click();await page.evaluate(()=>fixture.fail=true);await page.locator('#saveTx').click();await page.waitForFunction(()=>document.getElementById('entryError').textContent.includes('Fixture network error'));
   assert.equal(await page.locator('#amount').inputValue(),'100.000');assert.equal(await page.locator('#saveTx').isEnabled(),true);await page.locator('#historyTab').click();
