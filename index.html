@@ -484,7 +484,7 @@ const fmtDate=(iso,expectedMonth)=>{
 const todayIso=()=>{const now=new Date(),month=String(now.getMonth()+1).padStart(2,'0'),day=String(now.getDate()).padStart(2,'0');return `${now.getFullYear()}-${month}-${day}`};
 const appNow=new Date();let user=null,current=appNow.getMonth()+1,currentYear=appNow.getFullYear(),entryType='expense',paymentMethod='bank',currentStatus=null,editingTx=null;
 let privacyHidden=localStorage.getItem('happy_money_privacy_hidden')==='true';
-const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Dịch vụ số','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại'];
+const EXPENSE_CATEGORIES=['Ăn uống','Di chuyển & xe','Nhà cửa & hóa đơn','Dịch vụ số','Tennis','Mua sắm','Gia đình & quà tặng','Sunny & sức khỏe','Giải trí & sách','Tiền mặt & lặt vặt','Chưa phân loại','Gửi tiết kiệm'];
 const INCOME_CATEGORIES=['Lương','Rút tiết kiệm','Khác'];
 const CATEGORY_NAMES=[...INCOME_CATEGORIES,...EXPENSE_CATEGORIES];
 const DEFAULT_EXPENSE_CATEGORIES=[...EXPENSE_CATEGORIES];
@@ -495,7 +495,8 @@ const isDeletedTransaction=row=>row?.source==='app_edited'&&!String(row?.descrip
 function guessCategory(description){
   const s=normalizeText(description);
   if(/rut tien mat|(^|\s)tien mat(\s|$)/.test(s))return 'Tiền mặt & lặt vặt';
-  if(/rut tiet kiem|rut tu tiet kiem|chuyen tu tiet kiem/.test(s))return 'Rút tiết kiệm';
+  if(/^(?:(?:gui|bo)(?: tien)?(?: vao)?|chuyen(?: tien)? vao)\s+tiet kiem(?:\b|$)/.test(s))return 'Gửi tiết kiệm';
+ if(/rut tiet kiem|rut tu tiet kiem|chuyen tu tiet kiem/.test(s))return 'Rút tiết kiệm';
   if(/^(so du )?dau thang( tai khoan)?$/.test(s))return 'Số dư đầu tháng';
   if(/tennis|san tennis|vot|babolat|dan vot|cuon can|le phi giai|danh giai|may giay adidas/.test(s))return 'Tennis';
   if(/taxi|grab|xanh sm|xe om|xang|gui xe|ve que|que len|ve sg|vario|vespa|thay nhot|nhot may|bao tri xe/.test(s))return 'Di chuyển & xe';
@@ -523,6 +524,8 @@ function resolveCategoryName(name,{activeOnly=false}={}){
 }
 function categoryFor(row){
  if(Number(row?.income||0)>0)return incomeCategoryFor(row);
+ // Also recognize previously saved Sheet/app deposits under generic categories.
+ if(Number(row?.expense||0)>0&&guessCategory(row?.description)==='Gửi tiết kiệm')return 'Gửi tiết kiệm';
  const guessed=guessCategory(row?.description);let override=getCategoryOverrides()[String(row?.id)]||row?.category_name;
  if(override==='Công cụ & dịch vụ số')override='Dịch vụ số';
  if(override==='Chuyển tiền nội bộ'||(resolveCategoryName(override)===fallbackCategoryName()&&resolveCategoryName(guessed,{activeOnly:true})!==fallbackCategoryName()))override=null;
@@ -543,10 +546,10 @@ function accountingCategoryFor(row){
  const name=categoryFor(row),item=incomeCatalogRecord.items.find(item=>item.name===name||item.aliases.includes(name));
  return item?.kind==='savings'?'Rút tiết kiệm':item?.kind==='opening'?'Số dư đầu tháng':name;
 }
-const isFundingCategory=row=>['Rút tiết kiệm','Số dư đầu tháng'].includes(accountingCategoryFor(row));
+const isFundingCategory=row=>['Rút tiết kiệm','Gửi tiết kiệm','Số dư đầu tháng'].includes(accountingCategoryFor(row));
 const isOpeningBalance=row=>accountingCategoryFor(row)==='Số dư đầu tháng';
-const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻'};
-const CATEGORY_COLORS={'Ăn uống':'#ff626b','Di chuyển & xe':'#48c6bc','Nhà cửa & hóa đơn':'#b8a1df','Tennis':'#ff626b','Mua sắm':'#f6dd65','Gia đình & quà tặng':'#5a9fea','Sunny & sức khỏe':'#9bce81','Giải trí & sách':'#d29cd2','Tiền mặt & lặt vặt':'#a7b4ca','Dịch vụ số':'#e2af78','Chưa phân loại':'#9aa2af'};
+const CATEGORY_ICONS={'Ăn uống':'🍜','Di chuyển & xe':'🚗','Nhà cửa & hóa đơn':'🏠','Tennis':'🎾','Mua sắm':'🛍️','Gia đình & quà tặng':'🎁','Sunny & sức khỏe':'☀️','Giải trí & sách':'🎬','Tiền mặt & lặt vặt':'💵','Dịch vụ số':'💻','Gửi tiết kiệm':'🏦'};
+const CATEGORY_COLORS={'Ăn uống':'#ff626b','Di chuyển & xe':'#48c6bc','Nhà cửa & hóa đơn':'#b8a1df','Tennis':'#ff626b','Mua sắm':'#f6dd65','Gia đình & quà tặng':'#5a9fea','Sunny & sức khỏe':'#9bce81','Giải trí & sách':'#d29cd2','Tiền mặt & lặt vặt':'#a7b4ca','Dịch vụ số':'#e2af78','Chưa phân loại':'#9aa2af','Gửi tiết kiệm':'#a58af5'};
 let categoryNavigation=null;
 let categoryManuallySelected=false,savingTransaction=false,editSaving=false,activeCategoryName=null;
 let quickEntryPending=new URLSearchParams(location.search).get('action')==='add';
@@ -636,7 +639,7 @@ async function refresh(){
   $('bankHero').textContent=privateFmt(calculated.bank);$('remain').textContent=privateFmt(rem);
   $('foodDifference').textContent=fmt(rem-calculated.bank);$('savingsBalance').textContent=privateFmt(calculated.savings);
   $('sendWife').textContent=privateFmt(st?.send_wife||0);$('startBalance').textContent=privateFmt(calculated.opening);
-  const payLaterTotal=activeTx.filter(isPayLater).reduce((sum,x)=>sum+Number(x.expense||0),0);
+  const payLaterTotal=activeTx.filter(row=>isPayLater(row)&&!isFundingCategory(row)).reduce((sum,x)=>sum+Number(x.expense||0),0);
   $('payLaterTotal').textContent=fmt(payLaterTotal);
   const latestDate=sortedTx.map(x=>normalizedIsoDate(x.txn_date,x.month)).filter(Boolean).sort().pop()||`${currentYear}-${String(current).padStart(2,'0')}-01`;
   const statusFallback=String(st?.updated_at||'').slice(0,10)||latestDate;
@@ -691,7 +694,7 @@ function renderTransactionSearch(){
   if(period==='custom'&&(!date||date<from||date>to))return false;
   const category=categoryFor(row),text=normalizeText([row.description,category,HappyI18n.categoryLabel(category,'en')].join(' '));return terms.every(term=>text.includes(term));
  }).sort((a,b)=>Number(b.year)-Number(a.year)||Number(b.month)-Number(a.month)||normalizedIsoDate(b.txn_date,b.month).localeCompare(normalizedIsoDate(a.txn_date,a.month))||String(b.created_at||'').localeCompare(String(a.created_at||''))||Number(b.row_order||0)-Number(a.row_order||0));
- $('searchSummary').classList.remove('hidden');$('searchCount').textContent=matches.length.toLocaleString(HappyI18n.locale());$('searchTotal').textContent=fmt(matches.reduce((sum,row)=>sum+Number(row.expense||0),0));
+ $('searchSummary').classList.remove('hidden');$('searchCount').textContent=matches.length.toLocaleString(HappyI18n.locale());$('searchTotal').textContent=fmt(matches.reduce((sum,row)=>sum+(isFundingCategory(row)?0:Number(row.expense||0)),0));
  $('searchResults').innerHTML=matches.map(row=>{
   const category=categoryFor(row),income=Number(row.income||0)>0,amount=transactionFmt(row),font=Math.max(12,15-Math.max(0,amount.length-13)*.6),date=normalizedIsoDate(row.txn_date,row.month);
   return `<button class="searchResultRow" type="button" data-search-id="${escapeHtml(row.id)}" style="--tx-color:${CATEGORY_COLORS[category]||'#9aa2af'};--amount-font:${font}px"><span class="txIcon" aria-hidden="true">${CATEGORY_ICONS[category]||(income?'↙':'•')}</span><span><span class="searchResultName" data-user-content>${escapeHtml(row.description||category)}</span><span class="searchResultMeta"><time${date?` datetime="${escapeHtml(date)}"`:''}>${escapeHtml(historyDateLabel(date||'unknown'))}</time><span aria-hidden="true">·</span><span data-category-label="${escapeHtml(category)}">${escapeHtml(HappyI18n.categoryLabel(category))}</span></span></span><span class="searchResultAmount ${income?'inc':'exp'}">${amount}</span></button>`;
@@ -840,11 +843,11 @@ function monthTotals(rows,status,cutoffDay=null){
  let income=0,expense=0;for(const row of rows||[]){
   if(isDeletedTransaction(row)||isOpeningBalance(row))continue;
   if(cutoffDay!==null&&!transactionThroughDay(row,cutoffDay))continue;
-  if(!isFundingCategory(row))income+=Number(row.income||0);expense+=Number(row.expense||0);
+  if(!isFundingCategory(row)){income+=Number(row.income||0);expense+=Number(row.expense||0)}
  }return {income,expense};
 }
 function expenseThroughDay(rows,cutoffDay){
-  const unknown=(rows||[]).some(row=>!isDeletedTransaction(row)&&!isOpeningBalance(row)&&Number(row.expense||0)>0&&!normalizedIsoDate(row.txn_date,row.month)&&cutoffDay<HappyBalances.lastDay(Number(row.year),Number(row.month)));
+  const unknown=(rows||[]).some(row=>!isDeletedTransaction(row)&&!isFundingCategory(row)&&Number(row.expense||0)>0&&!normalizedIsoDate(row.txn_date,row.month)&&cutoffDay<HappyBalances.lastDay(Number(row.year),Number(row.month)));
   return unknown?null:monthTotals(rows,null,cutoffDay).expense;
 }
 function remainingThroughDay(rows,status,day,year=currentYear,month=current){return activeBalanceLedger?.get(year,month)?.at(day).remaining||0}
@@ -908,7 +911,7 @@ function drawAnnualOverview(){
 }
 function drawAnnualBreakdown(){
  const rows=annualRows.filter(row=>Number(row.year)===annualYear&&(!annualSelectedMonth||Number(row.month)===annualSelectedMonth)&&!isDeletedTransaction(row)&&!isOpeningBalance(row));
- const expenses=rows.filter(row=>Number(row.expense||0)>0),total=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0);
+ const expenses=rows.filter(row=>Number(row.expense||0)>0&&!isFundingCategory(row)),total=expenses.reduce((sum,row)=>sum+Number(row.expense||0),0);
  const now=new Date(),isCurrentYear=annualYear===now.getFullYear(),isCurrentMonth=isCurrentYear&&annualSelectedMonth===now.getMonth()+1;
  const days=annualSelectedMonth?(isCurrentMonth?now.getDate():new Date(annualYear,annualSelectedMonth,0).getDate()):(isCurrentYear?Math.round((Date.UTC(annualYear,now.getMonth(),now.getDate())-Date.UTC(annualYear,0,1))/86400000)+1:(Date.UTC(annualYear+1,0,1)-Date.UTC(annualYear,0,1))/86400000);
  const label=annualSelectedMonth?new Intl.DateTimeFormat(HappyI18n.locale(),{month:'long',year:'numeric'}).format(new Date(annualYear,annualSelectedMonth-1,1)):String(annualYear);
@@ -979,7 +982,7 @@ async function renderMonthDetails(reportYear=currentYear,reportMonth=current){
   const previousFoodDifference=previousBalanceComparison?.foodDifference??null;
   const hasPreviousData=previousRows.length>0||!!previousStatus;
   const asOfRows=rows.filter(row=>!isOpeningBalance(row)&&transactionThroughDay(row,dayCount));
-  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0);
+  const expenses=asOfRows.filter(row=>Number(row.expense||0)>0&&!isFundingCategory(row));
   renderCategoryChart(expenses);
   const payLaterExpense=expenses.filter(isPayLater).reduce((sum,row)=>sum+Number(row.expense||0),0);
   const largest=expenses.reduce((best,row)=>Number(row.expense||0)>Number(best?.expense||0)?row:best,null);
@@ -1344,12 +1347,14 @@ $('saveTx').addEventListener('click',async()=>{
   let saved=false;
   try{
     await loadBalanceLedger(Number(date.slice(0,4)),Number(date.slice(5,7)));
-    const source=entryType==='income'?'app':paymentMethod==='pay_later'?'app_pay_later':paymentMethod==='cash'?'app_cash':'app';
-    const keyPrefix=paymentMethod==='pay_later'?'app-pay-later-':paymentMethod==='cash'?'app-cash-':'app-';
-    const payload={category_name:category,user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:paymentMethod,source_key:keyPrefix+crypto.randomUUID()};
+    const savingsDeposit=entryType==='expense'&&(category==='Gửi tiết kiệm'||guessCategory(desc)==='Gửi tiết kiệm');
+     const recordedCategory=savingsDeposit?'Gửi tiết kiệm':category,recordedMethod=savingsDeposit?'bank':paymentMethod;
+     const source=entryType==='income'?'app':recordedMethod==='pay_later'?'app_pay_later':recordedMethod==='cash'?'app_cash':'app';
+    const keyPrefix=recordedMethod==='pay_later'?'app-pay-later-':recordedMethod==='cash'?'app-cash-':'app-';
+    const payload={category_name:recordedCategory,user_id:user.id,year:Number(date.slice(0,4)),month:Number(date.slice(5,7)),description:desc,txn_date:date,income:entryType==='income'?amount:0,expense:entryType==='expense'?amount:0,source,payment_method:entryType==='income'?null:recordedMethod,source_key:keyPrefix+crypto.randomUUID()};
     const {data:inserted,error}=await sb.from('transactions').insert(payload).select().single();if(error)throw error;
     saved=true;
-    if(inserted?.id)await saveCategoryOverride(inserted.id,category);
+    if(inserted?.id)await saveCategoryOverride(inserted.id,recordedCategory);
     currentYear=payload.year;current=payload.month;$('addOverlay').classList.remove('open');renderMonths();await refresh();if($('summaryOverlay').classList.contains('open'))await renderMonthlyOverview();
   }catch(error){
     if(saved){$('addOverlay').classList.remove('open');alert('Giao dịch đã lưu. Anh làm mới để tải lại dữ liệu.');}
@@ -1383,7 +1388,9 @@ $('saveEditTx').addEventListener('click',async()=>{
   const name=$('editTxName').value.trim()||$('editTxCategory').value,amount=cleanMoney('editTxAmount'),date=$('editTxDate').value;
   const keepUndated=!date&&!normalizedIsoDate(editingTx.txn_date,editingTx.month);
   if(!name||!Number.isSafeInteger(amount)||amount<=0||(!date&&!keepUndated)){alert('Anh kiểm tra nội dung, số tiền và ngày giao dịch nhé.');return}
-  const transactionId=editingTx.id,isIncome=Number(editingTx.income||0)>0,method=isIncome?null:$('editTxPayment').value,category=$('editTxCategory').value;
+  const transactionId=editingTx.id,isIncome=Number(editingTx.income||0)>0;
+   const savingsDeposit=!isIncome&&($('editTxCategory').value==='Gửi tiết kiệm'||guessCategory(name)==='Gửi tiết kiệm');
+   const method=isIncome?null:savingsDeposit?'bank':$('editTxPayment').value,category=savingsDeposit?'Gửi tiết kiệm':$('editTxCategory').value;
   const payload={category_name:category,description:name,txn_date:keepUndated?null:date,year:keepUndated?Number(editingTx.year):Number(date.slice(0,4)),month:keepUndated?Number(editingTx.month):Number(date.slice(5,7)),income:isIncome?amount:0,expense:isIncome?0:amount,source:'app_edited',payment_method:method,updated_at:new Date().toISOString()};
   editSaving=true;$('saveEditTx').disabled=true;$('deleteEditTx').disabled=true;$('saveEditTx').textContent='Đang lưu…';
   try{
@@ -1501,10 +1508,12 @@ function normalizeCatalog(value){
  });
  // Version 1 had no removal/renaming. Migrate once, without resurrecting removed categories.
  if(Number(value?.version||1)<2)DEFAULT_CATALOG.forEach(item=>{if(!ids.has(item.id)&&!names.has(normalizeText(item.name)))items.push({...item})});
+ // v3 introduces savings deposits to existing category catalogs only once.
+ if(Number(value?.version||1)<3){const saving=DEFAULT_CATALOG.find(item=>item.name==='Gửi tiết kiệm');if(saving&&!ids.has(saving.id)&&!names.has(normalizeText(saving.name)))items.push({...saving})}
  const fallback=DEFAULT_CATALOG.find(item=>item.name==='Chưa phân loại');
  const existing=items.find(item=>item.id===fallback.id||item.name===fallback.name);
  if(!existing)items.push({...fallback});
- return {version:2,updated_at:Number(value?.updated_at)||0,items};
+ return {version:3,updated_at:Number(value?.updated_at)||0,items};
 }
 const activeCatalog=()=>catalogRecord.items.filter(item=>!item.archived);
 function applyCatalog(record){
@@ -1524,7 +1533,7 @@ function renderExpenseChips(){
  fillCategorySelect('category',selected||'Chưa phân loại',entryType);syncQuickCategory();
 }
 function persistCatalog(items){
- const record=normalizeCatalog({version:2,updated_at:Math.max(Date.now(),catalogRecord.updated_at+1),items});applyCatalog(record);catalogDirty=true;
+ const record=normalizeCatalog({version:3,updated_at:Math.max(Date.now(),catalogRecord.updated_at+1),items});applyCatalog(record);catalogDirty=true;
  let stored=false;try{localStorage.setItem(catalogKey(),JSON.stringify(record));stored=true}catch{}
  renderCatalogList();$('catalogStatus').textContent='Đang lưu…';
  const owner=user?.id;
