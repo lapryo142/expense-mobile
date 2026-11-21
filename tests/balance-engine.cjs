@@ -12,6 +12,15 @@ assert.equal(calc([r('opening',11,1,100000,0,{description:'Đầu tháng'})],[oc
 // Funding is a transfer, not earned income. Cash/pay later do not debit bank.
 let rows=[r('expense',11,1,0,200000),r('income',11,1,300000),r('withdraw',11,2,1000000,0,{description:'Rút tiết kiệm'}),r('later',11,3,0,500000,{payment_method:'pay_later'}),r('cash',11,3,0,400000,{payment_method:'cash'})];
 let v=calc(rows,[oct]).at(3);assert.equal(v.bank,6100000);assert.equal(v.savings,19000000);assert.equal(v.remaining,5200000);
+// Bank -> savings transfers are not actual expenses and do not inflate savings on edit/reload.
+const deposits=[r('d1',11,4,0,300000,{description:'Gửi tiết kiệm'}),r('d2',11,5,0,100000,{description:'Bỏ tiết kiệm'}),r('d3',11,6,0,200000,{description:'Bỏ vào tiết kiệm'}),r('d4',11,7,0,600000,{description:'Tháng 11',category_name:'Gửi tiết kiệm'})];
+let ds=calc(deposits,[oct]).at(7);assert.equal(ds.savings,21200000);assert.equal(ds.bank,3800000);assert.equal(ds.remaining,3800000);
+assert.equal(calc(deposits,[oct]).at(4).savings,20300000);
+const editedDeposits=deposits.map(x=>x.id==='d1'?{...x,expense:400000}:x);assert.equal(calc(editedDeposits,[oct]).at(7).savings,21300000);
+const deletedDeposits=editedDeposits.map(x=>x.id==='d2'?{...x,source:'app_edited',description:'',income:0,expense:0}:x);assert.equal(calc(deletedDeposits,[oct]).at(7).savings,21200000);
+const savingsCheckpoint=snap({year:2026,month:11,savings_balance:19000000,savings_balance_date:'2026-11-03',bank_balance:5000000,bank_balance_date:'2026-11-03'},[]);
+assert.equal(calc(deposits,[oct,savingsCheckpoint]).at(7).savings,20200000);
+assert.equal(calc(deposits,[oct,savingsCheckpoint]).at(7).bank,3800000);
 // Reconciliation basis includes same-day rows once; later backdated insert/edit/delete are deltas.
 const base={year:2026,month:11,bank_balance:7000000,bank_balance_date:'2026-11-02',savings_balance:19000000,savings_balance_date:'2026-11-02'};
 const anchored=snap(base,rows);assert.equal(calc(rows,[oct,anchored]).at(3).bank,7000000);

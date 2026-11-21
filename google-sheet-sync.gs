@@ -32,7 +32,7 @@ const EXPENSE_SYNC = {
   },
   startBalanceLabels: ['đầu tháng', 'đầu tháng tài khoản', 'số dư đầu tháng', 'số dư đầu tháng tài khoản'],
   ignoredLabels: [
-    'tổng', 'đưa vợ', 'gửi vợ', 'bỏ vào tiết kiệm', 'tiết kiệm', 'tổng tiết kiệm',
+    'tổng', 'đưa vợ', 'gửi vợ', 'tiết kiệm', 'tổng tiết kiệm',
     'còn lại', 'còn lại ngân hàng', 'còn lại trong ngân hàng', 'chênh lệch (ăn uống)',
     'đầu tháng', 'đầu tháng tài khoản', 'số dư đầu tháng', 'số dư đầu tháng tài khoản'
   ]

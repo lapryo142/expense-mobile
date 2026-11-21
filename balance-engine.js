@@ -13,7 +13,7 @@
   const number = value => Number(value || 0);
   const clean = value => String(value || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/đ/g, 'd');
   const deleted = row => row.source === 'app_edited' && !String(row.description || '').trim() && !number(row.income) && !number(row.expense);
-  const defaultCategory = row => /^(so du )?dau thang/.test(clean(row.description)) ? 'Số dư đầu tháng' : /rut (tien )?tiet kiem/.test(clean(row.description)) ? 'Rút tiết kiệm' : '';
+  const defaultCategory = row => /^(so du )?dau thang/.test(clean(row.description)) ? 'Số dư đầu tháng' : /rut (tien )?tiet kiem/.test(clean(row.description)) ? 'Rút tiết kiệm' : clean(row.category_name)==='gui tiet kiem'||/^(?:(?:gui|bo)(?: tien)?(?: vao)?|chuyen(?: tien)? vao)\s+tiet kiem(?:\b|$)/.test(clean(row.description)) ? 'Gửi tiết kiệm' : '';
 
   function context(rows, status, options = {}) {
     const category = options.categoryFor || defaultCategory;
@@ -23,6 +23,7 @@
     const date = row => normalizeDate(row.txn_date, row.month) || end;
     const opening = row => category(row) === 'Số dư đầu tháng';
     const withdrawal = row => category(row) === 'Rút tiết kiệm';
+    const deposit = row => category(row) === 'Gửi tiết kiệm';
     const later = options.isPayLater || (row => row.payment_method === 'pay_later' || row.source === 'app_pay_later');
     const wife = number(status.send_wife);
     // An actual expense row is already a debit; do not also debit its status card.
@@ -36,6 +37,8 @@
         book += income - expense;
         bank += income - (later(row) || row.payment_method === 'cash' || row.source === 'app_cash' ? 0 : expense);
         if (withdrawal(row)) savings -= income;
+        // A bank-to-savings deposit is a transfer, not an actual expense.
+        if (deposit(row)) savings += expense;
       }
       if (standaloneWife && wifeDate <= cutoff) {bank -= standaloneWife; book -= standaloneWife;}
       return {bank, savings, book};
